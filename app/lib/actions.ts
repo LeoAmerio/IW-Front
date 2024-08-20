@@ -1,4 +1,4 @@
-'use server';
+s'use server';
 
 // import { signIn } from "@/auth";
 import { sql } from "@vercel/postgres";
