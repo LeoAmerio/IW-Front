@@ -1,12 +1,21 @@
 "use client";
 
-import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import AcmeLogo from "@/components/ui/acme-logo";
 import SignupForm from "@/components/forms/signup-form";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 const SignupPage = () => {
   const router = useRouter();
+  const authStatus = useAuthStore((state) => state.status);
+  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+
+  if (authStatus === "Pending") {
+    checkAuthStatus();
+    return <div>Loading...</div>;
+  }
+
+  if (authStatus === "Authorized") router.push("/dashboard");
 
   const handleSignupSuccess = () => {
     router.push('/dashboard');

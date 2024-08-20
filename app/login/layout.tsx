@@ -1,21 +1,8 @@
-"use client";
-
 import { useAuthStore } from "@/store/auth/auth.store";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
-export const AuthLayout = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
-  const authStatus = useAuthStore((state) => state.status);
-  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
-
-  if (authStatus === "Pending") {
-    checkAuthStatus();
-    return <div>Loading...</div>;
-  }
-
-  if (authStatus === "Authorized") router.push("/dashboard");
-
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="bg-gray-100 flex justify-center items-center h-screen">
       <div className="w-1/2 h-screen hidden lg:flex lg:flex-col items-center justify-center bg-indigo-700">
@@ -31,5 +18,3 @@ export const AuthLayout = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
-
-export default AuthLayout;

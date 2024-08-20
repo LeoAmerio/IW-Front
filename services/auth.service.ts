@@ -1,5 +1,4 @@
 import { loginAPI } from '@/api/login.api';
-import LoginAPI from '@/api/LoginAPI';
 import { AxiosError } from 'axios';
 
 export interface LoginResponse {
