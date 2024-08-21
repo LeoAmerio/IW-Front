@@ -15,11 +15,15 @@ const SignupPage = () => {
     return <div>Loading...</div>;
   }
 
-  if (authStatus === "Authorized") router.push("/dashboard");
+  // if (authStatus === "Authorized") router.push("/dashboard");
 
   const handleSignupSuccess = () => {
-    router.push('/dashboard');
+    router.push('/login');
   };
+
+  const handleGoBack = () => {
+    router.push('/');
+  }
   
   return (
     <main className="flex items-center justify-center md:h-screen">
@@ -29,7 +33,7 @@ const SignupPage = () => {
             <AcmeLogo />
           </div>
         </div>
-        <SignupForm onSignupSuccess={handleSignupSuccess} />
+        <SignupForm onSignupSuccess={handleSignupSuccess} onGoBack={handleGoBack} />
       </div>
     </main>
   );

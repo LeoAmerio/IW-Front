@@ -1,4 +1,5 @@
 import {
+  ArrowLeftIcon,
   ArrowRightIcon,
   AtSymbolIcon,
   KeyIcon,
@@ -11,9 +12,10 @@ import { Link } from "@mui/material";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
+  onGoBack: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -99,6 +101,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           </Link> */}
         <Button className="mt-4 w-full">
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        </Button>
+        <Button
+          className="mt-4 w-full"
+          onClick={onGoBack}
+        >
+          Volver atrás
+          <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
           <div className="mt-3 text-center">
             <Link href="/signup" className="text-blue-600 hover:underline">
