@@ -6,7 +6,8 @@ import {
   AtSymbolIcon,
   KeyIcon,
   FaceSmileIcon,
-  FaceFrownIcon
+  FaceFrownIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import { Controller, useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ import { TextField } from "@mui/material";
 
 interface SignupFormProps {
   onSignupSuccess: () => void;
+  onGoBack: () => void;
 }
 
 interface SignupFormData {
@@ -42,7 +44,7 @@ const schema = yup.object().shape({
     // .min(8, "La contraseña debe tener mínimo 8 caracteres."),
 });
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
+const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) => {
   const {
     register,
     control,
@@ -225,12 +227,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
           type="submit"
           disabled={signupMutation.isLoading}
         >
-          {signupMutation.isLoading ? "Signing up..." : "Sign up"}{" "}
+          {signupMutation.isLoading ? "Registrando..." : "Registrarse"}{" "}
           <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        </Button>
+        <Button
+          className="mt-4 w-full"
+          onClick={onGoBack}
+        >
+          Volver atrás
+          <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
         {signupMutation.isError && (
           <p className="text-red-500 text-sm mt-2">
-            An error occurred during signup. Please try again.
+            Ha ocurrido un error, por favor intente nuevamente.
           </p>
         )}
       </div>
