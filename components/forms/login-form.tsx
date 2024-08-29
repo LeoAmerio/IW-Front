@@ -47,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     <form className="space-y-3" onSubmit={handleSubmit}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Please log in to continue.
+          Por favor inicie sesion para continuar.
         </h1>
         <div className="w-full">
           <div>
@@ -65,7 +65,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 name="email"
-                placeholder="Enter your email address"
+                placeholder="Ingrese su email"
                 required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -76,7 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
               className="mb-3 mt-5 block text-xs font-medium text-gray-900"
               htmlFor="password"
             >
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <input
@@ -86,7 +86,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 name="password"
-                placeholder="Enter password"
+                placeholder="Ingrese su contraseña"
                 required
                 minLength={6}
               />
@@ -98,7 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           ¿Olvidó su contraseña?
           </Link> */}
         <Button className="mt-4 w-full">
-          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+          Inisiar Sesion <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
           <div className="mt-3 text-center">
             <Link href="/signup" className="text-blue-600 hover:underline">

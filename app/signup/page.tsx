@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import AcmeLogo from "@/components/ui/acme-logo";
 import SignupForm from "@/components/forms/signup-form";
 import { useAuthStore } from "@/store/auth/auth.store";
+import { Snackbar } from "@mui/material";
 
 const SignupPage = () => {
   const router = useRouter();

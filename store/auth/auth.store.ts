@@ -54,5 +54,5 @@ export const useAuthStore = create<AuthState>()(
       storeApi,
       { name: 'auth-storage' }
     )
-    )
-  );
+  )
+);
