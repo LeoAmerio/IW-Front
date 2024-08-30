@@ -15,6 +15,7 @@ import * as yup from "yup";
 import { useMutation } from "react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TextField } from "@mui/material";
+import toast from "react-hot-toast";
 
 interface SignupFormProps {
   onSignupSuccess: () => void;
@@ -63,10 +64,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, nombre, apellido, password, rol: 4 }),
-      }).then((response) => {
+        body: JSON.stringify({ email, nombre, apellido, password, rol: 3 }),
+      }).then(async (response) => {
         if (!response.ok) {
-          throw new Error("Signup failed");
+          const errorData = await response.json();
+          if(response.status === 400 && errorData.email) {
+            throw new Error(errorData.email[0]);
+          }
+          throw new Error("Ha ocurrido un error en el registro.");
         }
         return response.json();
       }),
@@ -75,8 +80,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
         Cookies.set("token", data.token, { expires: 1 });
         onSignupSuccess();
       },
-      onError: (error) => {
+      onError: (error: Error) => {
         console.error("Error:", error);
+        toast.error(error.message);
       },
     }
   );
@@ -240,6 +246,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
         {signupMutation.isError && (
           <p className="text-red-500 text-sm mt-2">
             Ha ocurrido un error, por favor intente nuevamente.
+            {/* {signupMutation.error.message} */}
           </p>
         )}
       </div>

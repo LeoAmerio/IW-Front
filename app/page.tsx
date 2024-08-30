@@ -3,6 +3,7 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image  from 'next/image';
 import { CardWithBackground } from '../components/ui/dashboard/cards';
+import { Toaster } from 'react-hot-toast';
 
 export default function Page() {
   return (
@@ -38,6 +39,7 @@ export default function Page() {
           <Image src='/hero-mobile.png' alt='Screenshot of the dash' width={560} height={620} className='block md:hidden' />
         </div>
       </div>
+      <Toaster />
     </main>
   );
 }

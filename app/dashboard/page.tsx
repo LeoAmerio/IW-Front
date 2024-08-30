@@ -8,6 +8,7 @@ import {
   RevenueChartSkeleton,
 } from "@/components/ui/skeletons";
 import CardWrapper, { Card } from "@/components/ui/dashboard/cards";
+import PostCard from "@/components/Posts/post-card";
 
 export default async function Page() {
   const {
@@ -38,14 +39,36 @@ export default async function Page() {
           type="customers"
         /> */}
       </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <Suspense fallback={<RevenueChartSkeleton />}>
+      {/* <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8"> */}
+      <div className="mt-6 grid grid-cols-1">
+        <PostCard posteo={posteo} />
+        {/* <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChart />
         </Suspense>
         <Suspense fallback={<LatestInvoicesSkeleton />}>
           <LatestInvoices />
-        </Suspense>
+        </Suspense> */}
       </div>
     </main>
   );
+}
+
+
+const posteo = {
+  "id": 12,
+  "titulo": "probando hacer un posteo",
+  "descripcion": "soy leo posteando en mi edificio :)",
+  "usuario": { 
+    "id": 38,
+    "nombre": "leo",
+    "apellido": "amerio",
+    "piso": 2,
+    "numero": "D"
+  },
+  "tipo_posteo": { 
+    "id": 1,
+    "tipo": "Reclamo"
+  },
+  "imagen": null,
+  "fecha_creacion_legible": "29 de agosto de 2024 a las 22:25"
 }
