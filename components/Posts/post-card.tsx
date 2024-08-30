@@ -3,7 +3,7 @@ import React from "react";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardTitle } from "../ui";
 import Link from "next/link";
-import { usePostStore } from "@/store/posts.store";
+import { usePostStore } from '@/store/post-store';
 
 interface PosteoCard {
   id: number;

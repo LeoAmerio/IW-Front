@@ -2,7 +2,7 @@
 import PostDetail from '@/components/Posts/post-detail';
 import Breadcrumbs from '@/components/ui/invoices/breadcrumbs';
 import { Posteo } from '@/interfaces/types';
-import { usePostStore } from '@/store/posts.store';
+import { usePostStore } from '@/store/post-store';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
