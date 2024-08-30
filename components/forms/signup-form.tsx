@@ -9,7 +9,7 @@ import {
   FaceFrownIcon,
   ArrowLeftIcon
 } from "@heroicons/react/24/outline";
-import { Button } from "../ui/button";
+import { Button } from "../ui/customers/button";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useMutation } from "react-query";

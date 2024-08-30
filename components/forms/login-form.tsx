@@ -5,7 +5,7 @@ import {
   KeyIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../ui/customers/button";
 import { lusitana } from "../ui/fonts";
 import Cookies from "js-cookie";
 import { Link } from "@mui/material";

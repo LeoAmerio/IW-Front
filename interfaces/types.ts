@@ -2,10 +2,10 @@
 export type Posteo = {
   id: number;
   title: string;
-  body: string;
+  descripcion: string;
   user: User;
   posteoTypo: PosteoTypo;
-  imagen?: string;
+  imagen: string | null;
   created_at: string;
 };
 
