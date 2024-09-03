@@ -1,13 +1,38 @@
-
-export type Posteo = {
+export interface Posteo {
   id: number;
-  title: string;
+  titulo: string;
   descripcion: string;
-  user: User;
-  posteoTypo: PosteoTypo;
+  fecha_creacion_legible: string;
   imagen: string | null;
-  created_at: string;
-};
+  tipo_posteo: {
+    id: number;
+    tipo: string;
+  };
+  usuario: {
+    id: number;
+    apellido: string;
+    nombre: string;
+    piso: number | null;
+    depto: string | null;
+  };
+}
+
+export interface PosteoRequest {
+  titulo: string;
+  descripcion: string;
+  tipo_posteo_id: number;
+  imagen: string | null;
+}
+
+// export type Posteo = {
+//   id: number;
+//   title: string;
+//   descripcion: string;
+//   user: User;
+//   posteoTypo: PosteoTypo;
+//   imagen: string | null;
+//   created_at: string;
+// };
 
 export interface User {
   id: number;
@@ -19,5 +44,25 @@ export interface User {
 
 export interface PosteoTypo {
   id: number;
-  typo: string;
+  typo: PosteoTypoEnum;
+}
+
+export enum PosteoTypoEnum {
+  Reclamo = "Reclamo",
+  Consulta = "Consulta",
+  Aviso = "Aviso",
+}
+
+export interface Edificio {
+  id: number;
+  nombre: string;
+  direccion: string;
+  numero: number;
+  ciudad: string;
+}
+
+export interface SearchParams {
+  usuario: string;
+  tipo_posteo: number;
+  ordering: string;
 }

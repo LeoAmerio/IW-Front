@@ -12,10 +12,17 @@ import {
 import { Button } from "../ui/customers/button";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TextField } from "@mui/material";
-import toast from "react-hot-toast";
+import edificiosApi from "@/api/edificios.api";
+import propiedadesApi from "@/api/propiedades.api";
+import { Toaster, toast } from "react-hot-toast";
+
+const fetchEdificios = async () => {
+  const { data } = await propiedadesApi.getEdificios();
+  return data;
+}
 
 interface SignupFormProps {
   onSignupSuccess: () => void;
@@ -78,6 +85,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
     {
       onSuccess: (data) => {
         Cookies.set("token", data.token, { expires: 1 });
+        toast.success(`${data.message}`)
         onSignupSuccess();
       },
       onError: (error: Error) => {
@@ -86,6 +94,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
       },
     }
   );
+
+  const { data: edificios, isLoading } = useQuery(
+    ["edificios"],
+    fetchEdificios,
+    {
+      onSuccess: (data) => {
+        console.log("Edificios from useQuery: ", data);
+      },
+    }
+  ) 
+
+  console.log("Edificios:", edificios);
 
   const onSubmit = (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
@@ -104,7 +124,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
     <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Registrese para poder ingresar.
+          Registrese aquí.
         </h1>
         <div className="w-full">
           <div>

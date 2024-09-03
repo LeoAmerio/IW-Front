@@ -6,48 +6,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { PosteoTypo, User } from '@/interfaces/types'
+import { Posteo, PosteoTypo, User } from '@/interfaces/types'
+import { PencilIcon } from '@heroicons/react/24/outline'
+import { IconButton } from '@mui/material'
 // import { MessageCircle } from 'lucide-react'
 
-// Tipo para el posteo
-type Posteo = {
-  id: number;
-  title: string;
-  descripcion: string;
-  user: User;
-  posteoTypo: PosteoTypo;
-  imagen: string | null;
-  created_at: string;
-  // comentarios: number
+interface PostCardProps {
+  posteo: Posteo;
+  // onEdit: (Posteo: Posteo) => void;
 }
 
-// Función para obtener el posteo por ID (simulada)
-function getPosteoById(id: number): Posteo | null {
-  // En una aplicación real, aquí harías una llamada a tu API
-  const posteo: Posteo = {
-    id: 12,
-    title: "probando hacer un posteo",
-    descripcion: "soy leo posteando en mi edificio :)",
-    user: {
-      id: 38,
-      name: "leo",
-      lastName: "amerio",
-      piso: 2,
-      departamento: "D"
-    },
-    posteoTypo: {
-      id: 1,
-      typo: "Reclamo"
-    },
-    imagen: null,
-    created_at: "29 de agosto de 2024 a las 22:25",
-    // comentarios: 5
-  }
-
-  return posteo.id === id ? posteo : null
-}
-
-const PostDetail = ({ posteo }: { posteo: Posteo }) => {
+const PostDetail = ({ posteo }: PostCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [comentario, setComentario] = useState('')
 
@@ -58,19 +27,26 @@ const PostDetail = ({ posteo }: { posteo: Posteo }) => {
   const handleSubmitComentario = (e: React.FormEvent) => {
     e.preventDefault()
     // Aquí iría la lógica para enviar el comentario
-    console.log('Comentario enviado:', comentario)
+    // console.log('Comentario enviado:', comentario)
     setComentario('')
     setIsModalOpen(false)
   }
+
+  // const handleEditPost = () => {
+  //   onEdit(posteo);
+  // }
 
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">{posteo.title}</CardTitle>
+          <CardTitle className="text-2xl">{posteo.titulo}</CardTitle>
+          {/* <IconButton onClick={handleEditPost} className="text-gray-500 hover:text-gray-700">
+            <PencilIcon className="h-5 w-5" />
+          </IconButton> */}
           <div className="flex justify-between items-center">
-            <Badge variant="outline">{posteo.posteoTypo.typo}</Badge>
-            <p className="text-sm text-gray-500">{posteo.created_at}</p>
+            <Badge variant="outline">{posteo.tipo_posteo.tipo}</Badge>
+            <p className="text-sm text-gray-500">{posteo.fecha_creacion_legible}</p>
           </div>
         </CardHeader>
         <CardContent>
@@ -79,7 +55,7 @@ const PostDetail = ({ posteo }: { posteo: Posteo }) => {
             <img src={posteo.imagen} alt="Imagen del posteo" className="w-full h-auto rounded-md mb-4" />
           )}
           <div className="text-right">
-            <p className="text-sm text-gray-500">Autor: Piso {posteo.user.piso} - {posteo.user.departamento}</p>
+            <p className="text-sm text-gray-500">Autor: Piso {posteo.usuario.piso} - {posteo.usuario.depto}</p>
           </div>
         </CardContent>
         <CardFooter className="flex justify-between items-center">
