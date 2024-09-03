@@ -105,7 +105,7 @@ const PostsSection = () => {
     setIsModalOpen(true);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { id, value, files } = e.target
     if (id === 'imagen' && files && files[0]) {
       setFormData(prev => ({
@@ -169,7 +169,7 @@ const PostsSection = () => {
     refetch();
   };
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e: any) => {
     const { id, value } = e.target
     setFilters(prev => ({
       ...prev,
