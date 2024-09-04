@@ -8,8 +8,8 @@ class propiedadesApi {
     })
   }
 
-  async getEdificios(): Promise<AxiosResponse<Edificio>> {
-    return this.http().get<Edificio>(`/propiedades/edificios/`);
+  async getEdificios(): Promise<AxiosResponse<Edificio[]>> {
+    return this.http().get<Edificio[]>(`/propiedades/edificios/`);
   }
 }
 

@@ -21,10 +21,6 @@ export default async function Page() {
     }
   }, [id, post]);
 
-
-  console.log('Post ID:', id);
-  console.log('Post:', post);
-
   return (
     <main>
       <Breadcrumbs

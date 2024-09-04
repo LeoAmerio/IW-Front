@@ -50,11 +50,11 @@ const editPost = async (posteo: PosteoRequest, id: number) => {
   return data;
 };
 
-// const getFilters = async () => {
-//   const { data } = await edificiosApi.getFilters();
-//   console.log("Filters from api: ", data);
-//   return data;
-// };
+const getFilters = async (filters: SearchParams) => {
+  const { data } = await edificiosApi.getFilters(filters);
+  console.log("Filters from api: ", data);
+  return data;
+};
 
 const PostsSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,15 +73,17 @@ const PostsSection = () => {
     tipo_posteo_id: 1,
     imagen: null,
   });
+  // const [posts, setPosts] = useState<Posteo[]>([]);
 
-  // const handleChange = (event) => {
-  //   event.preventDefault();
-  //   const { id, value, files } = event.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [id]: files ? files[0] : value,
-  //   }));
-  // };
+  // const { data: allPosts, isLoading, refetch } = useQuery(
+  //   ['posts', filters],
+  //   () => edificiosApi.getFilters(filters),
+  //   {
+  //     onSuccess: (data) => {
+  //       setPosts(data.data);
+  //     }
+  //   }
+  // );
 
   const handleSelectChange = (value: string) => {
     setFormData((prevData) => ({
@@ -128,7 +130,7 @@ const PostsSection = () => {
 
   const {
     data: posts,
-    isLoading,
+    isLoading: loadingData,
     refetch,
   } = useQuery(["posts"], fetchPosts, {
     onSuccess: (data) => {
@@ -178,7 +180,7 @@ const PostsSection = () => {
   }
 
   const applyFilters = () => {
-    // Apply filters to posts
+    refetch();
     setIsFilterModalOpen(false)
   }
 
@@ -202,85 +204,99 @@ const PostsSection = () => {
   return (
     <div className="container mx-auto p-4">
       {/* <div className="flex mb-2 space-x-2"> */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Card className="mb-8 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6">
-                <p className="text-gray-500">Realizar posteo...</p>
-              </CardContent>
-            </Card>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Crear nuevo posteo</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="titulo">Título</Label>
-                <Input
-                  id="titulo"
-                  required
-                  value={formData.titulo}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="descripcion">Descripción</Label>
-                <Textarea
-                  id="descripcion"
-                  required
-                  value={formData.descripcion}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="tipo">Tipo de publicación</Label>
-                <Select
-                  required
-                  value={formData.tipo_posteo_id.toString()}
-                  onValueChange={handleSelectChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={"0"}>AVISO</SelectItem>
-                    <SelectItem value={"1"}>CONSULTA</SelectItem>
-                    <SelectItem value={"2"}>RECLAMO</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="imagen">Imagen {formData.titulo ? '(opcional, deje vacío para mantener la imagen actual)' : '(opcional)'}</Label>
-                <Input id="imagen" type="file" accept="image/*" onChange={handleChange} />
-                {imagePreview && (
-                  <div className="mt-2">
-                    <img src={imagePreview} alt="Preview" className="max-w-full h-auto max-h-48 object-contain" />
-                  </div>
-                )}
-              </div>
-              <Button type="submit">Publicar</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-[72px] w-[72px]"
-                onClick={() => setIsFilterModalOpen(true)}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogTrigger asChild>
+          <Card className="mb-8 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <CardContent className="p-6">
+              <p className="text-gray-500">Realizar posteo...</p>
+            </CardContent>
+          </Card>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Crear nuevo posteo</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="titulo">Título</Label>
+              <Input
+                id="titulo"
+                required
+                value={formData.titulo}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="descripcion">Descripción</Label>
+              <Textarea
+                id="descripcion"
+                required
+                value={formData.descripcion}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="tipo">Tipo de publicación</Label>
+              <Select
+                required
+                value={formData.tipo_posteo_id.toString()}
+                onValueChange={handleSelectChange}
               >
-                <ManageSearchIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Filtros</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      {/* </div> */}
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione un tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={"0"}>AVISO</SelectItem>
+                  <SelectItem value={"1"}>CONSULTA</SelectItem>
+                  <SelectItem value={"2"}>RECLAMO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="imagen">
+                Imagen{" "}
+                {formData.titulo
+                  ? "(opcional, deje vacío para mantener la imagen actual)"
+                  : "(opcional)"}
+              </Label>
+              <Input
+                id="imagen"
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+              />
+              {imagePreview && (
+                <div className="mt-2">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="max-w-full h-auto max-h-48 object-contain"
+                  />
+                </div>
+              )}
+            </div>
+            <Button type="submit">Publicar</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              className="h-[72px] w-[72px] mb-4"
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <ManageSearchIcon className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Filtros</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      {/* </div>
 
       <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
         <DialogContent>
@@ -298,23 +314,23 @@ const PostsSection = () => {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                value={filters.usuario}
+                value={filters.usuario || ""}
                 onChange={handleFilterChange}
               />
             </div>
             <div>
-              <Label htmlFor="tipo">Tipo de posteo</Label>
+              <Label htmlFor="tipo_posteo">Tipo de posteo</Label>
               <Select
                 value={filters.tipo_posteo.toString()}
-                onValueChange={(value) =>
-                  handleFilterChange({ target: { id: "tipo", value } })
+                onValueChange={(value: any) =>
+                  handleFilterChange({ target: { id: "tipo_posteo", value } })
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccione un tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* <SelectItem value="">Todos</SelectItem> */}
+                  {/* <SelectItem value="">Todos</SelectItem> 
                   <SelectItem value="0">AVISO</SelectItem>
                   <SelectItem value="1">CONSULTA</SelectItem>
                   <SelectItem value="2">RECLAMO</SelectItem>
@@ -322,24 +338,41 @@ const PostsSection = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="fecha">Fecha de creación</Label>
-              <Input
-                id="fecha"
-                type="date"
-                value={filters.ordering}
-                onChange={handleFilterChange}
-              />
+              <Label htmlFor="ordering">Ordenar por fecha</Label>
+              <Select
+                value={filters.ordering || ""}
+                onValueChange={(value: any) =>
+                  handleFilterChange({ target: { id: "ordering", value } })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione orden" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sin orden</SelectItem>
+                  <SelectItem value="fecha_creacion">
+                    Más recientes primero
+                  </SelectItem>
+                  <SelectItem value="-fecha_creacion">
+                    Más antiguos primero
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit">Aplicar filtros</Button>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       <div className="mt-6 grid grid-cols-1 space-y-4">
-        {posts &&
+        {loadingData ? (
+          <p>Cargando posteos...</p>
+        ) : (
+          posts &&
           posts.map((posteo) => (
             <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
-          ))}
+          ))
+        )}
       </div>
     </div>
   );
