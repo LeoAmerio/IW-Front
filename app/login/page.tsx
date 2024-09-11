@@ -10,13 +10,6 @@ const LoginPage = () => {
   const authStatus = useAuthStore((state) => state.status);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
 
-  if (authStatus === "Pending") {
-    checkAuthStatus();
-    return <div>Loading...</div>;
-  }
-
-  if (authStatus === "Authorized") router.push("/dashboard");
-
   const handleLoginSuccess = () => {
     router.push('/dashboard');
   };

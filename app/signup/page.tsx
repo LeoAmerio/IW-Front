@@ -18,7 +18,7 @@ const SignupPage = () => {
   // if (authStatus === "Authorized") router.push("/dashboard");
 
   const handleSignupSuccess = () => {
-    router.push('/login');
+    router.push('/');
   };
 
   const handleGoBack = () => {
