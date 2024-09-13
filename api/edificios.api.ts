@@ -1,4 +1,4 @@
-import { Edificio, Posteo, PosteoRequest } from '@/interfaces/types';
+import { Edificio, Posteo, PosteoRequest, SearchParams } from '@/interfaces/types';
 import { useAuthStore } from '@/store/auth/auth.store';
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
@@ -35,9 +35,30 @@ class EdificoApi {
     return this.http().put<PosteoRequest>(`/comunicaciones/posteos/${id}/`, posteo);
   }
 
-  // async getFilters(): Promise<AxiosResponse<any>> {
+  async getFilters(filters?: SearchParams): Promise<AxiosResponse<Posteo[]>> {
+    const params = new URLSearchParams();
 
-  // }
+    if(filters) {
+      if (filters.tipo_posteo) {
+        params.append('tipo_posteo', filters.tipo_posteo.toString());
+      }
+      if (filters.ordering) {
+        params.append('ordering', filters.ordering)
+      }
+      if (filters.usuario) {
+        params.append('usuario', filters.usuario)
+      }
+    }
+    // if(filters) {
+    //   Object.entries(filters).forEach(([key, value]) => {
+    //     if (value !== undefined && value !== null && value !== '') {
+    //       params.append(key, value.toString());
+    //     }
+    //   });
+    // }
+
+    return this.http().get<Posteo[]>(`/comunicaciones/posteos/?${params.toString()}`)
+  }
 }
 
 export default new EdificoApi();
