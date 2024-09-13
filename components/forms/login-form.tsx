@@ -14,6 +14,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
+import { useAuthStore } from "@/services/auth.service";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -41,6 +42,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     resolver: yupResolver(schema),
   });
 
+  const setAuth = useAuthStore((state) => state.setAuth);
+
   const loginMutation = useMutation(
     ({ email, password }: LoginRequest) =>
       fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login/`, {
@@ -63,6 +66,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
         if (response.ok) {
           const data = await response.json();
           Cookies.set("token", data.token, { expires: 1 });
+          setAuth(data.token, data.user_id, data.email);
           onLoginSuccess();
         }
         return response.json

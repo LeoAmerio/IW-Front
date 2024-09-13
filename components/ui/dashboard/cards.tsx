@@ -73,13 +73,14 @@ interface CardBgProps {
   classNamesDivLogo?: string;
   classNamesLink?: string;
   classNamesImg?: string;
+  classNameGlobal?: string;
   img: string;
   alt: string;
 }
 
-export function CardWithBackground({ classNamesDivLogo, img, alt }: CardBgProps) {
+export function CardWithBackground({ classNamesDivLogo, img, alt, classNameGlobal }: CardBgProps) {
   return (
-    <div>
+    <div className={`${'relative' + classNameGlobal}`}>
       <Link
         className="relative mb-2 flex h-20 items-end justify-start rounded-md overflow-hidden md:h-40"
         href="/"

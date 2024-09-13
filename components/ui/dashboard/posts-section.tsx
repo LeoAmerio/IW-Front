@@ -24,23 +24,14 @@ import { Posteo, PosteoRequest, PosteoTypoEnum, SearchParams } from "@/interface
 import axios from "axios";
 import edificiosApi from "@/api/edificios.api";
 import { useQuery } from "react-query";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { ManageSearch as ManageSearchIcon } from '@mui/icons-material';
 
 const fetchPosts = async () => {
   const { data } = await edificiosApi.getPosts();
-  // console.log("Posts from api: ", data);
   return data;
 };
 
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
-  // console.log("Post created: ", data);
   return data;
 };
 
@@ -73,17 +64,6 @@ const PostsSection = () => {
     tipo_posteo_id: 1,
     imagen: null,
   });
-  // const [posts, setPosts] = useState<Posteo[]>([]);
-
-  // const { data: allPosts, isLoading, refetch } = useQuery(
-  //   ['posts', filters],
-  //   () => edificiosApi.getFilters(filters),
-  //   {
-  //     onSuccess: (data) => {
-  //       setPosts(data.data);
-  //     }
-  //   }
-  // );
 
   const handleSelectChange = (value: string) => {
     setFormData((prevData) => ({
@@ -93,40 +73,32 @@ const PostsSection = () => {
   };
 
   const handleEdit = (posteo: Posteo) => {
-    // console.log("Posteo to edit: ", posteo);
     setFormData({
       titulo: posteo.titulo,
       descripcion: posteo.descripcion,
       tipo_posteo_id: posteo.tipo_posteo.id,
-      imagen: null,
     });
     setCurrentPostId(posteo.id);
     setImagePreview(posteo.imagen);
-    // console.log("form data to edit: ", formData);
     setIsEditing(true);
     setIsModalOpen(true);
   };
 
-  const handleChange = (e: any) => {
-    const { id, value, files } = e.target
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value, files } = e.target as HTMLInputElement;
     if (id === 'imagen' && files && files[0]) {
       setFormData(prev => ({
         ...prev,
         [id]: files[0]
-      }))
-      setImagePreview(URL.createObjectURL(files[0]))
-    } else if (id === 'tipo_posteo_id') {
-      setFormData(prev => ({
-        ...prev,
-        [id]: parseInt(value)
-      }))
+      }));
+      setImagePreview(URL.createObjectURL(files[0]));
     } else {
       setFormData(prev => ({
         ...prev,
         [id]: value
-      }))
+      }));
     }
-  }
+  };
 
   const {
     data: posts,
@@ -134,36 +106,27 @@ const PostsSection = () => {
     refetch,
   } = useQuery(["posts"], fetchPosts, {
     onSuccess: (data) => {
-      // console.log("Posts from useQuery: ", data);
-      // setPosteos([posts]);
     },
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const postData = {
-      ...formData,
-      imagen: imagePreview ? imagePreview : "null",
-    };
-    // const postData = new FormData();
-    // postData.append('titulo', formData.titulo);
-    // postData.append('descripcion', formData.descripcion);
-    // postData.append('tipo_posteo_id', formData.tipo_posteo_id.toString());
-    
-    if (formData.imagen) {
-      postData.imagen = formData.imagen;
-    }
+    let postData: PosteoRequest;
 
-    // console.log("Post data: ", Object.fromEntries(postData));
-    
-
-    console.log("Post data: ", postData);
     if (isEditing && currentPostId) {
+      // Para edición, excluimos el campo de imagen
+      const { imagen, ...editData } = formData;
+      postData = editData;
       await editPost(postData, currentPostId);
       setIsEditing(false);
       setCurrentPostId(null);
     } else {
+      // Para creación, incluimos la imagen solo si se ha seleccionado una
+      postData = {
+        ...formData,
+        imagen: formData.imagen || null,
+      };
       await createPost(postData);
     }
 
@@ -188,14 +151,13 @@ const PostsSection = () => {
     setFormData({
       titulo: '',
       descripcion: '',
-      tipo_posteo_id: 0,
+      tipo_posteo_id: 1,
       imagen: null
     })
     setImagePreview(null)
   }
 
   useEffect(() => {
-    // Reset form when modal is closed
     if (!isModalOpen) {
       resetForm()
     }
@@ -214,7 +176,7 @@ const PostsSection = () => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Crear nuevo posteo</DialogTitle>
+            <DialogTitle>{isEditing ? 'Editar posteo' : 'Crear nuevo posteo'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -275,12 +237,31 @@ const PostsSection = () => {
                 </div>
               )}
             </div>
-            <Button type="submit">Publicar</Button>
+            <Button type="submit">{isEditing ? 'Actualizar' : 'Publicar'}</Button>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* <TooltipProvider>
+      <div className="mt-6 grid grid-cols-1 space-y-4">
+        {loadingData ? (
+          <p>Cargando posteos...</p>
+        ) : (
+          posts &&
+          posts.map((posteo) => (
+            <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PostsSection;
+
+
+
+
+{/* <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -363,19 +344,3 @@ const PostsSection = () => {
           </form>
         </DialogContent>
       </Dialog> */}
-
-      <div className="mt-6 grid grid-cols-1 space-y-4">
-        {loadingData ? (
-          <p>Cargando posteos...</p>
-        ) : (
-          posts &&
-          posts.map((posteo) => (
-            <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default PostsSection;

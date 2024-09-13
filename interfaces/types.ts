@@ -21,7 +21,7 @@ export interface PosteoRequest {
   titulo: string;
   descripcion: string;
   tipo_posteo_id: number;
-  imagen: string | null;
+  imagen?: string | File | null;
 }
 
 // export type Posteo = {
@@ -33,6 +33,19 @@ export interface PosteoRequest {
 //   imagen: string | null;
 //   created_at: string;
 // };
+
+export interface User {
+  token: string;
+  user_id: number;
+  email: string;
+}
+
+export enum CrudOperation {
+  CREATE,
+  READ,
+  UPDATE,
+  DELETE
+}
 
 export interface User {
   id: number;
