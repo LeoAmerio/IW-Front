@@ -1,14 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth/auth.store";
 import AcmeLogo from "@/components/ui/acme-logo";
 import LoginForm from "@/components/forms/login-form";
 
 const LoginPage = () => {
   const router = useRouter();
-  const authStatus = useAuthStore((state) => state.status);
-  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
 
   const handleLoginSuccess = () => {
     router.push('/dashboard');

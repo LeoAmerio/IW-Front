@@ -10,8 +10,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Cookies from "js-cookie";
 import { useQuery } from 'react-query';
+import { User } from '@/interfaces/user.interface';
 
-const fetchUserById = async (user_id: number) => {
+const fetchUserById = async (user_id: number): Promise<User> => {
   const response = await fetch(`https://ucse-iw-2024.onrender.com/auth/usuarios/${user_id}`, {
     method: "GET",
     headers: {
@@ -57,6 +58,9 @@ export default function NavLinks() {
     return <div>Loading...</div>;
   }
   // console.log('User data', data.rol_info.rol);
+  if (!data || !data.rol_info) {
+    return <div>Error: Datos del usuario no disponibles</div>;
+  }
 
   return (
     <>

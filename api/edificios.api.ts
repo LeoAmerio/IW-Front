@@ -1,5 +1,4 @@
 import { Edificio, Posteo, PosteoRequest, SearchParams } from '@/interfaces/types';
-import { useAuthStore } from '@/store/auth/auth.store';
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 
