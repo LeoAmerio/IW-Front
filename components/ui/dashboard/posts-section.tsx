@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -20,8 +21,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import PostCard from "@/components/Posts/post-card";
-import { Posteo, PosteoRequest, PosteoTypoEnum, SearchParams } from "@/interfaces/types";
-import axios from "axios";
+import {
+  Posteo,
+  PosteoRequest,
+  PosteoTypoEnum,
+  SearchParams,
+} from "@/interfaces/types";
 import edificiosApi from "@/api/edificios.api";
 import { useQuery } from "react-query";
 
@@ -41,131 +46,69 @@ const editPost = async (posteo: PosteoRequest, id: number) => {
   return data;
 };
 
-const getFilters = async (filters: SearchParams) => {
-  const { data } = await edificiosApi.getFilters(filters);
-  console.log("Filters from api: ", data);
-  return data;
-};
-
 const PostsSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPostId, setCurrentPostId] = useState<number | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [filters, setFilters] = useState<SearchParams>({
-    usuario: '',
-    tipo_posteo: 0,
-    ordering: ''
-  })
-  const [formData, setFormData] = useState<PosteoRequest>({
-    titulo: "",
-    descripcion: "",
-    tipo_posteo_id: 1,
-    imagen: null,
+
+  const { control, handleSubmit, reset, setValue } = useForm<PosteoRequest>({
+    defaultValues: {
+      titulo: "",
+      descripcion: "",
+      tipo_posteo_id: 1,
+      imagen: null,
+    },
   });
 
-  const handleSelectChange = (value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      tipo_posteo_id: parseInt(value),
-    }));
-  };
+  const {
+    data: posts,
+    isLoading: loadingData,
+    refetch,
+  } = useQuery(["posts"], fetchPosts);
 
   const handleEdit = (posteo: Posteo) => {
-    setFormData({
-      titulo: posteo.titulo,
-      descripcion: posteo.descripcion,
-      tipo_posteo_id: posteo.tipo_posteo.id,
-    });
+    setValue("titulo", posteo.titulo);
+    setValue("descripcion", posteo.descripcion);
+    setValue("tipo_posteo_id", posteo.tipo_posteo.id);
     setCurrentPostId(posteo.id);
     setImagePreview(posteo.imagen);
     setIsEditing(true);
     setIsModalOpen(true);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value, files } = e.target as HTMLInputElement;
-    if (id === 'imagen' && files && files[0]) {
-      setFormData(prev => ({
-        ...prev,
-        [id]: files[0]
-      }));
-      setImagePreview(URL.createObjectURL(files[0]));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [id]: value
-      }));
-    }
-  };
-
-  const {
-    data: posts,
-    isLoading: loadingData,
-    refetch,
-  } = useQuery(["posts"], fetchPosts, {
-    onSuccess: (data) => {
-    },
-  });
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    let postData: PosteoRequest;
-
+  const onSubmit = async (data: PosteoRequest) => {
     if (isEditing && currentPostId) {
-      // Para edición, excluimos el campo de imagen
-      const { imagen, ...editData } = formData;
-      postData = editData;
-      await editPost(postData, currentPostId);
+      const { imagen, ...editData } = data;
+      await editPost(editData, currentPostId);
       setIsEditing(false);
       setCurrentPostId(null);
     } else {
-      // Para creación, incluimos la imagen solo si se ha seleccionado una
-      postData = {
-        ...formData,
-        imagen: formData.imagen || null,
-      };
-      await createPost(postData);
+      await createPost(data);
     }
 
     setIsModalOpen(false);
     refetch();
   };
 
-  const handleFilterChange = (e: any) => {
-    const { id, value } = e.target
-    setFilters(prev => ({
-      ...prev,
-      [id]: value
-    }))
-  }
-
-  const applyFilters = () => {
-    refetch();
-    setIsFilterModalOpen(false)
-  }
-
   const resetForm = () => {
-    setFormData({
-      titulo: '',
-      descripcion: '',
+    reset({
+      titulo: "",
+      descripcion: "",
       tipo_posteo_id: 1,
-      imagen: null
-    })
-    setImagePreview(null)
-  }
+      imagen: null,
+    });
+    setImagePreview(null);
+  };
 
   useEffect(() => {
     if (!isModalOpen) {
-      resetForm()
+      resetForm();
     }
-  }, [isModalOpen])
+  }, [isModalOpen]);
 
   return (
     <div className="container mx-auto p-4">
-      {/* <div className="flex mb-2 space-x-2"> */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild>
           <Card className="mb-8 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -176,68 +119,91 @@ const PostsSection = () => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isEditing ? 'Editar posteo' : 'Crear nuevo posteo'}</DialogTitle>
+            <DialogTitle>
+              {isEditing ? "Editar posteo" : "Crear nuevo posteo"}
+            </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label htmlFor="titulo">Título</Label>
-              <Input
-                id="titulo"
-                required
-                value={formData.titulo}
-                onChange={handleChange}
+              <Controller
+                name="titulo"
+                control={control}
+                rules={{ required: "El título es requerido" }}
+                render={({ field }) => <Input {...field} />}
               />
             </div>
             <div>
               <Label htmlFor="descripcion">Descripción</Label>
-              <Textarea
-                id="descripcion"
-                required
-                value={formData.descripcion}
-                onChange={handleChange}
+              <Controller
+                name="descripcion"
+                control={control}
+                rules={{ required: "La descripción es requerida" }}
+                render={({ field }) => <Textarea {...field} />}
               />
             </div>
             <div>
-              <Label htmlFor="tipo">Tipo de publicación</Label>
-              <Select
-                required
-                value={formData.tipo_posteo_id.toString()}
-                onValueChange={handleSelectChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione un tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={"0"}>AVISO</SelectItem>
-                  <SelectItem value={"1"}>CONSULTA</SelectItem>
-                  <SelectItem value={"2"}>RECLAMO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="imagen">
-                Imagen{" "}
-                {formData.titulo
-                  ? "(opcional, deje vacío para mantener la imagen actual)"
-                  : "(opcional)"}
-              </Label>
-              <Input
-                id="imagen"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
+              <Label htmlFor="tipo_posteo_id">Tipo de publicación</Label>
+              <Controller
+                name="tipo_posteo_id"
+                control={control}
+                rules={{ required: "El tipo de publicación es requerido" }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value.toString()}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3">AVISO</SelectItem>
+                      <SelectItem value="2">CONSULTA</SelectItem>
+                      <SelectItem value="1">RECLAMO</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               />
-              {imagePreview && (
-                <div className="mt-2">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="max-w-full h-auto max-h-48 object-contain"
-                  />
-                </div>
-              )}
             </div>
-            <Button type="submit">{isEditing ? 'Actualizar' : 'Publicar'}</Button>
+            {!isEditing && (
+              <div>
+                <Label htmlFor="imagen">
+                  Imagen{" "}
+                  {isEditing
+                    ? "(opcional, deje vacío para mantener la imagen actual)"
+                    : "(opcional)"}
+                </Label>
+                <Controller
+                  name="imagen"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          field.onChange(file);
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  )}
+                />
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="max-w-full h-auto max-h-48 object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            <Button type="submit">
+              {isEditing ? "Actualizar" : "Publicar"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -257,90 +223,3 @@ const PostsSection = () => {
 };
 
 export default PostsSection;
-
-
-
-
-{/* <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              className="h-[72px] w-[72px] mb-4"
-              onClick={() => setIsFilterModalOpen(true)}
-            >
-              <ManageSearchIcon className="h-5 w-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Filtros</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      {/* </div>
-
-      <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Filtrar posteos</DialogTitle>
-          </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              applyFilters();
-            }}
-            className="space-y-4"
-          >
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={filters.usuario || ""}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="tipo_posteo">Tipo de posteo</Label>
-              <Select
-                value={filters.tipo_posteo.toString()}
-                onValueChange={(value: any) =>
-                  handleFilterChange({ target: { id: "tipo_posteo", value } })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione un tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectItem value="">Todos</SelectItem> 
-                  <SelectItem value="0">AVISO</SelectItem>
-                  <SelectItem value="1">CONSULTA</SelectItem>
-                  <SelectItem value="2">RECLAMO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="ordering">Ordenar por fecha</Label>
-              <Select
-                value={filters.ordering || ""}
-                onValueChange={(value: any) =>
-                  handleFilterChange({ target: { id: "ordering", value } })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione orden" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Sin orden</SelectItem>
-                  <SelectItem value="fecha_creacion">
-                    Más recientes primero
-                  </SelectItem>
-                  <SelectItem value="-fecha_creacion">
-                    Más antiguos primero
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit">Aplicar filtros</Button>
-          </form>
-        </DialogContent>
-      </Dialog> */}

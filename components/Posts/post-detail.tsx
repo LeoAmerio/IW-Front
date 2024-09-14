@@ -36,7 +36,7 @@ interface PostCardProps {
 }
 
 const deletePost = async (id: number) => {
-  console.log('Deleting post with ID:', id);
+  console.log("Deleting post with ID:", id);
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${id}/`,
     {
@@ -58,7 +58,7 @@ const deletePost = async (id: number) => {
   }
 
   return response.json();
-}
+};
 
 const PostDetail = ({ posteo }: PostCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,41 +79,40 @@ const PostDetail = ({ posteo }: PostCardProps) => {
 
   const deletePostMutation = useMutation(deletePost, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries('posts');
+      queryClient.invalidateQueries("posts");
       toast.success("Posteo eliminado exitosamente");
-      if (data.status === 204) {
-        redirect('/');
-      }
+      // if (data.status === 204) {
+      //   redirect("/");
+      // }
+      window.location.href = "/dashboard";
     },
     onError: (error: Error) => {
-      redirect('/');
-      // console.error('Delete post error:', error);
-      // toast.error(`Error al eliminar el posteo: ${error.message}`);
+      // redirect("/");
+      window.location.href = "/dashboard";
     },
   });
 
   const handleDeletePost = () => {
-    deletePostMutation.mutate(posteo.id);
+    if (window.confirm("¿Estás seguro de que quieres eliminar este posteo?")) {
+      deletePostMutation.mutate(posteo.id);
+    }
   };
-
-  console.log('posteo: ', posteo.id)
-  console.log('posteo: ', posteo)
-  console.log('user id: ', userId)
-  console.log('posteo user id: ', posteo.usuario.id)
 
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">{posteo.titulo}</CardTitle>
-          {userId === posteo.usuario.id && (
-            <IconButton
-              onClick={handleDeletePost}
-              className="text-gray-500 hover:text-gray-700 justify-end"
-            >
-              <TrashIcon className="h-5 w-5" />
-            </IconButton>
-          )}
+          <div className="flex justify-between items-center mb-2">
+            <CardTitle className="text-2xl">{posteo.titulo}</CardTitle>
+            {userId === posteo.usuario.id && (
+              <IconButton
+                onClick={handleDeletePost}
+                className="text-gray-500 hover:text-gray-700 justify-end"
+              >
+                <TrashIcon className="h-5 w-5" />
+              </IconButton>
+            )}
+          </div>
           <div className="flex justify-between items-center">
             <Badge variant="outline">{posteo.tipo_posteo.tipo}</Badge>
             <p className="text-sm text-gray-500">
@@ -134,7 +133,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
           )}
           <div className="text-right">
             <p className="text-sm text-gray-500">
-              Autor: Piso {posteo.usuario.piso} - {posteo.usuario.depto}
+              Autor: {posteo.usuario.piso} - {posteo.usuario.depto}
             </p>
           </div>
         </CardContent>
