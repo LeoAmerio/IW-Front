@@ -22,8 +22,8 @@ class EdificoApi {
     return this.http().get<Edificio>(`/propiedades/edificios/`);
   }
 
-  async getPosts(): Promise<AxiosResponse<Posteo[]>> {
-    return this.http().get<Posteo[]>(`/comunicaciones/posteos/`);
+  async getPosts(params: string = ''): Promise<AxiosResponse<Posteo[]>> {
+    return this.http().get<Posteo[]>(`/comunicaciones/posteos/${params ? `?${params}` : ''}`);
   }
 
   async postPost(posteo: PosteoRequest): Promise<AxiosResponse<PosteoRequest>> {
