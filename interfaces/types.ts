@@ -13,7 +13,7 @@ export interface Posteo {
     apellido: string;
     nombre: string;
     piso: number | null;
-    depto: string | null;
+    numero: string | null;
   };
 }
 

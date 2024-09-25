@@ -133,7 +133,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
           )}
           <div className="text-right">
             <p className="text-sm text-gray-500">
-              Autor: {posteo.usuario.piso} - {posteo.usuario.depto}
+              Autor: {posteo.usuario.piso} - {posteo.usuario.numero}
             </p>
           </div>
         </CardContent>

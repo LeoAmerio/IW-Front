@@ -44,13 +44,19 @@ const links = [
 export default function NavLinks() {
   const pathname = usePathname();
   const user_id = useAuthStore((state) => state.user_id);
+  console.log('User ID: ', user_id);
 
   const { data, isLoading } = useQuery(
     ['user', user_id], 
-    () => fetchUserById(user_id!), 
+    () => fetchUserById(user_id), 
     {
       enabled: !!user_id,
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      onError: (error: Error) => {
+        console.error(`Fetch error ${error.message}`)
+      }
     }
   );
 
