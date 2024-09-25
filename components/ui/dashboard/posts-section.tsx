@@ -213,9 +213,9 @@ const PostsSection = () => {
                         <SelectValue placeholder="Seleccione un tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="3">AVISO</SelectItem>
+                        <SelectItem value="1">AVISO</SelectItem>
                         <SelectItem value="2">CONSULTA</SelectItem>
-                        <SelectItem value="1">RECLAMO</SelectItem>
+                        <SelectItem value="3">RECLAMO</SelectItem>
                       </SelectContent>
                     </Select>
                   )}

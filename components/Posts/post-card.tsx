@@ -54,6 +54,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setPost(posteo);
   };
 
+  console.log('Post: ', posteo)
+
   const truncateDescription = (descripcion: string, maxLength: number) => {
     return descripcion.length > maxLength
       ? `${descripcion.substring(0, maxLength)}...`
@@ -119,9 +121,9 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
               </p>
               {posteo.usuario &&
                 posteo.usuario.piso !== null &&
-                posteo.usuario.depto !== null && (
+                posteo.usuario.numero !== null && (
                   <p className="text-sm text-gray-700 mb-0">
-                    Piso {posteo.usuario.piso} - {posteo.usuario.depto}
+                    Piso {posteo.usuario.piso} - {posteo.usuario.numero}
                   </p>
                 )}
             </div>
