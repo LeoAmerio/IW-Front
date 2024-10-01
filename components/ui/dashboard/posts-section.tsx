@@ -37,6 +37,10 @@ import {
 } from "../tooltip";
 import { ManageSearch as ManageSearchIcon } from "@mui/icons-material";
 
+const fetchUsers = async () => {
+  
+}
+
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
   return data;
@@ -54,6 +58,7 @@ const PostsSection = () => {
   const [currentPostId, setCurrentPostId] = useState<number | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
 
   const [filters, setFilters] = useState<SearchParams>({
     usuario: "",
@@ -91,6 +96,8 @@ const PostsSection = () => {
   } = useQuery(["posts", appliedFilters], () => fetchPosts(appliedFilters), {
     enabled: true,
   });
+
+  const listUsersPost = posts ? [...new Set(posts.map((post) => post.usuario))] : [];
 
   const handleEdit = (posteo: Posteo) => {
     setValue("titulo", posteo.titulo);
@@ -140,6 +147,9 @@ const PostsSection = () => {
   // };
 
   const handleFilterChange = (key: keyof SearchParams, value: string) => {
+    if (key === "usuario") {
+      const mailUser = '';
+    }
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -295,6 +305,24 @@ const PostsSection = () => {
                 value={filters.usuario}
                 onChange={(e) => handleFilterChange("usuario", e.target.value)}
               />
+            </div>
+            <div>
+              <Label htmlFor="tipo_posteo">Usuario</Label>
+              <Select
+                value={filters.usuario}
+                onValueChange={(value) => handleFilterChange("usuario", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione un tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {listUsersPost.map((user, index) => (
+                    <SelectItem key={index} value={user.id.toString()}>
+                      {user.numero} {user.piso}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="tipo_posteo">Tipo de posteo</Label>
