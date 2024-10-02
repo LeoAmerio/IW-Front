@@ -48,7 +48,7 @@ const createPost = async (posteo: PosteoRequest) => {
 
 const editPost = async (posteo: PosteoRequest, id: number) => {
   const { data } = await edificiosApi.editPost(posteo, id);
-  console.log("Post edited: ", data);
+  // console.log("Post edited: ", data);
   return data;
 };
 
@@ -61,12 +61,12 @@ const PostsSection = () => {
 
 
   const [filters, setFilters] = useState<SearchParams>({
-    usuario: "",
+    usuario: 0,
     tipo_posteo: "",
     ordering: "",
   });
   const [appliedFilters, setAppliedFilters] = useState<SearchParams>({
-    usuario: "",
+    usuario: 0,
     tipo_posteo: "",
     ordering: "",
   });
@@ -82,7 +82,7 @@ const PostsSection = () => {
 
   const fetchPosts = async (filters: SearchParams) => {
     const params = new URLSearchParams();
-    if (filters.usuario) params.append("usuario", filters.usuario);
+    if (filters.usuario) params.append("usuario", filters.usuario.toString());
     if (filters.tipo_posteo) params.append("tipo_posteo", filters.tipo_posteo);
     if (filters.ordering) params.append("ordering", filters.ordering);
     const { data } = await edificiosApi.getPosts(params.toString());
@@ -97,7 +97,9 @@ const PostsSection = () => {
     enabled: true,
   });
 
-  const listUsersPost = posts ? [...new Set(posts.map((post) => post.usuario))] : [];
+  const listUsersPost = posts ? Array.from(new Set(posts.map(post => JSON.stringify(post.usuario))))
+    .map(userStr => JSON.parse(userStr)) : [];
+  console.log('List users post: ', listUsersPost);
 
   const handleEdit = (posteo: Posteo) => {
     setValue("titulo", posteo.titulo);
@@ -161,7 +163,7 @@ const PostsSection = () => {
 
   const clearFilters = () => {
     const clearedFilters = {
-      usuario: "",
+      usuario: 0,
       tipo_posteo: "",
       ordering: "",
     };
@@ -298,27 +300,27 @@ const PostsSection = () => {
             <DialogTitle>Filtrar posteos</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); applyFilters(); }} className="space-y-4">
-            <div>
+            {/* <div>
               <Label htmlFor="usuario">Email</Label>
               <Input
                 id="usuario"
                 value={filters.usuario}
                 onChange={(e) => handleFilterChange("usuario", e.target.value)}
               />
-            </div>
+            </div> */}
             <div>
               <Label htmlFor="tipo_posteo">Usuario</Label>
               <Select
-                value={filters.usuario}
+                value={filters.usuario.toString()}
                 onValueChange={(value) => handleFilterChange("usuario", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccione un tipo" />
+                  <SelectValue placeholder="Seleccione un usuario" />
                 </SelectTrigger>
                 <SelectContent>
                   {listUsersPost.map((user, index) => (
-                    <SelectItem key={index} value={user.id.toString()}>
-                      {user.numero} {user.piso}
+                    <SelectItem key={index} value={user.id}>
+                      {user.piso} {user.numero}
                     </SelectItem>
                   ))}
                 </SelectContent>

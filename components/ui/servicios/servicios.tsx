@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React from "react";
 import { Card, Carousel } from "./cards-services";
+import { ExpandableCardDemo } from "./list-professionals";
 
 export function Serivcios() {
   const cards = data.map((card, index) => (
@@ -11,9 +12,10 @@ export function Serivcios() {
   return (
     <div className="w-full h-full py-20">
       <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
-        Get to know your iSad.
+        Listado de profesionales asociados al edificio.
       </h2>
-      <Carousel items={ } />
+      <h6>Sientase libre de elegir de este listado o el de su preferencia, son meras recomendaciones</h6>
+      <Carousel items={cards} />
     </div>
   );
 }
@@ -52,40 +54,40 @@ const DummyContent = () => {
 
 const data = [
   {
-    category: "Artificial Intelligence",
-    title: "You can do more with AI.",
-    src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Plomería",
+    title: "Listado de plomeros habilitados.",
+    src: "https://i.pinimg.com/564x/d0/cc/11/d0cc1139753dccd1dac738c7369173e4.jpg",
     content: <DummyContent />,
   },
   {
-    category: "Productivity",
-    title: "Enhance your productivity.",
-    src: "https://images.unsplash.com/photo-1531554694128-c4c6665f59c2?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    content: <DummyContent />,
+    category: "Gasista",
+    title: "Listado de gasistas habilitados.",
+    src: "https://i.pinimg.com/564x/35/50/3c/35503c92a934f9937153a7a311be8f2b.jpg",
+    content: <ExpandableCardDemo />,
   },
   {
-    category: "Product",
-    title: "Launching the new Apple Vision Pro.",
-    src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Electricista",
+    title: "Listado de electricistas habilitados.",
+    src: "https://plus.unsplash.com/premium_photo-1661908782924-de673a5c6988?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     content: <DummyContent />,
   },
 
   {
-    category: "Product",
-    title: "Maps for your iPhone 15 Pro Max.",
-    src: "https://images.unsplash.com/photo-1599202860130-f600f4948364?q=80&w=2515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Tecnico en Refrigeración",
+    title: "Listado de tecnicos en refrigeracion habilitados.",
+    src: "https://i.pinimg.com/564x/2c/ad/f3/2cadf30425f901a347c2d47bf80ae488.jpg",
     content: <DummyContent />,
   },
   {
-    category: "iOS",
-    title: "Photography just got better.",
-    src: "https://images.unsplash.com/photo-1602081957921-9137a5d6eaee?q=80&w=2793&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Cerrajero",
+    title: "Listado de cerrajeros habilitados.",
+    src: "https://images.unsplash.com/flagged/photo-1564767609424-270b9df918e1?q=80&w=1373&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     content: <DummyContent />,
   },
   {
-    category: "Hiring",
-    title: "Hiring for a Staff Software Engineer",
-    src: "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Pintor",
+    title: "Listado de pintores habilitados.",
+    src: "https://plus.unsplash.com/premium_photo-1723867371537-a185781be154?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     content: <DummyContent />,
   },
 ];
