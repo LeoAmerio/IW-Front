@@ -54,7 +54,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setPost(posteo);
   };
 
-  console.log('Post: ', posteo)
+  // console.log('Post: ', posteo)
 
   const truncateDescription = (descripcion: string, maxLength: number) => {
     return descripcion.length > maxLength

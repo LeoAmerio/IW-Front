@@ -5,10 +5,10 @@ import {
   KeyIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { Button } from "../ui/customers/button";
+import { Button } from "../ui/servicios/button";
 import { lusitana } from "../ui/fonts";
 import Cookies from "js-cookie";
-import { Link } from "@mui/material";
+import { Link, LinearProgress } from "@mui/material";
 import { useMutation } from "react-query";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -43,6 +43,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   });
 
   const setAuth = useAuthStore((state) => state.setAuth);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginMutation = useMutation(
     ({ email, password }: LoginRequest) =>
@@ -74,9 +75,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       {
         onSuccess: (data) => {
         toast.success(`${data.arguments}`, { duration: 5000 })
+        setIsLoading(false);
         onLoginSuccess();
       },
       onError: (error: Error) => {
+        setIsLoading(false);
         // toast.error(`${error.message}`, { duration: 5000 })
       }
     }
@@ -90,7 +93,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       setError("password", { message: "Ingrese la contraseña" });
     }
     console.log('data on submit: ', data)
-
+    setIsLoading(true);
     loginMutation.mutate(data);
     // try {
     //   const response = await 
@@ -178,9 +181,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
               ¿No tiene cuenta? Cree una aquí
             </Link>
           </div>
-        {/* <div className="flex h-8 items-end space-x-1">
-          {/* Add form errors here
-        </div> */}
+        {isLoading && <LinearProgress />}
       </div>
     </form>
   );

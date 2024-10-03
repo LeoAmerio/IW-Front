@@ -37,6 +37,10 @@ import {
 } from "../tooltip";
 import { ManageSearch as ManageSearchIcon } from "@mui/icons-material";
 
+const fetchUsers = async () => {
+  
+}
+
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
   return data;
@@ -44,7 +48,7 @@ const createPost = async (posteo: PosteoRequest) => {
 
 const editPost = async (posteo: PosteoRequest, id: number) => {
   const { data } = await edificiosApi.editPost(posteo, id);
-  console.log("Post edited: ", data);
+  // console.log("Post edited: ", data);
   return data;
 };
 
@@ -55,13 +59,14 @@ const PostsSection = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
+
   const [filters, setFilters] = useState<SearchParams>({
-    usuario: "",
+    usuario: 0,
     tipo_posteo: "",
     ordering: "",
   });
   const [appliedFilters, setAppliedFilters] = useState<SearchParams>({
-    usuario: "",
+    usuario: 0,
     tipo_posteo: "",
     ordering: "",
   });
@@ -77,7 +82,7 @@ const PostsSection = () => {
 
   const fetchPosts = async (filters: SearchParams) => {
     const params = new URLSearchParams();
-    if (filters.usuario) params.append("usuario", filters.usuario);
+    if (filters.usuario) params.append("usuario", filters.usuario.toString());
     if (filters.tipo_posteo) params.append("tipo_posteo", filters.tipo_posteo);
     if (filters.ordering) params.append("ordering", filters.ordering);
     const { data } = await edificiosApi.getPosts(params.toString());
@@ -91,6 +96,10 @@ const PostsSection = () => {
   } = useQuery(["posts", appliedFilters], () => fetchPosts(appliedFilters), {
     enabled: true,
   });
+
+  const listUsersPost = posts ? Array.from(new Set(posts.map(post => JSON.stringify(post.usuario))))
+    .map(userStr => JSON.parse(userStr)) : [];
+  console.log('List users post: ', listUsersPost);
 
   const handleEdit = (posteo: Posteo) => {
     setValue("titulo", posteo.titulo);
@@ -140,6 +149,9 @@ const PostsSection = () => {
   // };
 
   const handleFilterChange = (key: keyof SearchParams, value: string) => {
+    if (key === "usuario") {
+      const mailUser = '';
+    }
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -151,7 +163,7 @@ const PostsSection = () => {
 
   const clearFilters = () => {
     const clearedFilters = {
-      usuario: "",
+      usuario: 0,
       tipo_posteo: "",
       ordering: "",
     };
@@ -289,12 +301,22 @@ const PostsSection = () => {
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); applyFilters(); }} className="space-y-4">
             <div>
-              <Label htmlFor="usuario">Email</Label>
-              <Input
-                id="usuario"
-                value={filters.usuario}
-                onChange={(e) => handleFilterChange("usuario", e.target.value)}
-              />
+              <Label htmlFor="usuario">Usuario</Label>
+              <Select
+                value={filters.usuario.toString()}
+                onValueChange={(value) => handleFilterChange("usuario", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione un usuario" />
+                </SelectTrigger>
+                <SelectContent>
+                  {listUsersPost.map((user, index) => (
+                    <SelectItem key={index} value={`${user.id}`}>
+                      {user.piso} {user.numero}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="tipo_posteo">Tipo de posteo</Label>
@@ -313,7 +335,7 @@ const PostsSection = () => {
                 </SelectContent>
               </Select>
             </div>
-            {/* <div>
+            <div>
               <Label htmlFor="ordering">Ordenar por fecha de creación</Label>
               <Select
                 value={filters.ordering}
@@ -323,12 +345,12 @@ const PostsSection = () => {
                   <SelectValue placeholder="Seleccione orden" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* <SelectItem value="">Sin orden</SelectItem>
+                  {/* <SelectItem value="">Sin orden</SelectItem> */}
                   <SelectItem value="fecha_creacion">Más recientes primero</SelectItem>
-                  <SelectItem value="fecha_creacion">Más antiguos primero</SelectItem>
+                  <SelectItem value="-fecha_creacion">Más antiguos primero</SelectItem>
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
             <div className="flex justify-between">
               <Button type="submit">Aplicar filtros</Button>
               <Button type="button" variant="outline" onClick={clearFilters}>

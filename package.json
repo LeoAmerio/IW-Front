@@ -22,6 +22,7 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@tabler/icons-react": "^3.19.0",
     "@tailwindcss/forms": "^0.5.7",
     "@vercel/postgres": "^0.8.0",
     "autoprefixer": "10.4.19",
@@ -31,6 +32,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
+    "framer-motion": "^11.9.0",
     "heroicons": "^2.1.5",
     "js-cookie": "^3.0.5",
     "next": "^14.2.5",
@@ -65,5 +67,6 @@
     "gh-pages": "^6.1.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
-  }
+  },
+  "packageManager": "yarn@4.3.1+sha512.af78262d7d125afbfeed740602ace8c5e4405cd7f4735c08feb327286b2fdb2390fbca01589bfd1f50b1240548b74806767f5a063c94b67e431aabd0d86f7774"
 }

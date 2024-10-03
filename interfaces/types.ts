@@ -75,7 +75,7 @@ export interface Edificio {
 }
 
 export interface SearchParams {
-  usuario: string;
+  usuario: number;
   tipo_posteo: string;
   ordering: string;
 }
