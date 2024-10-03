@@ -300,16 +300,8 @@ const PostsSection = () => {
             <DialogTitle>Filtrar posteos</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); applyFilters(); }} className="space-y-4">
-            {/* <div>
-              <Label htmlFor="usuario">Email</Label>
-              <Input
-                id="usuario"
-                value={filters.usuario}
-                onChange={(e) => handleFilterChange("usuario", e.target.value)}
-              />
-            </div> */}
             <div>
-              <Label htmlFor="tipo_posteo">Usuario</Label>
+              <Label htmlFor="usuario">Usuario</Label>
               <Select
                 value={filters.usuario.toString()}
                 onValueChange={(value) => handleFilterChange("usuario", value)}
@@ -319,7 +311,7 @@ const PostsSection = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {listUsersPost.map((user, index) => (
-                    <SelectItem key={index} value={user.id}>
+                    <SelectItem key={index} value={`${user.id}`}>
                       {user.piso} {user.numero}
                     </SelectItem>
                   ))}
@@ -343,7 +335,7 @@ const PostsSection = () => {
                 </SelectContent>
               </Select>
             </div>
-            {/* <div>
+            <div>
               <Label htmlFor="ordering">Ordenar por fecha de creación</Label>
               <Select
                 value={filters.ordering}
@@ -353,12 +345,12 @@ const PostsSection = () => {
                   <SelectValue placeholder="Seleccione orden" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* <SelectItem value="">Sin orden</SelectItem>
+                  {/* <SelectItem value="">Sin orden</SelectItem> */}
                   <SelectItem value="fecha_creacion">Más recientes primero</SelectItem>
-                  <SelectItem value="fecha_creacion">Más antiguos primero</SelectItem>
+                  <SelectItem value="-fecha_creacion">Más antiguos primero</SelectItem>
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
             <div className="flex justify-between">
               <Button type="submit">Aplicar filtros</Button>
               <Button type="button" variant="outline" onClick={clearFilters}>
