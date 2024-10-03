@@ -45,7 +45,7 @@ class EdificoApi {
         params.append('ordering', filters.ordering)
       }
       if (filters.usuario) {
-        params.append('usuario', filters.usuario)
+        params.append('usuario', filters.usuario.toString());
       }
     }
     // if(filters) {

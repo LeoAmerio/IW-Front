@@ -149,10 +149,11 @@ const PostsSection = () => {
   // };
 
   const handleFilterChange = (key: keyof SearchParams, value: string) => {
-    if (key === "usuario") {
-      const mailUser = '';
-    }
-    setFilters(prev => ({ ...prev, [key]: value }));
+    // setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [key]: key === "usuario" ? parseInt(value, 10) : value,
+    }));
   };
 
   const applyFilters = () => {
