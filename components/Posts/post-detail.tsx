@@ -35,6 +35,10 @@ interface PostCardProps {
   // onEdit: (Posteo: Posteo) => void;
 }
 
+interface CommentRequest {
+  comentario: string;
+} 
+
 const deletePost = async (id: number) => {
   console.log("Deleting post with ID:", id);
   const response = await fetch(

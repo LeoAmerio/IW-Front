@@ -37,10 +37,6 @@ import {
 } from "../tooltip";
 import { ManageSearch as ManageSearchIcon } from "@mui/icons-material";
 
-const fetchUsers = async () => {
-  
-}
-
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
   return data;
@@ -48,7 +44,6 @@ const createPost = async (posteo: PosteoRequest) => {
 
 const editPost = async (posteo: PosteoRequest, id: number) => {
   const { data } = await edificiosApi.editPost(posteo, id);
-  // console.log("Post edited: ", data);
   return data;
 };
 

@@ -79,3 +79,13 @@ export interface SearchParams {
   tipo_posteo: string;
   ordering: string;
 }
+
+export interface Servicios {
+  id: number;
+  tipo: {
+    id: number;
+    tipo: string;
+  };
+  nombre_proveedor: string;
+  telefono: string;
+}
