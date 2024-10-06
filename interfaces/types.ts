@@ -8,13 +8,15 @@ export interface Posteo {
     id: number;
     tipo: string;
   };
-  usuario: {
-    id: number;
-    apellido: string;
-    nombre: string;
-    piso: number | null;
-    numero: string | null;
-  };
+  usuario: User;
+  respuestas: Answers[];
+}
+
+interface Answers {
+  id: number;
+  usuario: User;
+  contenido: string;
+  fecha_creacion_legible: string;
 }
 
 export interface PosteoRequest {
@@ -49,10 +51,10 @@ export enum CrudOperation {
 
 export interface User {
   id: number;
-  name: string;
-  lastName: string;
+  nombre: string;
+  apellido: string;
   piso: number;
-  departamento: string;
+  numero: string;
 }
 
 export interface PosteoTypo {

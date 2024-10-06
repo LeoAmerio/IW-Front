@@ -15,9 +15,9 @@ export default function RootLayout({
       <body className={`${montserrat.className} antialiased`}>
         <Toaster position="bottom-left" />
         <QueryClientWrapper>{children}</QueryClientWrapper>
-        <footer className="flex justify-center items-center py-10">
+        {/* <footer className="flex justify-center items-center py-10">
           Footer Here!
-        </footer>
+        </footer> */}
       </body>
     </html>
   );

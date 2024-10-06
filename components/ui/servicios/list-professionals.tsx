@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/components/hooks/useOutsideClick";
 import { Servicios } from "@/interfaces/types";
 import { Alert, Box } from "@mui/material";
+import CustomChip from "../custom-chip-notfound";
 
 interface ListProfessionalsProps {
   id: number;
@@ -34,19 +35,10 @@ export function ListProfessionals({ id, profesional, profesionalImg, titulo }: L
       </AnimatePresence>
       <ul className="max-w-2xl mx-auto w-full gap-4">
         {profesional.length === 0 && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ marginBlock: "2rem" }}
-            height="100%"
-          >
-            <Alert id="no-line-uploaded-alert" severity="info">
-              De momento no contamos con {titulo} cargados.
-              Disculpe las molestias.
-            </Alert>
-          </Box>
+          <CustomChip>
+            De momento no contamos con {titulo} cargados.
+            Disculpe las molestias.
+          </CustomChip>
         )}
         {profesional.map((card, index) => (
           <motion.div
