@@ -5,6 +5,7 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   ServerIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,6 +22,7 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Servicios', href: '/dashboard/servicios', icon: UserGroupIcon },
+  { name: 'Eventos', href: '/dashboard/events', icon: CalendarIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
 ];
 

@@ -7,6 +7,7 @@ import { Servicios } from "@/interfaces/types";
 import { useQuery } from "react-query";
 import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
+import { LinearProgress } from "@mui/material";
 
 export function Serivcios() {
   const user_id = useAuthStore((state) => state.user_id);
@@ -58,7 +59,6 @@ export function Serivcios() {
         />
       ),
     },
-
     {
       category: "Tecnico en Refrigeración",
       title: "Listado de tecnicos en refrigeracion habilitados.",
@@ -116,13 +116,13 @@ export function Serivcios() {
 
   const fetchServicios = async (): Promise<Servicios[]> => {
     const response = await fetch(
-      // "https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=1"
-      `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
+      `https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=${user?.edificio.id}`
+      // `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
     );
     return response.json();
   };
 
-  const { data: serviciosTipo } = useQuery(["servicios"], fetchServicios, {
+  const { data: serviciosTipo, isLoading: loadingGetServicios } = useQuery(["servicios"], fetchServicios, {
     refetchOnWindowFocus: true,
     onSuccess: () => {
       console.log("Servicios obtenidos con éxito");
@@ -151,12 +151,18 @@ export function Serivcios() {
         (servicio) => servicio.tipo.tipo === "Pintor"
       );
 
+      console.log("PlomeriaL: ", plomeriaList);
+      console.log("GasistaL: ", gasistaList);
+
       setPlomeria(plomeriaList);
       setGasista(gasistaList);
       setElectricista(electricistaList);
       setRefrigeracion(refrigeracionList);
       setCerrajero(cerrajeroList);
       setPintor(pintorList);
+
+      console.log("Plomeria: ", plomeria);
+      console.log("Gasista: ", gasista);
     }
   };
 
@@ -173,7 +179,11 @@ export function Serivcios() {
         Sientase libre de elegir de este listado o el de su preferencia, son
         meras recomendaciones
       </h6>
-      <Carousel items={cards} />
+      {loadingGetServicios ? (
+        <LinearProgress />
+      ) : (
+        <Carousel items={cards} />
+      )}
     </div>
   );
 }

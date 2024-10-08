@@ -68,6 +68,14 @@ export enum PosteoTypoEnum {
   Aviso = "Aviso",
 }
 
+export enum EventoTypoEnum {
+  ReunionConsorcio = "Reunion Consorcio",
+  Reformas = "Reformas",
+  Limpieza = "Limpieza",
+  Mantenimiento = "Mantenimiento",
+  OcupacionEspaciosComunes = "Ocupacion Espacios Comunes",
+}
+
 export interface Edificio {
   id: number;
   nombre: string;
