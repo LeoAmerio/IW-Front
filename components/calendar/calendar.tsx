@@ -73,7 +73,6 @@ const myEventsList: Event[] = [
     end: new Date(),
   },
 ];
-console.log('My Events List: ', myEventsList);
 
 const schema = yup.object<EventRequest>().shape({
   titulo: yup.string().required("El título es requerido"),
@@ -139,7 +138,6 @@ const MyCalendar: React.FC = () => {
   });
 
   const { data, isLoading } = useQuery(["events"], getEvents)
-  console.log('Data: ', data);
 
   const parseDate = (dateString: string): Date => {
     try {
@@ -147,7 +145,6 @@ const MyCalendar: React.FC = () => {
       const isoDateString = dateString.replace(' ', 'T');
       return parseISO(isoDateString);
     } catch (error) {
-      console.error(`Error parsing date: ${dateString}`, error);
       return new Date(); // Fecha fallback en caso de error
     }
     // const parsedDate = new Date(dateString);
@@ -166,7 +163,6 @@ const MyCalendar: React.FC = () => {
         resource: event,
       }
     }) ?? [], [data]);
-  console.log('Calendar Events: ', calendarEvents);
 
   const mutation = useMutation(postEvento, {
     onSuccess: (data) => {
@@ -366,13 +362,13 @@ const MyCalendar: React.FC = () => {
                       <SelectValue placeholder="Seleccione un evento" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">Reunión de Consorcio</SelectItem>
-                      <SelectItem value="2">Reformas</SelectItem>
-                      <SelectItem value="3">Limpieza</SelectItem>
-                      <SelectItem value="4">Mantenimiento</SelectItem>
-                      <SelectItem value="5">
+                      <SelectItem value="1">Mantenimiento</SelectItem>
+                      <SelectItem value="2">Limpieza</SelectItem>
+                      <SelectItem value="3">Reformas</SelectItem>
+                      <SelectItem value="4">Reunión de Consorcio</SelectItem>
+                      {/* <SelectItem value="4">
                         Ocupación de Espacios Comunes
-                      </SelectItem>
+                      </SelectItem> */}
                     </SelectContent>
                   </Select>
                 )}

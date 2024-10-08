@@ -92,7 +92,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     if (!data.password) {
       setError("password", { message: "Ingrese la contraseña" });
     }
-    console.log('data on submit: ', data)
     setIsLoading(true);
     loginMutation.mutate(data);
     // try {

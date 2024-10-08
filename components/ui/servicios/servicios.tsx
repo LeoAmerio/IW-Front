@@ -125,7 +125,6 @@ export function Serivcios() {
   const { data: serviciosTipo, isLoading: loadingGetServicios } = useQuery(["servicios"], fetchServicios, {
     refetchOnWindowFocus: true,
     onSuccess: () => {
-      console.log("Servicios obtenidos con éxito");
       separarPorCategorias();
     },
   });
@@ -151,18 +150,12 @@ export function Serivcios() {
         (servicio) => servicio.tipo.tipo === "Pintor"
       );
 
-      console.log("PlomeriaL: ", plomeriaList);
-      console.log("GasistaL: ", gasistaList);
-
       setPlomeria(plomeriaList);
       setGasista(gasistaList);
       setElectricista(electricistaList);
       setRefrigeracion(refrigeracionList);
       setCerrajero(cerrajeroList);
       setPintor(pintorList);
-
-      console.log("Plomeria: ", plomeria);
-      console.log("Gasista: ", gasista);
     }
   };
 

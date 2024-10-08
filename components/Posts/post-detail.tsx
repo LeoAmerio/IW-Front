@@ -47,7 +47,6 @@ interface PostCardProps {
 }
 
 const deletePost = async (id: number) => {
-  console.log("Deleting post with ID:", id);
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${id}/`,
     {
