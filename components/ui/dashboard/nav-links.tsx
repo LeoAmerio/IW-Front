@@ -5,31 +5,15 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   ServerIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Cookies from "js-cookie";
 import { useQuery } from 'react-query';
 import { User } from '@/interfaces/user.interface';
+import { fetchUserById } from '@/api/user.api';
 
-const fetchUserById = async (user_id: number): Promise<User> => {
-  const response = await fetch(`https://ucse-iw-2024.onrender.com/auth/usuarios/${user_id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Token ${Cookies.get("token")}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Error al obtener el usuario");
-  }
-
-  return response.json();
-};
-
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   {
@@ -38,13 +22,13 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Servicios', href: '/dashboard/servicios', icon: UserGroupIcon },
+  { name: 'Eventos', href: '/dashboard/events', icon: CalendarIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
   const user_id = useAuthStore((state) => state.user_id);
-  console.log('User ID: ', user_id);
 
   const { data, isLoading } = useQuery(
     ['user', user_id], 
@@ -63,7 +47,7 @@ export default function NavLinks() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  // console.log('User data', data.rol_info.rol);
+
   if (!data || !data.rol_info) {
     return <div>Error: Datos del usuario no disponibles</div>;
   }

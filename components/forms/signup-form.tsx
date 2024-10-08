@@ -115,8 +115,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
     }
   ) 
 
-  console.log("Edificios:", edificios);
-
   const onSubmit = (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
       setError("confirmPassword", {

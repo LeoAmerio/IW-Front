@@ -29,6 +29,17 @@ import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import CustomChip from "../ui/custom-chip-notfound";
 
 interface PostCardProps {
   posteo: Posteo;
@@ -60,6 +71,33 @@ const deletePost = async (id: number) => {
   return response.json();
 };
 
+const postComentario = async ({
+  contenido,
+  posteoId,
+}: {
+  contenido: string;
+  posteoId: number;
+}) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${posteoId}/respuestas/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${Cookies.get("token")}`,
+      },
+      body: JSON.stringify({ contenido }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to post comment: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+};
+
 const PostDetail = ({ posteo }: PostCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [comentario, setComentario] = useState("");
@@ -71,10 +109,29 @@ const PostDetail = ({ posteo }: PostCardProps) => {
     return <div>Posteo no encontrado</div>;
   }
 
+  // const handleSubmitComentario = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setComentario("");
+  //   setIsModalOpen(false);
+  // };
+
+  const { mutate: submitComentario } = useMutation(
+    ({ contenido, posteoId }: { contenido: string, posteoId: number} ) => postComentario({contenido, posteoId}), {
+    onSuccess: () => {
+      toast.success("Comentario enviado exitosamente");
+      setIsModalOpen(false);
+      setComentario("");
+      queryClient.invalidateQueries(["post", posteo.id]);
+      window.location.href = "/dashboard";
+    },
+    onError: (error: Error) => {
+      toast.error(`Error al enviar el comentario: ${error.message}`);
+    },
+  });
+
   const handleSubmitComentario = (e: React.FormEvent) => {
     e.preventDefault();
-    setComentario("");
-    setIsModalOpen(false);
+    submitComentario({ contenido: comentario, posteoId: posteo.id });
   };
 
   const deletePostMutation = useMutation(deletePost, {
@@ -136,6 +193,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
               Autor: {posteo.usuario.piso} - {posteo.usuario.numero}
             </p>
           </div>
+          
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -162,6 +220,30 @@ const PostDetail = ({ posteo }: PostCardProps) => {
           </Dialog>
           {/* <span className="text-sm text-gray-500">{posteo.comentarios} comentarios</span> */}
         </CardFooter>
+      </Card>
+      <Card className="mt-2">
+        <CardContent>
+        <div className="mt-4">
+            <h3 className="text-lg font-semibold">Respuestas:</h3>
+            {posteo.respuestas.length > 0 ? (
+              posteo.respuestas.map((respuesta) => (
+                <div key={respuesta.id} className="mt-2 p-2 border rounded-lg">
+                  <p className="text-sm text-gray-500">
+                    {respuesta.usuario.piso} - {respuesta.usuario.numero}:
+                  </p>
+                  <p>{respuesta.contenido}</p>
+                  <p className="text-xs text-gray-400">
+                    {respuesta.fecha_creacion_legible}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <CustomChip>
+                <p className="text-gray-500">No hay respuestas aún</p>
+              </CustomChip>
+            )}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

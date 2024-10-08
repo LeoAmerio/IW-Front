@@ -8,13 +8,15 @@ export interface Posteo {
     id: number;
     tipo: string;
   };
-  usuario: {
-    id: number;
-    apellido: string;
-    nombre: string;
-    piso: number | null;
-    numero: string | null;
-  };
+  usuario: User;
+  respuestas: Answers[];
+}
+
+interface Answers {
+  id: number;
+  usuario: User;
+  contenido: string;
+  fecha_creacion_legible: string;
 }
 
 export interface PosteoRequest {
@@ -49,10 +51,10 @@ export enum CrudOperation {
 
 export interface User {
   id: number;
-  name: string;
-  lastName: string;
+  nombre: string;
+  apellido: string;
   piso: number;
-  departamento: string;
+  numero: string;
 }
 
 export interface PosteoTypo {
@@ -64,6 +66,14 @@ export enum PosteoTypoEnum {
   Reclamo = "Reclamo",
   Consulta = "Consulta",
   Aviso = "Aviso",
+}
+
+export enum EventoTypoEnum {
+  ReunionConsorcio = "Reunion Consorcio",
+  Reformas = "Reformas",
+  Limpieza = "Limpieza",
+  Mantenimiento = "Mantenimiento",
+  OcupacionEspaciosComunes = "Ocupacion Espacios Comunes",
 }
 
 export interface Edificio {
@@ -78,4 +88,14 @@ export interface SearchParams {
   usuario: number;
   tipo_posteo: string;
   ordering: string;
+}
+
+export interface Servicios {
+  id: number;
+  tipo: {
+    id: number;
+    tipo: string;
+  };
+  nombre_proveedor: string;
+  telefono: string;
 }
