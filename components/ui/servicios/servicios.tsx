@@ -18,6 +18,108 @@ export function Serivcios() {
   const [refrigeracion, setRefrigeracion] = useState<Servicios[]>([]);
   const [cerrajero, setCerrajero] = useState<Servicios[]>([]);
   const [pintor, setPintor] = useState<Servicios[]>([]);
+  const [categorias, setCategorias] = useState<{ 
+    plomeria: Servicios[], 
+    gasista: Servicios[], 
+    electricista: Servicios[], 
+    refrigeracion: Servicios[], 
+    cerrajero: Servicios[], 
+    pintor: Servicios[] 
+  }>({
+    plomeria: [],
+    gasista: [],
+    electricista: [],
+    refrigeracion: [],
+    cerrajero: [],
+    pintor: []
+  });
+
+  const { data: user, isLoading } = useQuery(
+    ["user", user_id],
+    () => fetchUserById(user_id),
+    {
+      enabled: !!user_id,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      onError: (error: Error) => {
+        console.error(`Fetch error ${error.message}`);
+      },
+    }
+  );
+
+  const fetchServicios = async (): Promise<Servicios[]> => {
+    const response = await fetch(
+      `https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=${user?.edificio.id}`
+      // `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
+    );
+    return response.json();
+  };
+
+  const { data: serviciosTipo, isLoading: loadingGetServicios } = useQuery(
+    ["servicios", user?.edificio?.id],
+    fetchServicios,
+    {
+      enabled: !!user?.edificio?.id,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        console.log("Servicios obtenidos con éxito");
+        separarPorCategorias(data);
+      },
+      onError: (error: Error) => {
+        console.error("Error fetching servicios:", error);
+      }
+    }
+  );
+
+  const separarPorCategorias = (servicios: Servicios[]) => {
+    const newCategorias = {
+      plomeria: servicios.filter(servicio => servicio.tipo.tipo === "Plomería"),
+      gasista: servicios.filter(servicio => servicio.tipo.tipo === "Gasista"),
+      electricista: servicios.filter(servicio => servicio.tipo.tipo === "Electricista"),
+      refrigeracion: servicios.filter(servicio => servicio.tipo.tipo === "Tecnico en Refrigeración"),
+      cerrajero: servicios.filter(servicio => servicio.tipo.tipo === "Cerrajero"),
+      pintor: servicios.filter(servicio => servicio.tipo.tipo === "Pintor")
+    };
+    setCategorias(newCategorias);
+    console.log("Categorias separadas:", newCategorias);
+  };
+
+  // const separarPorCategorias = () => {
+  //   if (serviciosTipo) {
+  //     const plomeriaList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Plomería"
+  //     );
+  //     const gasistaList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Gasista"
+  //     );
+  //     const electricistaList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Electricista"
+  //     );
+  //     const refrigeracionList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Tecnico en Refrigeración"
+  //     );
+  //     const cerrajeroList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Cerrajero"
+  //     );
+  //     const pintorList = serviciosTipo.filter(
+  //       (servicio) => servicio.tipo.tipo === "Pintor"
+  //     );
+
+  //     console.log("PlomeriaL: ", plomeriaList);
+  //     console.log("GasistaL: ", gasistaList);
+
+  //     setPlomeria(plomeriaList);
+  //     setGasista(gasistaList);
+  //     setElectricista(electricistaList);
+  //     setRefrigeracion(refrigeracionList);
+  //     setCerrajero(cerrajeroList);
+  //     setPintor(pintorList);
+
+  //     console.log("Plomeria: ", plomeria);
+  //     console.log("Gasista: ", gasista);
+  //   }
+  // };
 
   const data = [
     {
@@ -27,7 +129,7 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={1}
-          profesional={plomeria}
+          profesional={categorias.plomeria}
           profesionalImg="https://plus.unsplash.com/premium_photo-1723874634715-246be2bb20ff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           titulo="plomeros"
         />
@@ -40,7 +142,7 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={2}
-          profesional={gasista}
+          profesional={categorias.gasista}
           profesionalImg="https://i.pinimg.com/564x/35/50/3c/35503c92a934f9937153a7a311be8f2b.jpg"
           titulo="gasistas"
         />
@@ -53,7 +155,7 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={3}
-          profesional={electricista}
+          profesional={categorias.electricista}
           profesionalImg="https://plus.unsplash.com/premium_photo-1661908782924-de673a5c6988?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           titulo="electricistas"
         />
@@ -66,7 +168,7 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={4}
-          profesional={refrigeracion}
+          profesional={categorias.refrigeracion}
           profesionalImg="https://plus.unsplash.com/premium_photo-1678766819678-35fc6c1f1170?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           titulo="tecnicos en refrigeración"
         />
@@ -79,7 +181,7 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={5}
-          profesional={cerrajero}
+          profesional={categorias.cerrajero}
           profesionalImg="https://plus.unsplash.com/premium_photo-1663013665171-6fbaf0767d0d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           titulo="cerrajeros"
         />
@@ -92,79 +194,13 @@ export function Serivcios() {
       content: (
         <ListProfessionals
           id={6}
-          profesional={pintor}
+          profesional={categorias.pintor}
           profesionalImg="https://plus.unsplash.com/premium_photo-1681839037423-e4a98afea9ea?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           titulo="pintores"
         />
       ),
     },
   ];
-
-  const { data: user, isLoading } = useQuery(
-    ['user', user_id], 
-    () => fetchUserById(user_id), 
-    {
-      enabled: !!user_id,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      onError: (error: Error) => {
-        console.error(`Fetch error ${error.message}`)
-      }
-    }
-  );
-
-  const fetchServicios = async (): Promise<Servicios[]> => {
-    const response = await fetch(
-      `https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=${user?.edificio.id}`
-      // `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
-    );
-    return response.json();
-  };
-
-  const { data: serviciosTipo, isLoading: loadingGetServicios } = useQuery(["servicios"], fetchServicios, {
-    refetchOnWindowFocus: true,
-    onSuccess: () => {
-      console.log("Servicios obtenidos con éxito");
-      separarPorCategorias();
-    },
-  });
-
-  const separarPorCategorias = () => {
-    if (serviciosTipo) {
-      const plomeriaList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Plomería"
-      );
-      const gasistaList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Gasista"
-      );
-      const electricistaList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Electricista"
-      );
-      const refrigeracionList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Tecnico en Refrigeración"
-      );
-      const cerrajeroList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Cerrajero"
-      );
-      const pintorList = serviciosTipo.filter(
-        (servicio) => servicio.tipo.tipo === "Pintor"
-      );
-
-      console.log("PlomeriaL: ", plomeriaList);
-      console.log("GasistaL: ", gasistaList);
-
-      setPlomeria(plomeriaList);
-      setGasista(gasistaList);
-      setElectricista(electricistaList);
-      setRefrigeracion(refrigeracionList);
-      setCerrajero(cerrajeroList);
-      setPintor(pintorList);
-
-      console.log("Plomeria: ", plomeria);
-      console.log("Gasista: ", gasista);
-    }
-  };
 
   const cards = data.map((card, index) => (
     <Card key={card.src} card={card} index={index} />
@@ -179,12 +215,7 @@ export function Serivcios() {
         Sientase libre de elegir de este listado o el de su preferencia, son
         meras recomendaciones
       </h6>
-      {loadingGetServicios ? (
-        <LinearProgress />
-      ) : (
-        <Carousel items={cards} />
-      )}
+      {loadingGetServicios ? <LinearProgress /> : <Carousel items={cards} />}
     </div>
   );
 }
-

@@ -342,8 +342,8 @@ const PostsSection = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {/* <SelectItem value="">Sin orden</SelectItem> */}
-                  <SelectItem value="fecha_creacion">Más recientes primero</SelectItem>
-                  <SelectItem value="-fecha_creacion">Más antiguos primero</SelectItem>
+                  <SelectItem value="-fecha_creacion">Más recientes primero</SelectItem>
+                  <SelectItem value="fecha_creacion">Más antiguos primero</SelectItem>
                 </SelectContent>
               </Select>
             </div>
