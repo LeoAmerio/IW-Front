@@ -6,8 +6,6 @@ import { usePostStore } from '@/store/post-store';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
-
-
 export default async function Page() {
   const pathname = usePathname();
   const id = pathname.split('/').pop();

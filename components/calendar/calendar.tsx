@@ -222,7 +222,7 @@ const MyCalendar: React.FC = () => {
         events={calendarEvents}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
+        style={{ height: 500, cursor: "pointer" }}
         onNavigate={handleNavigate}
         view={view}
         onView={handleView}

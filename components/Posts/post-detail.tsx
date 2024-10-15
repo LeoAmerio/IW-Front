@@ -18,32 +18,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Posteo, PosteoTypo, User } from "@/interfaces/types";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { Posteo } from "@/interfaces/types";
 import { IconButton } from "@mui/material";
-// import { MessageCircle } from 'lucide-react'
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/services/auth.service";
 import { TrashIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
-import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "../ui/form";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import CustomChip from "../ui/custom-chip-notfound";
 
 interface PostCardProps {
   posteo: Posteo;
-  // onEdit: (Posteo: Posteo) => void;
 }
 
 const deletePost = async (id: number) => {
@@ -105,6 +90,9 @@ const PostDetail = ({ posteo }: PostCardProps) => {
   const queryClient = useQueryClient();
   // const router = useRouter();
 
+  console.log("Posteo: ", posteo);
+  console.log("User ID: ", userId);
+
   if (!posteo) {
     return <div>Posteo no encontrado</div>;
   }
@@ -161,7 +149,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
         <CardHeader>
           <div className="flex justify-between items-center mb-2">
             <CardTitle className="text-2xl">{posteo.titulo}</CardTitle>
-            {userId === posteo.usuario.id && (
+            {userId && posteo.usuario && userId === posteo.usuario.id && (
               <IconButton
                 onClick={handleDeletePost}
                 className="text-gray-500 hover:text-gray-700 justify-end"
