@@ -16,11 +16,11 @@ import { fetchUserById } from '@/api/user.api';
 
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
-  },
+  // {
+  //   name: 'Invoices',
+  //   href: '/dashboard/invoices',
+  //   icon: DocumentDuplicateIcon,
+  // },
   { name: 'Servicios', href: '/dashboard/servicios', icon: UserGroupIcon },
   { name: 'Eventos', href: '/dashboard/events', icon: CalendarIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },

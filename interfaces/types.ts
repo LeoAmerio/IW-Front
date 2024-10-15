@@ -26,16 +26,6 @@ export interface PosteoRequest {
   imagen?: string | File | null;
 }
 
-// export type Posteo = {
-//   id: number;
-//   title: string;
-//   descripcion: string;
-//   user: User;
-//   posteoTypo: PosteoTypo;
-//   imagen: string | null;
-//   created_at: string;
-// };
-
 export interface User {
   token: string;
   user_id: number;
@@ -98,4 +88,12 @@ export interface Servicios {
   };
   nombre_proveedor: string;
   telefono: string;
+}
+
+export interface PosteoSearch {
+  titulo: string;
+  text: string;
+  descripcion: string;
+  edificio: number;
+  object: Posteo;
 }

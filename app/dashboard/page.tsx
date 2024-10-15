@@ -5,6 +5,7 @@ import { Posteo } from "@/interfaces/types";
 
 import CardWrapper from "@/components/ui/dashboard/cards";
 import PostsSection from "@/components/ui/dashboard/posts-section";
+import Search from "@/components/ui/search";
 
 export default async function Page() {
   const {

@@ -24,6 +24,7 @@ import PostCard from "@/components/Posts/post-card";
 import {
   Posteo,
   PosteoRequest,
+  PosteoSearch,
   PosteoTypoEnum,
   SearchParams,
 } from "@/interfaces/types";
@@ -36,6 +37,12 @@ import {
   TooltipTrigger,
 } from "../tooltip";
 import { ManageSearch as ManageSearchIcon } from "@mui/icons-material";
+import Search from "../search";
+import { usePostStore } from "@/store/post-store";
+import { useDebouncedCallback } from "use-debounce";
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { LinearProgress } from '@mui/material';
+import PostDetail from "@/components/Posts/post-detail";
 
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
@@ -47,13 +54,19 @@ const editPost = async (posteo: PosteoRequest, id: number) => {
   return data;
 };
 
+const WAIT_BETWEEN_CHANGE = 300;
+const BASE_URL = 'https://ucse-iw-2024.onrender.com/comunicaciones/search/?q=';
+
 const PostsSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPostId, setCurrentPostId] = useState<number | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-
+  const [searchResults, setSearchResults] = useState<PosteoSearch[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPost, setSelectedPost] = useState<Posteo | null>(null);
 
   const [filters, setFilters] = useState<SearchParams>({
     usuario: 0,
@@ -75,6 +88,19 @@ const PostsSection = () => {
     },
   });
 
+  const { posteo: selectedPosteo, setPosteo, clearPosteo } = usePostStore();
+
+  useEffect(() => {
+    clearPosteo();
+  }, []);
+
+  useEffect(() => {
+    console.log(selectedPost);
+    // if (selectedPost) {
+    //   <PostDetail posteo={selectedPost} />;
+    // }
+  }, [selectedPost]);
+
   const fetchPosts = async (filters: SearchParams) => {
     const params = new URLSearchParams();
     if (filters.usuario) params.append("usuario", filters.usuario.toString());
@@ -92,9 +118,11 @@ const PostsSection = () => {
     enabled: true,
   });
 
-  const listUsersPost = posts ? Array.from(new Set(posts.map(post => JSON.stringify(post.usuario))))
-    .map(userStr => JSON.parse(userStr)) : [];
-  console.log('List users post: ', listUsersPost);
+  const listUsersPost = posts
+    ? Array.from(
+        new Set(posts.map((post) => JSON.stringify(post.usuario)))
+      ).map((userStr) => JSON.parse(userStr))
+    : [];
 
   const handleEdit = (posteo: Posteo) => {
     setValue("titulo", posteo.titulo);
@@ -169,8 +197,68 @@ const PostsSection = () => {
     refetch();
   };
 
+  const handleSearch = useDebouncedCallback(async (term) => {
+    setSearchTerm(term);
+    if (term) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${BASE_URL}${encodeURIComponent(term)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch search results');
+        }
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (error) {
+        console.error(error);
+        setSearchResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setSearchResults([]);
+      clearPosteo();
+    }
+  }, WAIT_BETWEEN_CHANGE);
+
+  const handleSelectPost = (post: PosteoSearch) => {
+    setSelectedPost(post.object);
+    setSearchTerm(post.titulo);
+    setSearchResults([]);
+    // setPosteo(post);
+  }
+
   return (
     <div className="container mx-auto p-4">
+      <div className="mb-2">
+        {/* <Search placeholder="Buscar Posteos..." /> */}
+        <div className="relative flex flex-1 flex-shrink-0">
+          <label htmlFor="search" className="sr-only">
+            Search
+          </label>
+          <input
+            className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+            placeholder={'Buscar Posteos...'}
+            onChange={(e) => handleSearch(e.target.value)}
+            // defaultValue={searchParams.get('query')?.toString()}
+          />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+          {isLoading && <LinearProgress />}
+          {searchResults.length > 0 && (
+            <ul className="absolute top-full left-0 w-full bg-white border border-black rounded-md mt-1">
+              {searchResults.map((result, index) => (
+                <li
+                  key={index}
+                  className="p-2 hover:bg-gray-100"
+                  onClick={() => handleSelectPost(result)}
+                >
+                  {/* Renderiza aquí los detalles del resultado */}
+                  {JSON.stringify(result.titulo)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
       <div className="flex justify-between items-center mb-2">
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
@@ -295,7 +383,13 @@ const PostsSection = () => {
           <DialogHeader>
             <DialogTitle>Filtrar posteos</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); applyFilters(); }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              applyFilters();
+            }}
+            className="space-y-4"
+          >
             <div>
               <Label htmlFor="usuario">Usuario</Label>
               <Select
@@ -318,7 +412,9 @@ const PostsSection = () => {
               <Label htmlFor="tipo_posteo">Tipo de posteo</Label>
               <Select
                 value={filters.tipo_posteo}
-                onValueChange={(value) => handleFilterChange("tipo_posteo", value)}
+                onValueChange={(value) =>
+                  handleFilterChange("tipo_posteo", value)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccione un tipo" />
@@ -342,8 +438,12 @@ const PostsSection = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {/* <SelectItem value="">Sin orden</SelectItem> */}
-                  <SelectItem value="fecha_creacion">Más recientes primero</SelectItem>
-                  <SelectItem value="-fecha_creacion">Más antiguos primero</SelectItem>
+                  <SelectItem value="-fecha_creacion">
+                    Más recientes primero
+                  </SelectItem>
+                  <SelectItem value="fecha_creacion">
+                    Más antiguos primero
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -358,7 +458,9 @@ const PostsSection = () => {
       </Dialog>
 
       <div className="mt-6 grid grid-cols-1 space-y-4">
-        {loadingData ? (
+        {selectedPost? (
+          <PostDetail posteo={selectedPost} />
+        ) : loadingData ? (
           <p>Cargando posteos...</p>
         ) : (
           posts &&

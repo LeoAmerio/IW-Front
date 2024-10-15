@@ -21,6 +21,8 @@ export function ListProfessionals({ id, profesional, profesionalImg, titulo }: L
   const ref = useRef<HTMLDivElement>(null);
   const idUse = useId();
 
+  console.log('Profesionales: ', profesional);
+
   return (
     <>
       <AnimatePresence>

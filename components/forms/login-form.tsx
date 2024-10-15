@@ -66,7 +66,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
 
         if (response.ok) {
           const data = await response.json();
-          Cookies.set("token", data.token, { expires: 1 });
+          // Cookies.set("token", data.token, { expires: 1 });
+          Cookies.set("token", data.token);
           setAuth(data.token, data.user_id, data.email);
           onLoginSuccess();
         }

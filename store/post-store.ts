@@ -23,9 +23,11 @@ interface PosteoCard {
 interface PostStore {
   posteo: Posteo | null;
   setPosteo: (posteo: Posteo) => void;
+  clearPosteo: () => void;
 }
 
 export const usePostStore = create<PostStore>((set) => ({
   posteo: null,
   setPosteo: (posteo) => set({ posteo }),
+  clearPosteo: () => set({ posteo: null }),
 }));
