@@ -110,7 +110,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
     fetchEdificios,
     {
       onSuccess: (data) => {
-        console.log("Edificios from useQuery: ", data);
+        // console.log("Edificios from useQuery: ", data);
       },
     }
   ) 
@@ -140,7 +140,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
       }
       return;
     }
-    console.log("Data:", data);
 
     // Si las contraseñas coinciden, procede con el registro
     signupMutation.mutate(data);

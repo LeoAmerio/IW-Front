@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CardWithBackground } from "../components/ui/dashboard/cards";
 import { Toaster } from "react-hot-toast";
 import { redirect } from "next/navigation";
+import { LinkPreview } from "@/components/ui/link-preview";
 
 export default function Page() {
   return (
@@ -19,11 +20,25 @@ export default function Page() {
             <p
               className={`text-xl text-gray-800 md:text-3xl md:leading-normal`}
             >
-              <strong>Bienvenido a Housinger.</strong> La mejor herramienta de
-              administracion{" "}
-              <a href="https://nextjs.org/learn/" className="text-blue-500">
+              <strong>Bienvenido a{" "} 
+                <LinkPreview
+                  url="/login"
+                  imageSrc="/CapturaTrampa.png"
+                  isStatic={true}
+                  className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
+                >
+                  Housinger.
+                </LinkPreview>
+              </strong> 
+              La mejor herramienta de administracion{" "}
+              <LinkPreview
+                url="/login"
+                isStatic={true}
+                imageSrc="/imgCalendar.svg"
+                className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
+              >
                 para su edificio
-              </a>
+              </LinkPreview>
               , creado por nuestro quipo, con amor.
             </p>
             <Link
@@ -59,7 +74,7 @@ export default function Page() {
         </div>
         <br />
       </main>
-      <div className="w-full h-auto max-h-screen">
+      {/* <div className="w-full h-auto max-h-screen">
         <Link href="/signup">
           <Image
             src="/CapturaTrampa.png"
@@ -69,7 +84,7 @@ export default function Page() {
             height={900}
           />
         </Link>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -85,42 +85,6 @@ export function Serivcios() {
     console.log("Categorias separadas:", newCategorias);
   };
 
-  // const separarPorCategorias = () => {
-  //   if (serviciosTipo) {
-  //     const plomeriaList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Plomería"
-  //     );
-  //     const gasistaList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Gasista"
-  //     );
-  //     const electricistaList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Electricista"
-  //     );
-  //     const refrigeracionList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Tecnico en Refrigeración"
-  //     );
-  //     const cerrajeroList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Cerrajero"
-  //     );
-  //     const pintorList = serviciosTipo.filter(
-  //       (servicio) => servicio.tipo.tipo === "Pintor"
-  //     );
-
-  //     console.log("PlomeriaL: ", plomeriaList);
-  //     console.log("GasistaL: ", gasistaList);
-
-  //     setPlomeria(plomeriaList);
-  //     setGasista(gasistaList);
-  //     setElectricista(electricistaList);
-  //     setRefrigeracion(refrigeracionList);
-  //     setCerrajero(cerrajeroList);
-  //     setPintor(pintorList);
-
-  //     console.log("Plomeria: ", plomeria);
-  //     console.log("Gasista: ", gasista);
-  //   }
-  // };
-
   const data = [
     {
       category: "Plomería",
