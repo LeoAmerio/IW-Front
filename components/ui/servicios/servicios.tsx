@@ -63,7 +63,6 @@ export function Serivcios() {
       enabled: !!user?.edificio?.id,
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        console.log("Servicios obtenidos con éxito");
         separarPorCategorias(data);
       },
       onError: (error: Error) => {
@@ -74,15 +73,14 @@ export function Serivcios() {
 
   const separarPorCategorias = (servicios: Servicios[]) => {
     const newCategorias = {
-      plomeria: servicios.filter(servicio => servicio.tipo.tipo === "Plomería"),
+      plomeria: servicios.filter(servicio => servicio.tipo.tipo === "Plomeria"),
       gasista: servicios.filter(servicio => servicio.tipo.tipo === "Gasista"),
       electricista: servicios.filter(servicio => servicio.tipo.tipo === "Electricista"),
-      refrigeracion: servicios.filter(servicio => servicio.tipo.tipo === "Tecnico en Refrigeración"),
+      refrigeracion: servicios.filter(servicio => servicio.tipo.tipo === "Tecnico en Refrigeracion"),
       cerrajero: servicios.filter(servicio => servicio.tipo.tipo === "Cerrajero"),
       pintor: servicios.filter(servicio => servicio.tipo.tipo === "Pintor")
     };
     setCategorias(newCategorias);
-    console.log("Categorias separadas:", newCategorias);
   };
 
   const data = [
