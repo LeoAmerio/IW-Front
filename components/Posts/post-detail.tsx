@@ -24,12 +24,28 @@ import Cookies from "js-cookie";
 import { useAuthStore } from "@/services/auth.service";
 import { TrashIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient, useQuery } from "react-query";
 import CustomChip from "../ui/custom-chip-notfound";
 
 interface PostCardProps {
   posteo: Posteo;
 }
+
+const fetchPostDetails = async (postId: number): Promise<Posteo> => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${postId}/`,
+  {
+    method: "GET",
+    headers: {
+      // "Content-Type": "application/json",
+      Authorization: `Token ${Cookies.get("token")}`,
+    },
+  }
+  );
+  if (!response.ok) {
+    throw new Error("Error fetching post details");
+  }
+  return response.json();
+};
 
 const deletePost = async (id: number) => {
   const response = await fetch(
@@ -89,27 +105,27 @@ const PostDetail = ({ posteo }: PostCardProps) => {
   const queryClient = useQueryClient();
   // const router = useRouter();
 
-  console.log("Posteo: ", posteo);
-  console.log("User ID: ", userId);
-
   if (!posteo) {
     return <div>Posteo no encontrado</div>;
   }
 
-  // const handleSubmitComentario = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setComentario("");
-  //   setIsModalOpen(false);
-  // };
+  const { data: postDetails, isLoading, error } = useQuery(
+    ["post-detail", posteo.id],
+    () => fetchPostDetails(posteo.id)
+  );  
 
-  const { mutate: submitComentario } = useMutation(
+  console.log("Posteo: ", posteo);
+  console.log("User ID: ", userId);
+  console.log("Post Query: ", postDetails)
+
+  const submitComentario = useMutation(
     ({ contenido, posteoId }: { contenido: string, posteoId: number} ) => postComentario({contenido, posteoId}), {
     onSuccess: () => {
       toast.success("Comentario enviado exitosamente");
+      queryClient.invalidateQueries(["post-detail", posteo.id]);
       setIsModalOpen(false);
       setComentario("");
-      queryClient.invalidateQueries(["post", posteo.id]);
-      window.location.href = "/dashboard";
+      // window.location.href = "/dashboard";
     },
     onError: (error: Error) => {
       toast.error(`Error al enviar el comentario: ${error.message}`);
@@ -118,7 +134,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
 
   const handleSubmitComentario = (e: React.FormEvent) => {
     e.preventDefault();
-    submitComentario({ contenido: comentario, posteoId: posteo.id });
+    submitComentario.mutate({ contenido: comentario, posteoId: posteo.id });
   };
 
   const deletePostMutation = useMutation(deletePost, {
@@ -212,8 +228,8 @@ const PostDetail = ({ posteo }: PostCardProps) => {
         <CardContent>
         <div className="mt-4">
             <h3 className="text-lg font-semibold">Respuestas:</h3>
-            {posteo.respuestas.length > 0 ? (
-              posteo.respuestas.map((respuesta) => (
+            {postDetails && postDetails.respuestas.length > 0 ? (
+              postDetails.respuestas.map((respuesta) => (
                 <div key={respuesta.id} className="mt-2 p-2 border rounded-lg">
                   <p className="text-sm text-gray-500">
                     {respuesta.usuario.piso} - {respuesta.usuario.numero}:
