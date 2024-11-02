@@ -1,5 +1,5 @@
 import { Posteo, PosteoTypo, User } from "@/interfaces/types";
-import create from "zustand";
+import { create } from "zustand";
 
 interface PosteoCard {
   id: number;

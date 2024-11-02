@@ -97,3 +97,25 @@ export interface PosteoSearch {
   edificio: number;
   object: Posteo;
 }
+
+export interface EventResponse {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  usuario: number;
+  tipo_evento: {
+    id: number;
+    tipo: string;
+  };
+}
+
+export interface EventRequest {
+  titulo: string;
+  descripcion: string;
+  fecha_inicio: Date;
+  fecha_fin: Date;
+  tipo_evento_id: number;
+}
+
