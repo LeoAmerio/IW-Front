@@ -2,9 +2,6 @@ import AcmeLogo from "@/components/ui/acme-logo";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Image from "next/image";
-import { CardWithBackground } from "../components/ui/dashboard/cards";
-import { Toaster } from "react-hot-toast";
-import { redirect } from "next/navigation";
 import { LinkPreview } from "@/components/ui/link-preview";
 
 export default function Page() {
@@ -22,7 +19,7 @@ export default function Page() {
             >
               <strong>Bienvenido a{" "} 
                 <LinkPreview
-                  url="/login"
+                  url="/login?nextUrl=/dashboard"
                   imageSrc="/CapturaTrampa.png"
                   isStatic={true}
                   className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
@@ -32,7 +29,7 @@ export default function Page() {
               </strong> 
               La mejor herramienta de administracion{" "}
               <LinkPreview
-                url="/login"
+                url="/login?nextUrl=/events"
                 isStatic={true}
                 imageSrc="/imgCalendar.svg"
                 className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"

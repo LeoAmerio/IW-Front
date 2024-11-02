@@ -6,3 +6,9 @@
 // export const removeUser = () => {
 //   localStorage.removeItem(USER_LOCAL_KEY);
 // };
+
+export const truncateDescription = (descripcion: string, maxLength: number) => {
+  return descripcion.length > maxLength
+    ? `${descripcion.substring(0, maxLength)}...`
+    : descripcion;
+};

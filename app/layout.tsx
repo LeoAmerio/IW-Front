@@ -1,7 +1,6 @@
 import QueryClientWrapper from "@/components/QueryClientWrapper";
 import { montserrat } from "../components/ui/fonts";
 import "../components/ui/global.css";
-import corsMiddleware from "./lib/cors";
 import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({

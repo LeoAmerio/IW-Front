@@ -32,31 +32,11 @@ import { Label } from "../ui/label";
 import DatePicker from "react-datepicker";
 import Cookies from 'js-cookie';
 import "react-datepicker/dist/react-datepicker.css";
+import { EventRequest, EventResponse } from "@/interfaces/types";
 
 const locales = {
   es: es,
 };
-
-interface EventRequest {
-  titulo: string;
-  descripcion: string;
-  fecha_inicio: Date;
-  fecha_fin: Date;
-  tipo_evento_id: number;
-}
-
-interface EventResponse {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  fecha_inicio: string;
-  fecha_fin: string;
-  usuario: number;
-  tipo_evento: {
-    id: number;
-    tipo: string;
-  };
-}
 
 const localizer = dateFnsLocalizer({
   format,

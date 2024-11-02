@@ -11,6 +11,7 @@ import { useAuthStore } from "@/services/auth.service";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { toast } from "react-hot-toast";
+import { truncateDescription } from "../helpers/helpers";
 
 interface PostCardProps {
   posteo: Posteo;
@@ -58,20 +59,9 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setPost(posteo);
   };
 
-  // console.log('Post: ', posteo)
-
-  const truncateDescription = (descripcion: string, maxLength: number) => {
-    return descripcion.length > maxLength
-      ? `${descripcion.substring(0, maxLength)}...`
-      : descripcion;
-  };
-
   const handleEditPost = (posteo: Posteo) => {
-    // console.log("Editando posteo: ", posteo);
     onEdit(posteo);
   };
-
-  // console.log("Posteo:", posteo);
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
