@@ -4,12 +4,12 @@ import CardWrapper from "@/components/ui/dashboard/cards";
 import PostsSection from "@/components/ui/dashboard/posts-section";
 
 export default async function Page() {
-  const {
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  } = await fetchCardData();
+  // const {
+  //   numberOfInvoices,
+  //   numberOfCustomers,
+  //   totalPaidInvoices,
+  //   totalPendingInvoices,
+  // } = await fetchCardData();
 
 
   return (
@@ -18,12 +18,12 @@ export default async function Page() {
         Dashboard
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <CardWrapper
+        {/* <CardWrapper
           numberOfCustomers={numberOfCustomers}
           numberOfInvoices={numberOfInvoices}
           totalPaidInvoices={totalPaidInvoices}
           totalPendingInvoices={totalPendingInvoices}
-        />
+        /> */}
       </div>
       <PostsSection />
     </main>

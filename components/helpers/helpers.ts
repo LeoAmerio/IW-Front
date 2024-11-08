@@ -12,3 +12,15 @@ export const truncateDescription = (descripcion: string, maxLength: number) => {
     ? `${descripcion.substring(0, maxLength)}...`
     : descripcion;
 };
+
+// export const separarPorCategorias = (servicios: Servicios[]) => {
+//   const newCategorias = {
+//     plomeria: servicios.filter(servicio => servicio.tipo.tipo === "Plomeria"),
+//     gasista: servicios.filter(servicio => servicio.tipo.tipo === "Gasista"),
+//     electricista: servicios.filter(servicio => servicio.tipo.tipo === "Electricista"),
+//     refrigeracion: servicios.filter(servicio => servicio.tipo.tipo === "Tecnico en Refrigeracion"),
+//     cerrajero: servicios.filter(servicio => servicio.tipo.tipo === "Cerrajero"),
+//     pintor: servicios.filter(servicio => servicio.tipo.tipo === "Pintor")
+//   };
+//   setCategorias(newCategorias);
+// };

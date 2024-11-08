@@ -26,16 +26,14 @@ interface CardWrapperProps {
 export default async function CardWrapper({ numberOfCustomers, numberOfInvoices, totalPaidInvoices, totalPendingInvoices }: CardWrapperProps) {
   return (
     <>
-      {/* NOTE: Uncomment this code in Chapter 9 */}
-
-      <Card title="Collected" value={totalPaidInvoices} type="collected" />
-      <Card title="Pending" value={totalPendingInvoices} type="pending" />
-      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
       <Card
         title="Total Customers"
         value={numberOfCustomers}
         type="customers"
       />
+      <Card title="Collected" value={totalPaidInvoices} type="collected" />
+      <Card title="Pending" value={totalPendingInvoices} type="pending" />
+      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
     </>
   );
 }
@@ -68,7 +66,6 @@ export function Card({
   );
 }
 
-//Chanchada 
 interface CardBgProps {
   classNamesDivLogo?: string;
   classNamesLink?: string;
@@ -86,11 +83,11 @@ export function CardWithBackground({ classNamesDivLogo, img, alt, classNameGloba
         href="/"
       >
         <Image
-          src={img} // Asegúrate de que esta ruta sea correcta
+          src={img}
           alt={alt}
           layout="fill"
           objectFit="cover"
-          className="absolute inset-0 z-0 opacity-70" // Ajusta la opacidad según sea necesario
+          className="absolute inset-0 z-0 opacity-70"
           quality={100}
         />
         <div className={`${ classNamesDivLogo ? classNamesDivLogo : "w-32 text-white md:w-40 z-10 relative"}`}>
