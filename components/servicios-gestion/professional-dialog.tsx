@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { CrudOperation, Servicios } from '@/interfaces/types'
-import { createProfessional } from '@/api/services.api'
+import { createProfessional, deleteProfessional, editProfessional } from '@/api/services.api'
 import { LinearProgress } from '@mui/material'
 
 export type ProfessionalFormRequest = {
@@ -76,9 +76,37 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
     }
   );
 
+  const editProfessionalMutation = useMutation(
+    ({ id, data }: { id: number, data: ProfessionalFormRequest }) =>
+      editProfessional(id, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['professionals'])
+        onClose();
+        reset();
+      }
+    }
+  );
+
+  const deleteProfessionalMutation = useMutation(
+    ({ id }: { id: number }) =>
+      deleteProfessional(id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['professionals'])
+        onClose();
+        reset();
+      }
+    }
+  );
+
   const onSubmit = (data: ProfessionalFormRequest) => {
     if (operation === CrudOperation.CREATE) {
       createProfessionalMutation.mutate({ data })
+    }
+
+    if (operation === CrudOperation.UPDATE) {
+      editProfessionalMutation.mutate({ id: professional?.id!, data })
     }
     // mutation.mutate(data)
   }
