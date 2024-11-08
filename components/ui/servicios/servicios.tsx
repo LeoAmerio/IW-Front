@@ -8,16 +8,11 @@ import { useQuery } from "react-query";
 import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
 import { LinearProgress } from "@mui/material";
+import { fetchServicios } from "@/api/services.api";
 
 export function Serivcios() {
   const user_id = useAuthStore((state) => state.user_id);
 
-  const [plomeria, setPlomeria] = useState<Servicios[]>([]);
-  const [gasista, setGasista] = useState<Servicios[]>([]);
-  const [electricista, setElectricista] = useState<Servicios[]>([]);
-  const [refrigeracion, setRefrigeracion] = useState<Servicios[]>([]);
-  const [cerrajero, setCerrajero] = useState<Servicios[]>([]);
-  const [pintor, setPintor] = useState<Servicios[]>([]);
   const [categorias, setCategorias] = useState<{ 
     plomeria: Servicios[], 
     gasista: Servicios[], 
@@ -48,13 +43,13 @@ export function Serivcios() {
     }
   );
 
-  const fetchServicios = async (): Promise<Servicios[]> => {
-    const response = await fetch(
-      `https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=${user?.edificio.id}`
-      // `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
-    );
-    return response.json();
-  };
+  // const fetchServicios = async (): Promise<Servicios[]> => {
+  //   const response = await fetch(
+  //     `https://ucse-iw-2024.onrender.com/servicios/por_edificio/?edificio_id=${user?.edificio.id}`
+  //     // `${process.env.NEXT_PUBLIC_API_URL}/servicios/por_edificio/?edificio_id=${user?.edificio.id}` //! TODO user can't be undefined, fix later
+  //   );
+  //   return response.json();
+  // };
 
   const { data: serviciosTipo, isLoading: loadingGetServicios } = useQuery(
     ["servicios", user?.edificio?.id],
@@ -70,6 +65,8 @@ export function Serivcios() {
       }
     }
   );
+
+  console.log("data ", serviciosTipo);
 
   const separarPorCategorias = (servicios: Servicios[]) => {
     const newCategorias = {

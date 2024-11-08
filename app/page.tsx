@@ -29,7 +29,7 @@ export default function Page() {
               </strong> 
               La mejor herramienta de administracion{" "}
               <LinkPreview
-                url="/login?nextUrl=/events"
+                url="/login?nextUrl=/dashboard/events"
                 isStatic={true}
                 imageSrc="/imgCalendar.svg"
                 className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
