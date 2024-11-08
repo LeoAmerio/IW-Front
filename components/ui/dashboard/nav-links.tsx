@@ -25,7 +25,7 @@ const links = [
   { name: 'Servicios', href: '/dashboard/servicios', icon: UserGroupIcon },
   { name: 'Eventos', href: '/dashboard/events', icon: CalendarIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
-  { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerStackIcon  },
+  { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerStackIcon, role: 'Colaborador' },
   // { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerIcon, role: 'Colaborador' },
 ];
 

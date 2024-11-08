@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { deleteProfessional } from '@/api/services.api'
+import { LinearProgress } from '@mui/material'
 
 type DeleteConfirmationDialogProps = {
   isOpen: boolean
@@ -17,33 +19,55 @@ type DeleteConfirmationDialogProps = {
 export function DeleteConfirmationDialog({ isOpen, onClose, professional }: DeleteConfirmationDialogProps) {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation({
-    mutationFn: (id: number) => axios.delete(`/api/professionals/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['professionals'])
-      onClose()
-    },
-  })
+  const deleteProfessionalMutation = useMutation(
+    ({ id }: { id: number }) =>
+      deleteProfessional(id),
+    {
+      onSuccess: (_, variables) => {
+        console.log(`Profesional ${variables.id} eliminado exitosamente`)
+        queryClient.invalidateQueries(['professionals'])
+        onClose()
+      },
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          console.error('Error al eliminar:', error.response?.status, error.message)
+        } else {
+          console.error('Error desconocido:', error)
+        }
+      }
+    }
+  );
 
   const handleDelete = () => {
-    if (professional) {
-      mutation.mutate(professional.id)
+    if (!professional || !professional.id) {
+      console.error('No hay profesional seleccionado')
+      // onClose()
+      return
     }
+
+    deleteProfessionalMutation.mutate({ id: professional?.id! })
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogTitle>Confirmacio de borrado</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete {professional?.nombre_proveedor}? This action cannot be undone.
+            Esta seguro de dar de baja a {professional?.nombre_proveedor}? Esta accion no se puede deshacer.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={deleteProfessionalMutation.isLoading || deleteProfessionalMutation.isSuccess}
+          >
+            Eliminar
+          </Button>
         </DialogFooter>
+        {deleteProfessionalMutation.isLoading && <LinearProgress />}
       </DialogContent>
     </Dialog>
   )
