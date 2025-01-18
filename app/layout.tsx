@@ -2,6 +2,7 @@ import QueryClientWrapper from "@/components/QueryClientWrapper";
 import { montserrat } from "../components/ui/fonts";
 import "../components/ui/global.css";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 export default function RootLayout({
   children,
@@ -13,7 +14,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
         <Toaster position="bottom-left" />
-        <QueryClientWrapper>{children}</QueryClientWrapper>
+        <QueryClientWrapper>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryClientWrapper>
         {/* <footer className="flex justify-center items-center py-10">
           Footer Here!
         </footer> */}

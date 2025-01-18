@@ -95,7 +95,8 @@ export default function ServicesPage() {
   });
 
   const separarPorCategorias = (servicios: Servicios[]) => {
-    const newCategorias = {
+    // TODO Cambiar por los id para que sea mas generico
+    const newCategorias = { 
       plomeria: servicios.filter(
         (servicio) => servicio.tipo.tipo === "Plomeria"
       ),
