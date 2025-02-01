@@ -26,48 +26,29 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient, useQuery } from "react-query";
 import CustomChip from "../ui/custom-chip-notfound";
+import { useDeletePost } from "../hooks/useDeletePost";
+import VerticalMenu from "../VerticalMenu/vertical-menu";
+import { useMenuActions } from "../hooks/useMenuActions";
 
 interface PostCardProps {
   posteo: Posteo;
+  onEdit: (Posteo: Posteo) => void;
 }
 
 const fetchPostDetails = async (postId: number): Promise<Posteo> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${postId}/`,
-  {
-    method: "GET",
-    headers: {
-      // "Content-Type": "application/json",
-      Authorization: `Token ${Cookies.get("token")}`,
-    },
-  }
-  );
-  if (!response.ok) {
-    throw new Error("Error fetching post details");
-  }
-  return response.json();
-};
-
-const deletePost = async (id: number) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${id}/`,
+    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/posteos/${postId}/`,
     {
-      method: "DELETE",
+      method: "GET",
       headers: {
         // "Content-Type": "application/json",
         Authorization: `Token ${Cookies.get("token")}`,
       },
     }
   );
-
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to delete post: ${response.status} ${errorText}`);
+    throw new Error("Error fetching post details");
   }
-
-  if (response.status === 204) {
-    return { status: 204 };
-  }
-
   return response.json();
 };
 
@@ -98,7 +79,7 @@ const postComentario = async ({
   return response.json();
 };
 
-const PostDetail = ({ posteo }: PostCardProps) => {
+const PostDetail = ({ posteo, onEdit }: PostCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [comentario, setComentario] = useState("");
   const userId = useAuthStore((state) => state.user_id);
@@ -109,48 +90,40 @@ const PostDetail = ({ posteo }: PostCardProps) => {
     return <div>Posteo no encontrado</div>;
   }
 
-  const { data: postDetails, isLoading, error } = useQuery(
-    ["post-detail", posteo.id],
-    () => fetchPostDetails(posteo.id)
-  );  
-
-  console.log("Posteo: ", posteo);
-  console.log("User ID: ", userId);
-  console.log("Post Query: ", postDetails)
+  const {
+    data: postDetails,
+    isLoading,
+    error,
+  } = useQuery(["post-detail", posteo.id], () => fetchPostDetails(posteo.id));
 
   const submitComentario = useMutation(
-    ({ contenido, posteoId }: { contenido: string, posteoId: number} ) => postComentario({contenido, posteoId}), {
-    onSuccess: () => {
-      toast.success("Comentario enviado exitosamente");
-      queryClient.invalidateQueries(["post-detail", posteo.id]);
-      setIsModalOpen(false);
-      setComentario("");
-      // window.location.href = "/dashboard";
-    },
-    onError: (error: Error) => {
-      toast.error(`Error al enviar el comentario: ${error.message}`);
-    },
-  });
+    ({ contenido, posteoId }: { contenido: string; posteoId: number }) =>
+      postComentario({ contenido, posteoId }),
+    {
+      onSuccess: () => {
+        toast.success("Comentario enviado exitosamente");
+        queryClient.invalidateQueries(["post-detail", posteo.id]);
+        setIsModalOpen(false);
+        setComentario("");
+        // window.location.href = "/dashboard";
+      },
+      onError: (error: Error) => {
+        toast.error(`Error al enviar el comentario: ${error.message}`);
+      },
+    }
+  );
+
+  // TODO Falta corregir este edit
+  const handleEditPost = (posteo: Posteo) => {
+    onEdit(posteo);
+  }
 
   const handleSubmitComentario = (e: React.FormEvent) => {
     e.preventDefault();
     submitComentario.mutate({ contenido: comentario, posteoId: posteo.id });
   };
 
-  const deletePostMutation = useMutation(deletePost, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries("posts");
-      toast.success("Posteo eliminado exitosamente");
-      // if (data.status === 204) {
-      //   redirect("/");
-      // }
-      window.location.href = "/dashboard";
-    },
-    onError: (error: Error) => {
-      // redirect("/");
-      window.location.href = "/dashboard";
-    },
-  });
+  const deletePostMutation = useDeletePost();
 
   const handleDeletePost = () => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este posteo?")) {
@@ -158,20 +131,33 @@ const PostDetail = ({ posteo }: PostCardProps) => {
     }
   };
 
+  const handleReportPost = () => {}
+
+  const menuActions = useMenuActions({
+    userId: userId,
+    ownerId: posteo.usuario.id,
+    onEdit: handleEditPost,
+    onDelete: handleDeletePost,
+    onReport: handleReportPost,
+    posteo: posteo,
+  });
+
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center mb-2">
             <CardTitle className="text-2xl">{posteo.titulo}</CardTitle>
-            {userId && posteo.usuario && userId === posteo.usuario.id && (
+            <VerticalMenu actions={menuActions} />
+
+            {/* {userId && posteo.usuario && userId === posteo.usuario.id && (
               <IconButton
                 onClick={handleDeletePost}
                 className="text-gray-500 hover:text-gray-700 justify-end"
               >
                 <TrashIcon className="h-5 w-5" />
               </IconButton>
-            )}
+            )} */}
           </div>
           <div className="flex justify-between items-center">
             <Badge variant="outline">{posteo.tipo_posteo.tipo}</Badge>
@@ -196,7 +182,6 @@ const PostDetail = ({ posteo }: PostCardProps) => {
               Autor: {posteo.usuario.piso} - {posteo.usuario.numero}
             </p>
           </div>
-          
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -226,7 +211,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
       </Card>
       <Card className="mt-2">
         <CardContent>
-        <div className="mt-4">
+          <div className="mt-4">
             <h3 className="text-lg font-semibold">Respuestas:</h3>
             {postDetails && postDetails.respuestas.length > 0 ? (
               postDetails.respuestas.map((respuesta) => (

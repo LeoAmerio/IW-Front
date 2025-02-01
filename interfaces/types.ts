@@ -119,3 +119,11 @@ export interface EventRequest {
   tipo_evento_id: number;
 }
 
+export interface MenuAction {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  onClick: () => void;
+  className?: string;
+  show?: boolean;
+}

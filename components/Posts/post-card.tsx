@@ -15,6 +15,9 @@ import { truncateDescription } from "../helpers/helpers";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useMenuActions } from "../hooks/useMenuActions";
+import VerticalMenu from "../VerticalMenu/vertical-menu";
+import { useDeletePost } from "../hooks/useDeletePost";
 
 interface PostCardProps {
   posteo: Posteo;
@@ -55,6 +58,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     }
   );
 
+  const deletePostMutation = useDeletePost();
+
   const open = Boolean(anchorEl);
 
   if (isLoading) {
@@ -76,47 +81,24 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setAnchorEl(null);
   };
 
-  const ITEM_HEIGHT = 48;
-
-  const menuItems = React.useMemo(() => {
-    const items = [];
-    
-    // Si el usuario es el dueño del post, agregar opciones de edición y eliminación
-    if (user_id === posteo.usuario.id) {
-      items.push(
-        <MenuItem 
-          key="edit" 
-          onClick={() => {
-            handleEditPost(posteo);
-            handleClose();
-          }}
-        >
-          <PencilIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle" />
-          Editar
-        </MenuItem>,
-        <MenuItem 
-          key="delete" 
-          onClick={handleClose}
-        >
-          <DeleteOutlineIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle fill-red-600" />
-          Eliminar
-        </MenuItem>
-      );
+  const handleDeletePost = () => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este posteo?")) {
+      deletePostMutation.mutate(posteo.id);
     }
-    
-    // Agregar opción de denuncia para todos
-    items.push(
-      <MenuItem 
-        key="report" 
-        onClick={handleClose}
-      >
-        <ReportGmailerrorredIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle fill-red-600" />
-        Denunciar
-      </MenuItem>
-    );
-    
-    return items;
-  }, [user_id, posteo, handleEditPost, handleClose]);
+  };
+
+  const handleReportPost = () => {
+    setAnchorEl(null);
+  };
+
+  const menuActions = useMenuActions({
+    userId: user_id,
+    ownerId: posteo.usuario.id,
+    onEdit: handleEditPost,
+    onDelete: handleDeletePost,
+    onReport: handleReportPost,
+    posteo: posteo,
+  });
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
@@ -124,36 +106,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
         <CardTitle className="text-2xl m-2 font-bold text-gray-900">
           {posteo.titulo}
         </CardTitle>
-        <div id="long-menu">
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            className="m-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            id="long-menu"
-            MenuListProps={{
-              "aria-labelledby": "long-button",
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              style: {
-                maxHeight: ITEM_HEIGHT * 4.5,
-                width: "20ch",
-              },
-            }}
-          >
-            {menuItems}
-          </Menu>
-        </div>
+        <VerticalMenu actions={menuActions} />
       </div>
       <Link
         href={`/dashboard/post/${posteo.id}`}
