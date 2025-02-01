@@ -6,12 +6,15 @@ import Link from "next/link";
 import { usePostStore } from "@/store/post-store";
 import Image from "next/image";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { CardHeader, IconButton } from "@mui/material";
+import { CardHeader, IconButton, Menu, MenuItem } from "@mui/material";
 import { useAuthStore } from "@/services/auth.service";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { toast } from "react-hot-toast";
 import { truncateDescription } from "../helpers/helpers";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 interface PostCardProps {
   posteo: Posteo;
@@ -39,6 +42,7 @@ const fetchUserById = async (user_id: number): Promise<User> => {
 
 const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const setPost = usePostStore((state) => state.setPosteo);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const user_id = useAuthStore((state) => state.user_id);
 
@@ -50,6 +54,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const open = Boolean(anchorEl);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -63,20 +69,91 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     onEdit(posteo);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const ITEM_HEIGHT = 48;
+
+  const menuItems = React.useMemo(() => {
+    const items = [];
+    
+    // Si el usuario es el dueño del post, agregar opciones de edición y eliminación
+    if (user_id === posteo.usuario.id) {
+      items.push(
+        <MenuItem 
+          key="edit" 
+          onClick={() => {
+            handleEditPost(posteo);
+            handleClose();
+          }}
+        >
+          <PencilIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle" />
+          Editar
+        </MenuItem>,
+        <MenuItem 
+          key="delete" 
+          onClick={handleClose}
+        >
+          <DeleteOutlineIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle fill-red-600" />
+          Eliminar
+        </MenuItem>
+      );
+    }
+    
+    // Agregar opción de denuncia para todos
+    items.push(
+      <MenuItem 
+        key="report" 
+        onClick={handleClose}
+      >
+        <ReportGmailerrorredIcon className="h-5 w-5 d-flex justify-end mr-2 align-middle fill-red-600" />
+        Denunciar
+      </MenuItem>
+    );
+    
+    return items;
+  }, [user_id, posteo, handleEditPost, handleClose]);
+
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
       <div className="flex justify-between items-center mb-2">
         <CardTitle className="text-2xl m-2 font-bold text-gray-900">
           {posteo.titulo}
         </CardTitle>
-        {user_id === posteo.usuario.id && (
+        <div id="long-menu">
           <IconButton
-            onClick={() => handleEditPost(posteo)}
+            aria-label="more"
+            id="long-button"
             className="m-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
           >
-            <PencilIcon className="h-5 w-5 d-flex justify-end" />
+            <MoreVertIcon />
           </IconButton>
-        )}
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: "20ch",
+              },
+            }}
+          >
+            {menuItems}
+          </Menu>
+        </div>
       </div>
       <Link
         href={`/dashboard/post/${posteo.id}`}
