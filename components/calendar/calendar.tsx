@@ -33,6 +33,7 @@ import DatePicker from "react-datepicker";
 import Cookies from 'js-cookie';
 import "react-datepicker/dist/react-datepicker.css";
 import { EventRequest, EventResponse } from "@/interfaces/types";
+import EventDialog from "../events/event-dialog";
 
 const locales = {
   es: es,
@@ -108,7 +109,7 @@ const MyCalendar: React.FC = () => {
 
   const {
     register,
-    handleSubmit,
+    // handleSubmit,
     reset,
     control,
     formState: { errors },
@@ -180,16 +181,29 @@ const MyCalendar: React.FC = () => {
     });
   };
 
-  const onSubmit = (data: EventRequest) => {
-    const eventData = {
-      titulo: data.titulo,
-      descripcion: data.descripcion,
-      fecha_inicio: format(data.fecha_inicio, "yyyy-MM-dd HH:mm:ss"),
-      fecha_fin: format(data.fecha_fin, "yyyy-MM-dd HH:mm:ss"),
-      tipo_evento_id: data.tipo_evento_id,
-    };
-    mutation.mutate(eventData);
+  const handleSubmit = (events: any[]) => {
+    // Si es un solo evento
+    if (!Array.isArray(events)) {
+      mutation.mutate(events);
+      return;
+    }
+
+    // Si son múltiples eventos
+    events.forEach(event => {
+      mutation.mutate(event);
+    });
   };
+
+  // const onSubmit = (data: EventRequest) => {
+  //   const eventData = {
+  //     titulo: data.titulo,
+  //     descripcion: data.descripcion,
+  //     fecha_inicio: format(data.fecha_inicio, "yyyy-MM-dd HH:mm:ss"),
+  //     fecha_fin: format(data.fecha_fin, "yyyy-MM-dd HH:mm:ss"),
+  //     tipo_evento_id: data.tipo_evento_id,
+  //   };
+  //   mutation.mutate(eventData);
+  // };
 
   return (
     <div style={{ height: 500 }}>
@@ -225,7 +239,17 @@ const MyCalendar: React.FC = () => {
           showMore: (total) => `+ Ver más (${total})`
         }}
       />
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <EventDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={handleSubmit}
+        defaultDate={
+          selectedSlot
+            ? { start: selectedSlot.start, end: selectedSlot.end }
+            : undefined
+        }
+      />
+      {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Crear Evento</DialogTitle>
@@ -348,7 +372,7 @@ const MyCalendar: React.FC = () => {
                       <SelectItem value="4">Reunión de Consorcio</SelectItem>
                       {/* <SelectItem value="4">
                         Ocupación de Espacios Comunes
-                      </SelectItem> */}
+                      </SelectItem> }/*
                     </SelectContent>
                   </Select>
                 )}
@@ -370,7 +394,7 @@ const MyCalendar: React.FC = () => {
             </div>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

@@ -70,7 +70,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setPost(posteo);
   };
 
-  const handleEditPost = (posteo: Posteo) => {
+  const handleEditPost = () => {
     onEdit(posteo);
   };
 

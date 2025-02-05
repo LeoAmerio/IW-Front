@@ -8,10 +8,17 @@ import { useState } from "react";
 import { Button } from "../ui/servicios/button";
 import { lusitana } from "../ui/fonts";
 import Cookies from "js-cookie";
-import { Link, LinearProgress } from "@mui/material";
+import {
+  Link,
+  LinearProgress,
+  FormControl,
+  InputLabel,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import { useMutation } from "react-query";
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
 import { useAuthStore } from "@/services/auth.service";
@@ -28,7 +35,10 @@ interface LoginRequest {
 
 const schema = yup.object().shape({
   email: yup.string().email().required("Ingrese el mail"),
-  password: yup.string().required().min(8, "La contraseña debe tener al menos 8 caracteres"),
+  password: yup
+    .string()
+    .required()
+    .min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
@@ -44,6 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessagge, setErrorMessagge] = useState("");
 
   const loginMutation = useMutation(
     ({ email, password }: LoginRequest) =>
@@ -57,9 +68,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       }).then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json();
+          //TODO Aca esta el mensaje de error que devuelve la api y debo mostrar.
+          setErrorMessagge(errorData.error);
           if (response.status === 400 && errorData.email) {
             // type TypeErrorMessage = ReturnType<typeof errorMessage>
             const errorMessage = errorData.email[0];
+            console.log("ERROR MESSAGGE", errorMessage);
             toast.error(errorMessage, { duration: 5000 });
           }
         }
@@ -71,32 +85,32 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
           setAuth(data.token, data.user_id, data.email);
           onLoginSuccess();
         }
-        return response.json
+        return response.json;
       }),
-      {
-        onSuccess: (data) => {
-        toast.success(`${data.arguments}`, { duration: 5000 })
+    {
+      onSuccess: (data) => {
+        toast.success(`${data.arguments}`, { duration: 5000 });
         setIsLoading(false);
         onLoginSuccess();
       },
       onError: (error: Error) => {
         setIsLoading(false);
         // toast.error(`${error.message}`, { duration: 5000 })
-      }
+      },
     }
-  )
+  );
 
   const onSubmit = async (data: LoginRequest) => {
-    if (!data.email) {
-      setError("email", { message: "Ingrese el mail" });
+    if (!data.email || errorMessagge !== "") {
+      setError("email", { message: errorMessagge });
     }
-    if (!data.password) {
-      setError("password", { message: "Ingrese la contraseña" });
+    if (!data.password || errorMessagge !== "") {
+      setError("password", { message: errorMessagge });
     }
     setIsLoading(true);
     loginMutation.mutate(data);
     // try {
-    //   const response = await 
+    //   const response = await
 
     //   if (response.ok) {
     //     const data = await response.json();
@@ -111,7 +125,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   };
 
   return (
-    <form className="space-y-3" onSubmit={handleSubmit(onSubmit)} noValidate={true}>
+    <form
+      className="space-y-3"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate={true}
+    >
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Por favor inicie sesion para continuar.
@@ -134,10 +152,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 // name="email"
                 placeholder="Ingrese su email"
                 required
-                {...register('email', { required: 'Email es requerido' })}
+                {...register("email", { required: "Email es requerido" })}
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
+            {}
+            {/* <label
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <FormControl>
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <>
+                    <TextField
+                      {...field}
+                      id="email"
+                      className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                      type="email"
+                      placeholder="  Ingrese su email"
+                      required
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      // {...register('email', { required: 'Email es requerido' })}
+                    />
+                  </>
+                )}
+              />
+            </FormControl> */}
           </div>
           <div className="mt-4">
             <label
@@ -157,7 +211,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 placeholder="Ingrese su contraseña"
                 required
                 minLength={6}
-                {...register('password', { required: 'Contraseña es requerida', minLength: 6 })}
+                {...register("password", {
+                  required: "Contraseña es requerida",
+                  minLength: 6,
+                })}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -167,20 +224,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
           ¿Olvidó su contraseña?
           </Link> */}
         <Button className="mt-4 w-full" type="submit">
-          Iniciar Sesion <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+          Iniciar Sesion{" "}
+          <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
-        <Button
-          className="mt-4 w-full"
-          onClick={onGoBack}
-        >
+        <Button className="mt-4 w-full" onClick={onGoBack}>
           Volver atrás
           <ArrowLeftIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
-          <div className="mt-3 text-center">
-            <Link href="/signup" className="text-blue-600 hover:underline">
-              ¿No tiene cuenta? Cree una aquí
-            </Link>
-          </div>
+        <div className="mt-3 text-center">
+          <Link href="/signup" className="text-blue-600 hover:underline">
+            ¿No tiene cuenta? Cree una aquí
+          </Link>
+        </div>
         {isLoading && <LinearProgress />}
       </div>
     </form>
