@@ -127,3 +127,19 @@ export interface MenuAction {
   className?: string;
   show?: boolean;
 }
+
+export interface Usuario {
+  id: number;
+  email: string;
+  nombre: string;
+  apellido: string;
+  rol_info: {
+    id: number;
+    rol: string;
+  };
+  is_active: boolean;
+  is_staff: boolean;
+  edificio: Edificio | null;
+  piso: string | null;
+  numero: string | null;
+}
