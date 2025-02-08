@@ -8,7 +8,7 @@ const LogoutButton = () => {
 
   const handleLogOut = async () => {
     Cookies.remove("token");
-    router.push("/");
+    router.push("/login");
   };
 
   return (

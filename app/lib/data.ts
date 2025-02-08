@@ -45,7 +45,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
-  const {  } = useQuery(['cant-users'])
+  // const {  } = useQuery(['cant-users'])
   // try {
   //   // You can probably combine these into a single SQL query
   //   // However, we are intentionally splitting them to demonstrate

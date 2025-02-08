@@ -32,7 +32,7 @@ import { useMenuActions } from "../hooks/useMenuActions";
 
 interface PostCardProps {
   posteo: Posteo;
-  onEdit: (Posteo: Posteo) => void;
+  // onEdit: (Posteo: Posteo) => void;
 }
 
 const fetchPostDetails = async (postId: number): Promise<Posteo> => {
@@ -79,7 +79,7 @@ const postComentario = async ({
   return response.json();
 };
 
-const PostDetail = ({ posteo, onEdit }: PostCardProps) => {
+const PostDetail = ({ posteo }: PostCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [comentario, setComentario] = useState("");
   const userId = useAuthStore((state) => state.user_id);
@@ -115,7 +115,7 @@ const PostDetail = ({ posteo, onEdit }: PostCardProps) => {
 
   // TODO Falta corregir este edit
   const handleEditPost = (posteo: Posteo) => {
-    onEdit(posteo);
+    // onEdit(posteo);
   }
 
   const handleSubmitComentario = (e: React.FormEvent) => {
@@ -136,7 +136,6 @@ const PostDetail = ({ posteo, onEdit }: PostCardProps) => {
   const menuActions = useMenuActions({
     userId: userId,
     ownerId: posteo.usuario.id,
-    onEdit: handleEditPost,
     onDelete: handleDeletePost,
     onReport: handleReportPost,
     posteo: posteo,

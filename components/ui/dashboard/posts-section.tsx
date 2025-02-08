@@ -459,7 +459,7 @@ const PostsSection = () => {
 
       <div className="mt-6 grid grid-cols-1 space-y-4">
         {selectedPost? (
-          <PostDetail key={selectedPost.id} posteo={selectedPost} onEdit={handleEdit} />
+          <PostDetail key={selectedPost.id} posteo={selectedPost} />
         ) : loadingData ? (
           <p>Cargando posteos...</p>
         ) : (
