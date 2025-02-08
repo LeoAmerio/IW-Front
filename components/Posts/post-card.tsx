@@ -6,12 +6,18 @@ import Link from "next/link";
 import { usePostStore } from "@/store/post-store";
 import Image from "next/image";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { CardHeader, IconButton } from "@mui/material";
+import { CardHeader, IconButton, Menu, MenuItem } from "@mui/material";
 import { useAuthStore } from "@/services/auth.service";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { toast } from "react-hot-toast";
 import { truncateDescription } from "../helpers/helpers";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useMenuActions } from "../hooks/useMenuActions";
+import VerticalMenu from "../VerticalMenu/vertical-menu";
+import { useDeletePost } from "../hooks/useDeletePost";
 
 interface PostCardProps {
   posteo: Posteo;
@@ -39,6 +45,7 @@ const fetchUserById = async (user_id: number): Promise<User> => {
 
 const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const setPost = usePostStore((state) => state.setPosteo);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const user_id = useAuthStore((state) => state.user_id);
 
@@ -51,6 +58,10 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     }
   );
 
+  const deletePostMutation = useDeletePost();
+
+  const open = Boolean(anchorEl);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -59,9 +70,35 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setPost(posteo);
   };
 
-  const handleEditPost = (posteo: Posteo) => {
+  const handleEditPost = () => {
     onEdit(posteo);
   };
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDeletePost = () => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este posteo?")) {
+      deletePostMutation.mutate(posteo.id);
+    }
+  };
+
+  const handleReportPost = () => {
+    setAnchorEl(null);
+  };
+
+  const menuActions = useMenuActions({
+    userId: user_id,
+    ownerId: posteo.usuario.id,
+    onEdit: handleEditPost,
+    onDelete: handleDeletePost,
+    onReport: handleReportPost,
+    posteo: posteo,
+  });
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
@@ -69,14 +106,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
         <CardTitle className="text-2xl m-2 font-bold text-gray-900">
           {posteo.titulo}
         </CardTitle>
-        {user_id === posteo.usuario.id && (
-          <IconButton
-            onClick={() => handleEditPost(posteo)}
-            className="m-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            <PencilIcon className="h-5 w-5 d-flex justify-end" />
-          </IconButton>
-        )}
+        <VerticalMenu actions={menuActions} />
       </div>
       <Link
         href={`/dashboard/post/${posteo.id}`}

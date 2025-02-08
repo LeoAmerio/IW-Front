@@ -6,7 +6,8 @@ import {
   DocumentDuplicateIcon,
   ServerIcon,
   ServerStackIcon,
-  CalendarIcon
+  CalendarIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,28 +25,30 @@ const links = [
   // },
   { name: 'Servicios', href: '/dashboard/servicios', icon: UserGroupIcon },
   { name: 'Eventos', href: '/dashboard/events', icon: CalendarIcon },
+  { name: 'Mensajes', href: '/dashboard/mensajes', icon: ChatBubbleLeftRightIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
   { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerStackIcon, role: 'Colaborador' },
-  // { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerIcon, role: 'Colaborador' },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
   const user_id = useAuthStore((state) => state.user_id);
+  console.log('user_id', user_id);
 
   const { data, isLoading } = useQuery(
     ['user', user_id], 
     () => fetchUserById(user_id), 
     {
       enabled: !!user_id,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMount: true,
       onError: (error: Error) => {
         console.error(`Fetch error ${error.message}`)
       }
     }
   );
+  console.log('data', data);
 
   if (isLoading) {
     return <div>Loading...</div>;

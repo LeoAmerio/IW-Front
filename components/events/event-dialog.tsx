@@ -1,0 +1,286 @@
+import React from 'react';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import DatePicker from "react-datepicker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { format } from "date-fns";
+import { EventRequest } from "@/interfaces/types";
+
+const schema = yup.object().shape({
+  titulo: yup.string().required("El título es requerido"),
+  descripcion: yup.string().required("La descripción es requerida"),
+  fecha_inicio: yup.date().required("La fecha de inicio es requerida"),
+  fecha_fin: yup.date().required("La fecha de fin es requerida"),
+  tipo_evento_id: yup.number().required("El tipo de evento es requerido"),
+  dias_repeticion: yup.array().of(yup.number())
+});
+
+const defaultValues = {
+  titulo: "",
+  descripcion: "",
+  fecha_inicio: new Date(),
+  fecha_fin: new Date(),
+  tipo_evento_id: 0,
+  dias_repeticion: []
+};
+
+const diasSemana = [
+  { letra: 'L', numero: 1 },
+  { letra: 'M', numero: 2 },
+  { letra: 'M', numero: 3 },
+  { letra: 'J', numero: 4 },
+  { letra: 'V', numero: 5 },
+  { letra: 'S', numero: 6 },
+  { letra: 'D', numero: 0 }
+];
+
+interface EventDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: any) => void;
+  defaultDate?: { start: Date; end: Date };
+}
+
+const EventDialog: React.FC<EventDialogProps> = ({
+  open,
+  onOpenChange,
+  onSubmit,
+  defaultDate
+}) => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      ...defaultValues,
+      fecha_inicio: defaultDate?.start || new Date(),
+      fecha_fin: defaultDate?.end || new Date(),
+    },
+  });
+
+  const dias_repeticion = watch('dias_repeticion') || [];
+
+  const handleDayToggle = (dayNumber: number) => {
+    const currentDays = [...dias_repeticion];
+    const dayIndex = currentDays.indexOf(dayNumber);
+    
+    if (dayIndex === -1) {
+      currentDays.push(dayNumber);
+    } else {
+      currentDays.splice(dayIndex, 1);
+    }
+    
+    setValue('dias_repeticion', currentDays);
+  };
+
+  const generateRecurringEvents = (formData: any) => {
+    if (!formData.dias_repeticion.length) {
+      return [formData];
+    }
+
+    const events = [];
+    const startDate = new Date(formData.fecha_inicio);
+    const endDate = new Date(formData.fecha_fin);
+    const yearEnd = new Date(startDate.getFullYear(), 11, 31);
+
+    // Si la fecha final es después del fin de año, usamos el fin de año
+    const effectiveEndDate = endDate > yearEnd ? yearEnd : endDate;
+
+    let currentDate = new Date(startDate);
+    while (currentDate <= effectiveEndDate) {
+      if (formData.dias_repeticion.includes(currentDate.getDay())) {
+        events.push({
+          ...formData,
+          fecha_inicio: format(currentDate, "yyyy-MM-dd HH:mm:ss"),
+          fecha_fin: format(new Date(currentDate.setHours(
+            endDate.getHours(),
+            endDate.getMinutes(),
+            endDate.getSeconds()
+          )), "yyyy-MM-dd HH:mm:ss"),
+        });
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+      currentDate = new Date(currentDate); // Crear nueva instancia para evitar mutaciones
+    }
+
+    return events;
+  };
+
+  const handleFormSubmit = (data: any) => {
+    const events = generateRecurringEvents({
+      ...data,
+      fecha_inicio: format(data.fecha_inicio, "yyyy-MM-dd HH:mm:ss"),
+      fecha_fin: format(data.fecha_fin, "yyyy-MM-dd HH:mm:ss"),
+    });
+    onSubmit(events);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Crear Evento</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <div className="w-full">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="titulo">
+              Título
+            </label>
+            <div className="relative">
+              <input
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                id="titulo"
+                type="text"
+                {...register("titulo")}
+                placeholder="Ingrese el título"
+              />
+            </div>
+            {errors.titulo && (
+              <p className="text-red-500 text-xs mt-1">{errors.titulo.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="descripcion">
+              Descripción
+            </label>
+            <div className="relative">
+              <input
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                id="descripcion"
+                type="text"
+                {...register("descripcion")}
+                placeholder="Ingrese la descripción"
+              />
+            </div>
+            {errors.descripcion && (
+              <p className="text-red-500 text-xs mt-1">{errors.descripcion.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900">
+              Fecha de Inicio
+            </label>
+            <Controller
+              control={control}
+              name="fecha_inicio"
+              render={({ field }) => (
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  showTimeSelect
+                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                />
+              )}
+            />
+            {errors.fecha_inicio && (
+              <p className="text-red-500 text-xs mt-1">{errors.fecha_inicio.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900">
+              Fecha de Fin
+            </label>
+            <Controller
+              control={control}
+              name="fecha_fin"
+              render={({ field }) => (
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  showTimeSelect
+                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                />
+              )}
+            />
+            {errors.fecha_fin && (
+              <p className="text-red-500 text-xs mt-1">{errors.fecha_fin.message}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <Label htmlFor="Evento">Evento</Label>
+            <Controller
+              name="tipo_evento_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  defaultValue={field.value.toString()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione un evento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Mantenimiento</SelectItem>
+                    <SelectItem value="2">Limpieza</SelectItem>
+                    <SelectItem value="3">Reformas</SelectItem>
+                    <SelectItem value="4">Reunión de Consorcio</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.tipo_evento_id && (
+              <p className="text-red-500 text-xs mt-1">{errors.tipo_evento_id.message}</p>
+            )}
+          </div>
+
+          <div className="w-full mt-4">
+            <Label>Repetir todos los...</Label>
+            <div className="flex gap-2 mt-2 justify-center align-middle">
+              {diasSemana.map(({ letra, numero }) => (
+                <button
+                  key={numero}
+                  type="button"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                    dias_repeticion.includes(numero)
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
+                  onClick={() => handleDayToggle(numero)}
+                >
+                  {letra}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => onOpenChange(false)} variant="outline" type="button">
+              Cancelar
+            </Button>
+            <Button type="submit" className="ml-2">
+              Crear
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default EventDialog;

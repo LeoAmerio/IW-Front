@@ -27,7 +27,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
           className="object-cover w-full h-full"
         />
       </div>
-      <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
+      <div className="lg:p-26 md:p-42 sm:20 p-8 w-full lg:w-1/2">
         {children}
       </div>
     </div>

@@ -17,14 +17,14 @@ export default async function Page() {
       <h1 className={`${lusitana.className} m-4 text-xl md:text-2xl`}>
         Dashboard
       </h1>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* <CardWrapper
+      {/* <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <CardWrapper
           numberOfCustomers={numberOfCustomers}
           numberOfInvoices={numberOfInvoices}
           totalPaidInvoices={totalPaidInvoices}
           totalPendingInvoices={totalPendingInvoices}
-        /> */}
-      </div>
+        />
+      </div> */}
       <PostsSection />
     </main>
   );

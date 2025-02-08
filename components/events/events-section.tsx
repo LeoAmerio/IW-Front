@@ -19,9 +19,7 @@ const getEvents = async (): Promise<EventResponse[]> => {
 };
 
 const EventsSections = () => {
-
   const { data: events, isLoading } = useQuery(["events"], getEvents)
-  console.log('EVENTO: ', events);
 
   return (
     <div>
