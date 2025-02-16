@@ -60,7 +60,7 @@ const EventCard = ({ event }: EventCardProps) => {
     <>
       <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
         <div className="flex justify-between items-center mb-2">
-          <CardTitle className="text-2xl m-2 font-bold text-gray-900">
+          <CardTitle className="text-2xl m-2 font-bold text-gray-900 dark:text-gray-200">
             {event.titulo}
           </CardTitle>
           <VerticalMenu actions={menuActions} />
@@ -86,7 +86,7 @@ const EventCard = ({ event }: EventCardProps) => {
               <Badge variant="secondary">{event.tipo_evento.tipo}</Badge>
             )}
             <div className="text-right">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 {event.fecha_inicio === event.fecha_fin
                   ? event.fecha_inicio
                   : `Desde ${event.fecha_inicio} hasta ${event.fecha_fin}`}

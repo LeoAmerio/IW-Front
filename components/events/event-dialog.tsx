@@ -137,18 +137,18 @@ const EventDialog: React.FC<EventDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="dark:bg-[#020817]">
         <DialogHeader>
-          <DialogTitle>Crear Evento</DialogTitle>
+          <DialogTitle className="dark:text-gray-300">Crear Evento</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <div className="w-full">
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="titulo">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300" htmlFor="titulo">
               Título
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 id="titulo"
                 type="text"
                 {...register("titulo")}
@@ -161,12 +161,12 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="w-full">
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="descripcion">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300" htmlFor="descripcion">
               Descripción
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 id="descripcion"
                 type="text"
                 {...register("descripcion")}
@@ -179,7 +179,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="w-full">
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300">
               Fecha de Inicio
             </label>
             <Controller
@@ -191,7 +191,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   onChange={(date) => field.onChange(date)}
                   showTimeSelect
                   dateFormat="yyyy-MM-dd HH:mm:ss"
-                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500  dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 />
               )}
             />
@@ -201,7 +201,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="w-full">
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900">
+            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-200">
               Fecha de Fin
             </label>
             <Controller
@@ -213,7 +213,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   onChange={(date) => field.onChange(date)}
                   showTimeSelect
                   dateFormat="yyyy-MM-dd HH:mm:ss"
-                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500"
+                  className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500  dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 />
               )}
             />
@@ -223,7 +223,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="w-full">
-            <Label htmlFor="Evento">Evento</Label>
+            <Label htmlFor="Evento" className='dark:text-gray-300'>Evento</Label>
             <Controller
               name="tipo_evento_id"
               control={control}
@@ -232,14 +232,14 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   onValueChange={(value) => field.onChange(Number(value))}
                   defaultValue={field.value.toString()}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                     <SelectValue placeholder="Seleccione un evento" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Mantenimiento</SelectItem>
-                    <SelectItem value="2">Limpieza</SelectItem>
-                    <SelectItem value="3">Reformas</SelectItem>
-                    <SelectItem value="4">Reunión de Consorcio</SelectItem>
+                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
+                    <SelectItem value="1" className="dark:text-white dark:focus:bg-gray-700">Mantenimiento</SelectItem>
+                    <SelectItem value="2" className="dark:text-white dark:focus:bg-gray-700">Limpieza</SelectItem>
+                    <SelectItem value="3" className="dark:text-white dark:focus:bg-gray-700">Reformas</SelectItem>
+                    <SelectItem value="4" className="dark:text-white dark:focus:bg-gray-700">Reunión de Consorcio</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -250,7 +250,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="w-full mt-4">
-            <Label>Repetir todos los...</Label>
+            <Label className="dark:text-gray-200">Repetir todos los...</Label>
             <div className="flex gap-2 mt-2 justify-center align-middle">
               {diasSemana.map(({ letra, numero }) => (
                 <button
@@ -259,7 +259,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
                     dias_repeticion.includes(numero)
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700'
+                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
                   }`}
                   onClick={() => handleDayToggle(numero)}
                 >
@@ -270,7 +270,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           </div>
 
           <div className="flex justify-end mt-4">
-            <Button onClick={() => onOpenChange(false)} variant="outline" type="button">
+            <Button onClick={() => onOpenChange(false)} variant="outline" type="button" className="dark:border-gray-700 dark:text-gray-200">
               Cancelar
             </Button>
             <Button type="submit" className="ml-2">

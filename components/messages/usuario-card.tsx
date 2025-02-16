@@ -61,7 +61,7 @@ export const UsuarioCard: React.FC<UsuarioCardProps> = ({ usuario, conversacionE
   };
 
   return (
-    <div className="flex flex-col p-4 bg-white rounded-lg shadow-md">
+    <div className="flex flex-col p-4 bg-white rounded-lg shadow-md dark:bg-gray-700">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <Image
@@ -76,7 +76,7 @@ export const UsuarioCard: React.FC<UsuarioCardProps> = ({ usuario, conversacionE
           <h3 className="text-lg font-semibold">
             {usuario.nombre} {usuario.apellido}
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {usuario.edificio ? `${usuario.edificio.nombre}, ` : ""}
             {usuario.piso && usuario.numero
               ? `Piso ${usuario.piso}, Depto ${usuario.numero}`
