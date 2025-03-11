@@ -7,32 +7,36 @@ import { LinkPreview } from "@/components/ui/link-preview";
 export default function Page() {
   return (
     <>
-      <main className="flex min-h-screen flex-col p-6">
-        {/* <CardWithBackground img='/cat.png' alt='desde home' classNamesDivLogo='flex h-20 shrink-0 items-end rounded-lg p-4 md:h-52 w-32 text-white md:w-40 z-10 relative' /> */}
+      <main className="flex min-h-screen flex-col p-6 dark:bg-gray-900">
         <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52 ">
           <AcmeLogo />
         </div>
-        <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-          <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
+        <div className="mt-4 flex grow flex-col gap-4 md:flex-row dark:bg-gray-800 bg-gray-50 rounded-lg">
+          <div className="flex flex-col justify-center gap-6 px-6 py-10 md:w-2/5 md:px-20 dark:bg-gray-800 bg-gray-50 rounded-lg">
             <p
-              className={`text-xl text-gray-800 md:text-3xl md:leading-normal`}
+              className={`text-xl text-gray-800 md:text-3xl md:leading-normal 
+                          dark:text-white  // This ensures other text is white in dark mode
+                        `}
             >
-              <strong>Bienvenido a{" "} 
+              <strong>
+                Bienvenido a{" "}
                 <LinkPreview
                   url="/login?nextUrl=/dashboard"
                   imageSrc="/CapturaTrampa.png"
                   isStatic={true}
-                  className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
+                  className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500 
+                          dark:from-purple-500 dark:to-pink-500 dark:text-transparent"
                 >
-                  Housinger.
+                  Housinger.{" "}
                 </LinkPreview>
-              </strong> 
+              </strong>
               La mejor herramienta de administracion{" "}
               <LinkPreview
                 url="/login?nextUrl=/dashboard/events"
                 isStatic={true}
                 imageSrc="/imgCalendar.svg"
-                className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500"
+                className="font-bold bg-clip-text text-transparent bg-gradient-to-br from-purple-500 to-pink-500 
+                        dark:from-purple-500 dark:to-pink-500 dark:text-transparent"
               >
                 para su edificio
               </LinkPreview>

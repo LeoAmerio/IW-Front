@@ -198,8 +198,16 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
           </CardContent>
         </Link>
       </Card>
-      <Dialog open={openReportDialog} onClose={handleCloseReportDialog}>
-        <DialogTitle>Denunciar Posteo</DialogTitle>
+      <Dialog
+        open={openReportDialog}
+        onClose={handleCloseReportDialog}
+        PaperProps={{
+          className: "dark:bg-[#020817]",
+        }}
+      >
+        <DialogTitle className="dark:text-gray-300">
+          Denunciar Posteo
+        </DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">
             <InputLabel id="report-type-label">Tipo de denuncia</InputLabel>
@@ -209,16 +217,41 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
               value={reportType}
               label="Tipo de denuncia"
               onChange={handleReportTypeChange}
+              className="dark:text-gray-300 dark:field-text-white"
+              sx={{
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+              }}
             >
-              <MenuItem value={TipoDenuncia.SPAM.toLowerCase()}>Spam</MenuItem>
-              <MenuItem value={TipoDenuncia.ACOSO.toLowerCase()}>
+              <MenuItem
+                value={TipoDenuncia.SPAM.toLowerCase()}
+                className="dark:text-gray-300 dark:bg-gray-700"
+              >
+                Spam
+              </MenuItem>
+              <MenuItem
+                value={TipoDenuncia.ACOSO.toLowerCase()}
+                className="dark:text-gray-300 dark:bg-gray-700"
+              >
                 Acoso
               </MenuItem>
-              <MenuItem value={TipoDenuncia.CONTENIDO_INDEVIDO.toLowerCase()}>
+              <MenuItem
+                value={TipoDenuncia.CONTENIDO_INDEVIDO.toLowerCase()}
+                className="dark:text-gray-300 dark:bg-gray-700"
+              >
                 Contenido indebido
               </MenuItem>
             </Select>
-            <FormHelperText>Seleccione el tipo de denuncia</FormHelperText>
+            <FormHelperText className="dark:text-gray-400">
+              Seleccione el tipo de denuncia
+            </FormHelperText>
           </FormControl>
           <TextField
             autoFocus
@@ -232,16 +265,41 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
             onChange={(e) => setReportComment(e.target.value)}
             multiline
             rows={4}
+            className="dark:text-white"
+            sx={{
+              "& .MuiInputLabel-root": {
+                color: "rgba(255, 255, 255, 0.7)",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+                "&:hover fieldset": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+              },
+              "& .MuiInputBase-input": {
+                color: "white",
+              },
+            }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseReportDialog} color="primary">
+          <Button
+            onClick={handleCloseReportDialog}
+            color="primary"
+            className="dark:text-gray-300 dark:hover:text-gray-900 dark:hover:bg-gray-300 dark:bg-gray-700"
+          >
             Cancelar
           </Button>
           <Button
             onClick={handleSubmitReport}
             color="primary"
             variant="default"
+            className="dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
           >
             Denunciar
           </Button>

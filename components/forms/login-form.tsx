@@ -22,6 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
 import { useAuthStore } from "@/services/auth.service";
+import PasswordResetPopup from "./PasswordResetPopup";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -55,6 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessagge, setErrorMessagge] = useState("");
+  const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
 
   const loginMutation = useMutation(
     ({ email, password }: LoginRequest) =>
@@ -100,6 +102,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     }
   );
 
+  const handleOpenResetPopup = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    setIsResetPopupOpen(true);
+  };
+
   const onSubmit = async (data: LoginRequest) => {
     if (!data.email || errorMessagge !== "") {
       setError("email", { message: errorMessagge });
@@ -130,21 +137,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       onSubmit={handleSubmit(onSubmit)}
       noValidate={true}
     >
-      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+      <div className="flex-1 rounded-lg bg-gray-50 dark:bg-gray-800 px-6 pb-4 pt-8">
+        <h1 className={`${lusitana.className} mb-3 text-2xl text-gray-900 dark:text-gray-100`}>
           Por favor inicie sesion para continuar.
         </h1>
         <div className="w-full">
           <div>
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300"
               htmlFor="email"
             >
               Email
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 dark:border-gray-700 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400"
                 id="email"
                 type="email"
                 // value={email}
@@ -154,55 +161,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 required
                 {...register("email", { required: "Email es requerido" })}
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>
-            {}
-            {/* <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <FormControl>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <>
-                    <TextField
-                      {...field}
-                      id="email"
-                      className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                      type="email"
-                      placeholder="  Ingrese su email"
-                      required
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      // {...register('email', { required: 'Email es requerido' })}
-                    />
-                  </>
-                )}
-              />
-            </FormControl> */}
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+            )}
           </div>
           <div className="mt-4">
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300"
               htmlFor="password"
             >
               Contraseña
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 dark:border-gray-700 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400"
                 id="password"
                 type="password"
                 // value={password}
@@ -216,8 +190,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                   minLength: 6,
                 })}
               />
-              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+            )}
           </div>
         </div>
         {/* <Link component={<Landing} to={} sx={{ color: "#ffff" }}>
@@ -236,8 +213,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
             ¿No tiene cuenta? Cree una aquí
           </Link>
         </div>
+        <div className="mt-3 text-center">
+        <a
+          href="#"
+          className="text-blue-600 hover:underline"
+          onClick={handleOpenResetPopup}
+        >
+          Recuperar Contraseña
+        </a>
+      </div>
         {isLoading && <LinearProgress />}
       </div>
+
+      <PasswordResetPopup 
+        isOpen={isResetPopupOpen} 
+        onClose={() => setIsResetPopupOpen(false)} 
+      />
     </form>
   );
 };

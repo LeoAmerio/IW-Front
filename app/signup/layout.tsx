@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 export default function SignupLayout({ children }: { children: ReactNode }) {
   return (
     <div className="bg-gray-100 flex justify-center items-center h-screen">
-      <div className="w-1/2 h-screen hidden lg:flex lg:flex-col items-center justify-center bg-indigo-700">
+      <div className="w-1/2 h-screen hidden lg:flex lg:flex-col items-center justify-center bg-gray-800 dark:bg-gray-800">
         {/* <div className="pixels-photo">
           <a
             href="https://500px.com/photo/77888323/living-by-arild-aarnes"
@@ -27,7 +27,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
           className="object-cover w-full h-full"
         />
       </div>
-      <div className="lg:p-26 md:p-42 sm:20 p-8 w-full lg:w-1/2">
+      <div className="lg:p-26 md:p-42 sm:20 p-8 w-full lg:w-1/2 dark:bg-gray-900">
         {children}
       </div>
     </div>

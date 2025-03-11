@@ -2,8 +2,6 @@ import { fetchCardData } from "@/app/lib/data";
 import { lusitana } from "@/components/ui/fonts";
 import CardWrapper from "@/components/ui/dashboard/cards";
 import PostsSection from "@/components/ui/dashboard/posts-section";
-import { ThemeToggle } from "@/components/ThemeSwitcher/theme-toggle";
-import { ModeToggle } from "@/components/ThemeSwitcher/mode-toggle";
 
 export default async function Page() {
   // const {
@@ -19,8 +17,6 @@ export default async function Page() {
       <h1 className={`${lusitana.className} m-4 text-xl md:text-2xl`}>
         Dashboard
       </h1>
-      <ThemeToggle />
-      {/* <ModeToggle /> */}
       {/* <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <CardWrapper
           numberOfCustomers={numberOfCustomers}

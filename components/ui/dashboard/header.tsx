@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { IconSettings, IconSettings2 } from "@tabler/icons-react";
+import { ThemeToggle } from "@/components/ThemeSwitcher/theme-toggle";
 
 export default function Header() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function Header() {
       {/* <h1 className="text-xl font-semibold">Dashboard</h1> */}
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
