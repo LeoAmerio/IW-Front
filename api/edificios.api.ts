@@ -1,12 +1,13 @@
 import { Edificio, Posteo, PosteoRequest, SearchParams } from '@/interfaces/types';
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
+import { useAuthStore } from "@/store/auth/auth.store";
 
 class EdificoApi {
   http() {
-    // const token = useAuthStore.getState().token;
-    const token = Cookies.get('token');
-    // console.log('Token: ', token);
+    const token = useAuthStore((state) => state.token);
+    // const token = Cookies.get('token');
+    console.log('Token: ', token);
     const headers = {
       'Content-Type': 'multipart/form-data',
       Authorization: `Token ${token}`,

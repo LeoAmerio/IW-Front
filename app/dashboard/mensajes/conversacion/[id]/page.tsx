@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { IconSend } from "@tabler/icons-react";
 import Cookies from "js-cookie";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 interface Mensaje {
   id: number;

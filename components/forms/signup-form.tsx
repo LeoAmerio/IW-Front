@@ -19,6 +19,7 @@ import edificiosApi from "@/api/edificios.api";
 import propiedadesApi from "@/api/propiedades.api";
 import { toast } from "react-hot-toast";
 import { Select } from "../ui/select";
+import AuthService from "@/services/auth.service";
 
 const fetchEdificios = async () => {
   const { data } = await propiedadesApi.getEdificios();
@@ -74,24 +75,38 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
   });
 
   const signupMutation = useMutation(
-    ({ email, nombre, apellido, password, edificio, piso, numero }: SignupFormData) =>
-      fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/registro/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, nombre, apellido, password, rol: 3, edificio, piso, numero }),
-      }).then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          if(response.status === 400 && errorData.email) {
-            // throw new Error(errorData.email[0]);
-            toast.error(errorData.email[0]);
-          }
-          // throw new Error("Ha ocurrido un error en el registro.");
-        }
-        return response.json();
-      }),
+    // ({ email, nombre, apellido, password, edificio, piso, numero }: SignupFormData) =>
+    //   fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/registro/`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ email, nombre, apellido, password, rol: 3, edificio, piso, numero }),
+    //   }).then(async (response) => {
+    //     if (!response.ok) {
+    //       const errorData = await response.json();
+    //       if(response.status === 400 && errorData.email) {
+    //         // throw new Error(errorData.email[0]);
+    //         toast.error(errorData.email[0]);
+    //       }
+    //       // throw new Error("Ha ocurrido un error en el registro.");
+    //     }
+    //     return response.json();
+    //   }),
+    async (signupData: SignupFormData) => {
+      // Envías la petición al AuthService
+      const response = await AuthService.signup({
+        email: signupData.email,
+        nombre: signupData.nombre,
+        apellido: signupData.apellido,
+        password: signupData.password,
+        edificio: signupData.edificio,
+        piso: signupData.piso,
+        numero: signupData.numero,
+        rol: 3,
+      });
+      return response;
+    },
     {
       onSuccess: (data) => {
         // Cookies.set("token", data.token, { expires: 1 });

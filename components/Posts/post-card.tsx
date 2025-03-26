@@ -18,7 +18,6 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { useAuthStore } from "@/services/auth.service";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { truncateDescription } from "../helpers/helpers";
@@ -27,6 +26,7 @@ import VerticalMenu from "../VerticalMenu/vertical-menu";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { useReportPost } from "../hooks/useReportPost";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 enum TipoDenuncia {
   SPAM = "SPAM",
@@ -133,7 +133,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   };
 
   const menuActions = useMenuActions({
-    userId: user_id,
+    userId: user_id!,
     ownerId: posteo.usuario.id,
     onEdit: handleEditPost,
     onDelete: handleDeletePost,

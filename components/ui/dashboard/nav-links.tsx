@@ -1,5 +1,5 @@
 'use client';
-import { useAuthStore } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth/auth.store';
 import {
   UserGroupIcon,
   HomeIcon,
@@ -38,7 +38,7 @@ export default function NavLinks() {
 
   const { data, isLoading } = useQuery(
     ['user', user_id], 
-    () => fetchUserById(user_id), 
+    () => fetchUserById(user_id!), 
     {
       enabled: !!user_id,
       refetchOnWindowFocus: true,

@@ -5,7 +5,7 @@ import { Card, Carousel } from "./cards-services";
 import { ListProfessionals } from "./list-professionals";
 import { Servicios } from "@/interfaces/types";
 import { useQuery } from "react-query";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 import { fetchUserById } from "@/api/user.api";
 import { LinearProgress } from "@mui/material";
 import { fetchServicios } from "@/api/services.api";
@@ -31,7 +31,7 @@ export function Serivcios() {
 
   const { data: user, isLoading } = useQuery(
     ["user", user_id],
-    () => fetchUserById(user_id),
+    () => fetchUserById(user_id!),
     {
       enabled: !!user_id,
       refetchOnWindowFocus: false,

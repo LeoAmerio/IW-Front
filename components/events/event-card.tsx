@@ -5,7 +5,7 @@ import { Card, CardContent, CardTitle } from "../ui";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 import { truncateDescription } from "../helpers/helpers";
 import VerticalMenu from "../VerticalMenu/vertical-menu";
 import { useMenuActions } from "../hooks/useMenuActions";
@@ -48,7 +48,7 @@ const EventCard = ({ event }: EventCardProps) => {
   const handleReportEvent = () => {};
 
   const menuActions = useMenuActions({
-    userId: user_id,
+    userId: user_id!,
     ownerId: event.usuario,
     onEdit: () => handleEditEvent,
     onDelete: handleModalDelete,

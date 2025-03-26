@@ -21,8 +21,9 @@ import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
-import { useAuthStore } from "@/services/auth.service";
 import PasswordResetPopup from "./PasswordResetPopup";
+import { useAuthStore } from "@/store/auth/auth.store";
+import AuthService from "@/services/auth.service";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -53,51 +54,75 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     resolver: yupResolver(schema),
   });
 
-  const setAuth = useAuthStore((state) => state.setAuth);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessagge, setErrorMessagge] = useState("");
   const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
 
-  const loginMutation = useMutation(
-    ({ email, password }: LoginRequest) =>
-      fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify({ email, password }),
-      }).then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          //TODO Aca esta el mensaje de error que devuelve la api y debo mostrar.
-          setErrorMessagge(errorData.error);
-          if (response.status === 400 && errorData.email) {
-            // type TypeErrorMessage = ReturnType<typeof errorMessage>
-            const errorMessage = errorData.email[0];
-            console.log("ERROR MESSAGGE", errorMessage);
-            toast.error(errorMessage, { duration: 5000 });
-          }
-        }
+  // const loginZustand = useAuthStore((state) => state.login);
 
-        if (response.ok) {
-          const data = await response.json();
-          // Cookies.set("token", data.token, { expires: 1 });
-          Cookies.set("token", data.token);
-          setAuth(data.token, data.user_id, data.email);
-          onLoginSuccess();
-        }
-        return response.json;
-      }),
+
+  // const loginMutation = useMutation(
+  //   ({ email, password }: LoginRequest) =>
+  //     fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login/`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Authorization": `Bearer ${Cookies.get("token")}`,
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     }).then(async (response) => {
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         //TODO Aca esta el mensaje de error que devuelve la api y debo mostrar.
+  //         setErrorMessagge(errorData.error);
+  //         if (response.status === 400 && errorData.email) {
+  //           // type TypeErrorMessage = ReturnType<typeof errorMessage>
+  //           const errorMessage = errorData.email[0];
+  //           console.log("ERROR MESSAGGE", errorMessage);
+  //           toast.error(errorMessage, { duration: 5000 });
+  //         }
+  //       }
+
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         // Cookies.set("token", data.token, { expires: 1 });
+  //         Cookies.set("token", data.token);
+  //         setAuth(data.token, data.user_id, data.email);
+  //         onLoginSuccess();
+  //       }
+  //       return response.json;
+  //     }),
+  //   {
+  //     onSuccess: (data) => {
+  //       toast.success(`${data.arguments}`, { duration: 5000 });
+  //       setIsLoading(false);
+  //       onLoginSuccess();
+  //     },
+  //     onError: (error: Error) => {
+  //       setIsLoading(false);
+  //       // toast.error(`${error.message}`, { duration: 5000 })
+  //     },
+  //   }
+  // );
+  const loginMutation = useMutation(
+    async (data: LoginRequest) => {
+      // Llamamos directamente a login() del store, que a su vez llama al AuthService
+      // await loginZustand(data.email, data.password);
+      await AuthService.login(data.email, data.password)
+    },
     {
-      onSuccess: (data) => {
-        toast.success(`${data.arguments}`, { duration: 5000 });
+      onSuccess: () => {
+        toast.success("Login exitoso");
         setIsLoading(false);
         onLoginSuccess();
       },
-      onError: (error: Error) => {
+      onError: (error: any) => {
+        // Si el backend respondió con un mensaje de error, lo mostramos
+        const errMsg = error?.message || "No se pudo iniciar sesión";
+        toast.error(errMsg);
+        setError("email", { message: errMsg }); // Ejemplo: setear error en el form
+        setError("password", { message: errMsg });
         setIsLoading(false);
-        // toast.error(`${error.message}`, { duration: 5000 })
       },
     }
   );
@@ -116,19 +141,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     }
     setIsLoading(true);
     loginMutation.mutate(data);
-    // try {
-    //   const response = await
-
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     Cookies.set("token", data.token, { expires: 1 }); // Set the token in a cookie for 1 day
-    //     onLoginSuccess();
-    //   } else {
-    //     console.error("Login failed");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   return (

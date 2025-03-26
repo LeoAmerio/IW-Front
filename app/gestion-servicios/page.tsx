@@ -24,7 +24,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { CrudOperation, Servicios } from "@/interfaces/types";
 import { ProfessionalDialog } from "@/components/servicios-gestion/professional-dialog";
 import { DeleteConfirmationDialog } from "@/components/servicios-gestion/confirmation-dialog";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 import { fetchUserById } from "@/api/user.api";
 import { fetchServicios } from "@/api/services.api";
 
@@ -67,7 +67,7 @@ export default function ServicesPage() {
 
   const { data: user, isLoading: loadingUser } = useQuery(
     ["user", user_id],
-    () => fetchUserById(user_id),
+    () => fetchUserById(user_id!),
     {
       enabled: !!user_id,
       refetchOnWindowFocus: false,

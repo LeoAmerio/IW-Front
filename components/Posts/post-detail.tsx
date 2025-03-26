@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Posteo } from "@/interfaces/types";
 import { IconButton } from "@mui/material";
 import Cookies from "js-cookie";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store"; 
 import { TrashIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient, useQuery } from "react-query";
@@ -134,7 +134,7 @@ const PostDetail = ({ posteo }: PostCardProps) => {
   const handleReportPost = () => {}
 
   const menuActions = useMenuActions({
-    userId: userId,
+    userId: userId!,
     ownerId: posteo.usuario.id,
     onDelete: handleDeletePost,
     onReport: handleReportPost,

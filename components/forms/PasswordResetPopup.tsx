@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRightIcon, ArrowLeftIcon, XIcon } from "lucide-react";
 import axios from "axios";
+import AuthService from "@/services/auth.service";
 
 const PasswordResetPopup = ({
   isOpen,
@@ -62,14 +63,19 @@ const PasswordResetPopup = ({
     setIsLoading(true);
 
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/reset-password/`,
-        {
-          email: email,
-          token: token,
-          new_password: newPassword,
-        }
-      );
+      // await axios.post(
+      //   `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/reset-password/`,
+      //   {
+      //     email: email,
+      //     token: token,
+      //     new_password: newPassword,
+      //   }
+      // );
+      const response = await AuthService.resetPassword({
+        email,
+        token,
+        new_password: newPassword,
+      });
       setSuccessMessage("Su contraseña ha sido restablecida correctamente");
       setIsLoading(false);
       setStep(3);
