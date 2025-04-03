@@ -3,6 +3,8 @@ import { montserrat } from "../components/ui/fonts";
 import "../components/ui/global.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({
   children,
@@ -24,6 +26,8 @@ export default function RootLayout({
             {children}
           </QueryClientWrapper>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
         {/* <footer className="flex justify-center items-center py-10">
           Footer Here!
         </footer> */}
