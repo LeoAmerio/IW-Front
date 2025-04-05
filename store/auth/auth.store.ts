@@ -17,6 +17,9 @@ export interface LoginResponse {
   email: string;
 }
 
+// Tipo parcial para el usuario inicial
+type PartialUser = Pick<User, 'id' | 'email'>;
+
 export interface AuthState {
   // State
   status: AuthStatus;
@@ -77,14 +80,16 @@ const useAuthStore = create<AuthState>()(
             // Guardar el token en cookies para peticiones de API
             Cookies.set('token', data.token);
             
-            // Actualizar el estado
+            // Actualizar el estado con un usuario parcial
+            const partialUser: PartialUser = {
+              id: data.user_id,
+              email: data.email,
+            };
+            
             set({ 
               status: 'Authorized', 
               token: data.token, 
-              user: {
-                id: data.user_id,
-                email: data.email,
-              },
+              user: partialUser as User, // Usar type assertion para evitar el error
               isLoading: false,
               error: null,
               isAuthenticated: true
