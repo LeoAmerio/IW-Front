@@ -46,7 +46,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     // Revalidate auth every 10 minutes
     const revalidationInterval = setInterval(() => {
-      console.log('Revalidating authentication token...');
       initializeAuth();
     }, 10 * 60 * 1000); // 10 minutes
 

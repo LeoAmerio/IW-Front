@@ -23,8 +23,6 @@ type ReportsTableProps = {
 
 export function ReportsTable({ initialReports }: ReportsTableProps) {
   const [reports, setReports] = useState<Report[]>(initialReports)
-  console.log('initialReports', initialReports)
-  console.log('reports', reports)
   const [selectedReport, setSelectedReport] = useState<Report | null>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false)
@@ -32,7 +30,6 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
   useEffect(() => {
     if (Array.isArray(initialReports) && initialReports.length > 0) {
       setReports(initialReports);
-      console.log('Reports actualizados:', initialReports);
     }
   }, [initialReports]);
 

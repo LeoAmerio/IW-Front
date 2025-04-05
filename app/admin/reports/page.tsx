@@ -13,7 +13,6 @@ const fetchReports2 = async () => {
 
 export default function ReportsPage() {
   const { data: reports = [] } = useQuery(['reports'], fetchReports2)
-  console.log(reports)
 
   return (
     <div className="container mx-auto py-10">

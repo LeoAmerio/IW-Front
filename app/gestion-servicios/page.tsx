@@ -80,8 +80,6 @@ export default function ServicesPage() {
     }
   );
 
-  console.log("USER: ", user);
-
   const { data: professionals, isLoading: loadingGetServicios } = useQuery<
     Servicios[]
   >(["professionals", user?.edificio?.id], fetchServicios, {

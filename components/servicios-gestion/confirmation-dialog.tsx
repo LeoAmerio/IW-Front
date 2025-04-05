@@ -24,7 +24,6 @@ export function DeleteConfirmationDialog({ isOpen, onClose, professional }: Dele
       deleteProfessional(id),
     {
       onSuccess: (_, variables) => {
-        console.log(`Profesional ${variables.id} eliminado exitosamente`)
         queryClient.invalidateQueries(['professionals'])
         onClose()
       },

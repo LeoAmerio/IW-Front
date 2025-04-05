@@ -60,7 +60,6 @@ export default function RequireAuth({
       // Guardar la ruta actual para redireccionar después del login
       const returnUrl = encodeURIComponent(pathname);
       
-      console.log(`Redirigiendo a login desde: ${pathname}`);
       router.push(`/login?returnUrl=${returnUrl}`);
       return;
     }
