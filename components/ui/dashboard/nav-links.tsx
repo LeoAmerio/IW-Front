@@ -1,5 +1,5 @@
 'use client';
-import { useAuthStore } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth/auth.store';
 import {
   UserGroupIcon,
   HomeIcon,
@@ -7,14 +7,14 @@ import {
   ServerIcon,
   ServerStackIcon,
   CalendarIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  PaperClipIcon,
+  ClipboardDocumentListIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Cookies from "js-cookie";
-import { useQuery } from 'react-query';
-import { User } from '@/interfaces/user.interface';
-import { fetchUserById } from '@/api/user.api';
+import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
@@ -28,49 +28,53 @@ const links = [
   { name: 'Mensajes', href: '/dashboard/mensajes', icon: ChatBubbleLeftRightIcon },
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
   { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerStackIcon, role: 'Colaborador' },
+  { name: 'Gestion de Denuncias', href: '/admin/reports', icon: ClipboardDocumentListIcon, role: 'Colaborador' },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
-  const user_id = useAuthStore((state) => state.user_id);
-  console.log('user_id', user_id);
+  const { user, isLoading, isAuthenticated, token, initializeAuth } = useAuthStore(state => ({
+    user: state.user,
+    isLoading: state.isLoading,
+    isAuthenticated: state.isAuthenticated,
+    token: state.token,
+    initializeAuth: state.initializeAuth
+  }));
 
-  const { data, isLoading } = useQuery(
-    ['user', user_id], 
-    () => fetchUserById(user_id), 
-    {
-      enabled: !!user_id,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMount: true,
-      onError: (error: Error) => {
-        console.error(`Fetch error ${error.message}`)
-      }
+  // Inicializar la autenticación al cargar el componente si hay un token pero no hay usuario
+  useEffect(() => {
+    if (token && !user) {
+      initializeAuth();
     }
-  );
-  console.log('data', data);
+  }, [token, user, initializeAuth]);
 
+  // Mostrar estado de carga
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Cargando información del usuario...</div>;
   }
 
-  if (!data || !data.rol_info) {
+  // Mostrar error si no hay información de usuario disponible
+  if (!isAuthenticated || !user || !user.rol_info) {
     return <div>Error: Datos del usuario no disponibles</div>;
   }
 
   return (
     <>
       {links
-      .filter((link) => !link.role || link.role === data.rol_info.rol)
+      .filter((link) => !link.role || link.role === user.rol_info?.rol)
       .map((link) => {
         const LinkIcon = link.icon;
         return (
           <Link
             key={link.name}
             href={link.href}
-            className={`flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm 
-            font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3
-            ${pathname === link.href ? 'bg-sky-100 text-blue-600' : ''}`}
+            className={cn(
+              "flex items-center gap-2 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent",
+              pathname === link.href ? 'bg-sky-100 text-blue-600' : ''
+            )}
+            // className={`flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm 
+            // font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3
+            // ${pathname === link.href ? 'bg-sky-100 text-blue-600' : ''}`}
           >
             <LinkIcon className="w-6" />
             <p className="hidden md:block">{link.name}</p>

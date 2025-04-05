@@ -4,24 +4,19 @@ import {
   AtSymbolIcon,
   KeyIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/servicios/button";
 import { lusitana } from "../ui/fonts";
-import Cookies from "js-cookie";
 import {
   Link,
   LinearProgress,
-  FormControl,
-  InputLabel,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
-import { useMutation } from "react-query";
 import * as yup from "yup";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
+import PasswordResetPopup from "./PasswordResetPopup";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -44,7 +39,6 @@ const schema = yup.object().shape({
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   const {
     register,
-    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -52,76 +46,48 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     resolver: yupResolver(schema),
   });
 
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessagge, setErrorMessagge] = useState("");
-
-  const loginMutation = useMutation(
-    ({ email, password }: LoginRequest) =>
-      fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify({ email, password }),
-      }).then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          //TODO Aca esta el mensaje de error que devuelve la api y debo mostrar.
-          setErrorMessagge(errorData.error);
-          if (response.status === 400 && errorData.email) {
-            // type TypeErrorMessage = ReturnType<typeof errorMessage>
-            const errorMessage = errorData.email[0];
-            console.log("ERROR MESSAGGE", errorMessage);
-            toast.error(errorMessage, { duration: 5000 });
-          }
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          // Cookies.set("token", data.token, { expires: 1 });
-          Cookies.set("token", data.token);
-          setAuth(data.token, data.user_id, data.email);
-          onLoginSuccess();
-        }
-        return response.json;
-      }),
-    {
-      onSuccess: (data) => {
-        toast.success(`${data.arguments}`, { duration: 5000 });
-        setIsLoading(false);
-        onLoginSuccess();
-      },
-      onError: (error: Error) => {
-        setIsLoading(false);
-        // toast.error(`${error.message}`, { duration: 5000 })
-      },
+  // Usar el store de autenticación
+  const { login, isLoading, error } = useAuthStore(state => ({
+    login: state.login,
+    isLoading: state.isLoading,
+    error: state.error
+  }));
+  
+  const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
+  
+  // Manejar errores del store
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { duration: 5000 });
+      
+      // Configurar errores de formulario si aplica
+      if (error.includes('email') || error.includes('correo')) {
+        setError("email", { message: error });
+      }
+      
+      if (error.includes('contraseña') || error.includes('password')) {
+        setError("password", { message: error });
+      }
     }
-  );
+  }, [error, setError]);
+
+  const handleOpenResetPopup = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    setIsResetPopupOpen(true);
+  };
 
   const onSubmit = async (data: LoginRequest) => {
-    if (!data.email || errorMessagge !== "") {
-      setError("email", { message: errorMessagge });
+    try {
+      // Utilizar la acción de login del store
+      await login(data.email, data.password);
+      
+      // Mostrar mensaje de éxito y redirigir
+      toast.success("Inicio de sesión exitoso", { duration: 5000 });
+      onLoginSuccess();
+    } catch (error) {
+      // Los errores ya son manejados por el useEffect que observa el estado de error
+      console.error("Error durante el inicio de sesión:", error);
     }
-    if (!data.password || errorMessagge !== "") {
-      setError("password", { message: errorMessagge });
-    }
-    setIsLoading(true);
-    loginMutation.mutate(data);
-    // try {
-    //   const response = await
-
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     Cookies.set("token", data.token, { expires: 1 }); // Set the token in a cookie for 1 day
-    //     onLoginSuccess();
-    //   } else {
-    //     console.error("Login failed");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   return (
@@ -130,21 +96,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       onSubmit={handleSubmit(onSubmit)}
       noValidate={true}
     >
-      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+      <div className="flex-1 rounded-lg bg-gray-50 dark:bg-gray-800 px-6 pb-4 pt-8">
+        <h1 className={`${lusitana.className} mb-3 text-2xl text-gray-900 dark:text-gray-100`}>
           Por favor inicie sesion para continuar.
         </h1>
         <div className="w-full">
           <div>
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300"
               htmlFor="email"
             >
               Email
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 dark:border-gray-700 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400"
                 id="email"
                 type="email"
                 // value={email}
@@ -154,55 +120,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 required
                 {...register("email", { required: "Email es requerido" })}
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>
-            {}
-            {/* <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <FormControl>
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <>
-                    <TextField
-                      {...field}
-                      id="email"
-                      className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                      type="email"
-                      placeholder="  Ingrese su email"
-                      required
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      // {...register('email', { required: 'Email es requerido' })}
-                    />
-                  </>
-                )}
-              />
-            </FormControl> */}
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+            )}
           </div>
           <div className="mt-4">
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-gray-300"
               htmlFor="password"
             >
               Contraseña
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 dark:border-gray-700 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400"
                 id="password"
                 type="password"
                 // value={password}
@@ -216,8 +149,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                   minLength: 6,
                 })}
               />
-              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+            )}
           </div>
         </div>
         {/* <Link component={<Landing} to={} sx={{ color: "#ffff" }}>
@@ -236,8 +172,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
             ¿No tiene cuenta? Cree una aquí
           </Link>
         </div>
-        {isLoading && <LinearProgress />}
+        <div className="mt-3 text-center">
+        <a
+          href="#"
+          className="text-blue-600 hover:underline"
+          onClick={handleOpenResetPopup}
+        >
+          Recuperar Contraseña
+        </a>
       </div>
+        {isLoading && <LinearProgress color="primary" />}
+      </div>
+
+      <PasswordResetPopup 
+        isOpen={isResetPopupOpen} 
+        onClose={() => setIsResetPopupOpen(false)} 
+      />
     </form>
   );
 };

@@ -27,6 +27,7 @@ import { DeleteConfirmationDialog } from "@/components/servicios-gestion/confirm
 import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
 import { fetchServicios } from "@/api/services.api";
+import { BackButton } from "@/components/ui/BackButton";
 
 const serviceTypes = [
   { id: 1, tipo: "Plomeria" },
@@ -78,8 +79,6 @@ export default function ServicesPage() {
       },
     }
   );
-
-  console.log("USER: ", user);
 
   const { data: professionals, isLoading: loadingGetServicios } = useQuery<
     Servicios[]
@@ -142,7 +141,10 @@ export default function ServicesPage() {
   return (
     <main>
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Gestion de Servicios</h1>
+        <div className="flex items-center mb-6">
+          <BackButton href="/dashboard" />
+          <h1 className="text-3xl font-bold ml-2">Gestion de Servicios</h1>
+        </div>
         <div className="flex justify-between mb-4">
           <div className="flex gap-2">
             <Select onValueChange={(value) => setSelectedService(value)}>
@@ -164,11 +166,12 @@ export default function ServicesPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button 
+          <Button
             onClick={() => {
-              setIsDialogOpen(true)
-              setIsEditing(false)
-            }}>
+              setIsDialogOpen(true);
+              setIsEditing(false);
+            }}
+          >
             Agregar Profesional
           </Button>
         </div>
@@ -183,29 +186,30 @@ export default function ServicesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProfessionals && filteredProfessionals.map((professional) => (
-                <TableRow key={professional.id}>
-                  <TableCell>{professional.nombre_proveedor}</TableCell>
-                  <TableCell>{professional.tipo.tipo}</TableCell>
-                  <TableCell>{professional.telefono}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(professional)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(professional)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filteredProfessionals &&
+                filteredProfessionals.map((professional) => (
+                  <TableRow key={professional.id}>
+                    <TableCell>{professional.nombre_proveedor}</TableCell>
+                    <TableCell>{professional.tipo.tipo}</TableCell>
+                    <TableCell>{professional.telefono}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(professional)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(professional)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         ) : (

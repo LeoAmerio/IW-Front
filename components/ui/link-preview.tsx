@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { MotionDiv } from "../landing";
 
 type LinkPreviewProps = {
   children: React.ReactNode;
@@ -113,7 +114,7 @@ export const LinkPreview = ({
         >
           <AnimatePresence>
             {isOpen && (
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 20, scale: 0.6 }}
                 animate={{
                   opacity: 1,
@@ -147,7 +148,7 @@ export const LinkPreview = ({
                     alt="preview image"
                   />
                 </Link>
-              </motion.div>
+              </MotionDiv>
             )}
           </AnimatePresence>
         </HoverCardPrimitive.Content>

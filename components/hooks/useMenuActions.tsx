@@ -16,6 +16,7 @@ interface UseMenuActionsProps {
   posteo?: Posteo;
   event?: EventResponse;
   user?: User;
+  enabled?: boolean;
 }
 
 export const useMenuActions = ({
@@ -27,7 +28,8 @@ export const useMenuActions = ({
   extraActions = [],
   posteo,
   event,
-  user
+  user,
+  enabled = true
 }: UseMenuActionsProps) => {
   const singleItem: MenuActionType = useMemo(() => {
     const items = [posteo, event, user].filter(item => item !== undefined);

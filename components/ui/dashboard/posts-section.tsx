@@ -95,7 +95,6 @@ const PostsSection = () => {
   }, []);
 
   useEffect(() => {
-    console.log(selectedPost);
     // if (selectedPost) {
     //   <PostDetail posteo={selectedPost} />;
     // }

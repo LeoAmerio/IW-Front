@@ -66,8 +66,6 @@ export function Serivcios() {
     }
   );
 
-  console.log("data ", serviciosTipo);
-
   const separarPorCategorias = (servicios: Servicios[]) => {
     const newCategorias = {
       plomeria: servicios.filter(servicio => servicio.tipo.tipo === "Plomeria"),

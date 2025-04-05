@@ -24,7 +24,7 @@ export default function ConversacionPage() {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const userId = useAuthStore((state) => state.user_id);
-console.log('userId ', userId);
+
   // const enviarMensaje = (e: React.FormEvent) => {
   //   e.preventDefault()
   //   if (mensaje.trim()) {
@@ -40,7 +40,6 @@ console.log('userId ', userId);
       : Array.isArray(params.id)
       ? parseInt(params.id[0])
       : 0;
-  console.log(conversacionId);
 
   const cargarMensajes = async () => {
     try {
@@ -54,7 +53,6 @@ console.log('userId ', userId);
       );
       if (!response.ok) throw new Error("Error al cargar mensajes");
       const data = await response.json();
-      console.log('mensajes ', data);
       setMensajes(data);
     } catch (error) {
       console.error("Error:", error);
@@ -127,7 +125,7 @@ console.log('userId ', userId);
         ))}
       </div>
 
-      <form onSubmit={enviarMensaje} className="p-4 bg-white border-t">
+      <form onSubmit={enviarMensaje} className="p-4 bg-white border-t dark:bg-[#020817]">
         <div className="flex">
           <input
             type="text"

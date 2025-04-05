@@ -213,6 +213,17 @@ const MyCalendar: React.FC = () => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500, cursor: "pointer" }}
+        className="dark:text-white dark:[&_.rbc-header]:text-gray-300 
+          dark:[&_.rbc-month-view]:border-gray-700
+          dark:[&_.rbc-day-bg]:bg-[#020817]
+          dark:[&_.rbc-off-range-bg]:bg-gray-900
+          dark:[&_.rbc-today]:bg-gray-800
+          dark:[&_.rbc-toolbar]:text-gray-300
+          dark:[&_.rbc-btn-group>button]:bg-gray-800
+          dark:[&_.rbc-btn-group>button]:text-gray-300
+          dark:[&_.rbc-btn-group>button:hover]:bg-gray-700
+          dark:[&_.rbc-event]:bg-blue-600
+          dark:[&_.rbc-toolbar-label]:text-gray-300"
         onNavigate={handleNavigate}
         view={view}
         onView={handleView}
