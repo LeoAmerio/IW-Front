@@ -143,3 +143,49 @@ export interface Usuario {
   piso: string | null;
   numero: string | null;
 }
+
+export interface Report {
+  id: number
+  denunciante: {
+    id: number
+    email: string
+    nombre: string
+    apellido: string
+    rol_info: {
+      id: number
+      rol: string
+    }
+    edificio: {
+      id: number
+      nombre: string
+      direccion: string
+      numero: number
+      ciudad: string
+    }
+    piso: number
+    numero: string
+  }
+  tipo: string
+  posteo_denunciado: {
+    id: number
+    titulo: string
+    descripcion: string
+    usuario: {
+      id: number
+      nombre: string
+      apellido: string
+      piso: number
+      numero: string
+    }
+    tipo_posteo: {
+      id: number
+      tipo: string
+    }
+    imagen: string
+  } | null
+  usuario_denunciado: any | null
+  evento_denunciado: any | null
+  comentario: string
+  fecha_creacion: string
+  estado: "pendiente" | "aprobada" | "rechazada"
+}

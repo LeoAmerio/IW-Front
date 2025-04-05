@@ -58,7 +58,7 @@ export default function LoginClient() {
   if (isCheckingAuth || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Progress />
+        <Progress value={33} />
         <span className="ml-2 text-gray-600">Verificando sesión...</span>
       </div>
     );

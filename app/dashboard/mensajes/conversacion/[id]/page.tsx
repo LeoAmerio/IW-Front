@@ -24,7 +24,7 @@ export default function ConversacionPage() {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const userId = useAuthStore((state) => state.user_id);
-console.log('userId ', userId);
+
   // const enviarMensaje = (e: React.FormEvent) => {
   //   e.preventDefault()
   //   if (mensaje.trim()) {
