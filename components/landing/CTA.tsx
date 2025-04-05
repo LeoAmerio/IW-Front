@@ -1,7 +1,8 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import { MotionDiv } from "."
+"use client";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { MotionDiv } from ".";
+import Link from "next/link";
 
 export default function CTA() {
   return (
@@ -14,8 +15,10 @@ export default function CTA() {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <span className="block">Ready to streamline your workflow?</span>
-          <span className="block mt-2">Start your free trial today.</span>
+          <span className="block">
+            Listo para inciar esta nueva etapa en tu edificio?
+          </span>
+          <span className="block mt-2">Incia gratis hoy.</span>
         </motion.h2>
         <motion.p
           className="mt-4 text-lg leading-6 text-primary-foreground/90"
@@ -24,7 +27,7 @@ export default function CTA() {
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          Join thousands of satisfied customers who have transformed their business with StreamLine.
+          Unete a la comunidad de tu edifico, chatea, postea y crea eventos.
         </motion.p>
         <MotionDiv
           initial={{ opacity: 0, y: 20 }}
@@ -32,12 +35,15 @@ export default function CTA() {
           transition={{ duration: 0.5, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          <Button size="lg" variant="secondary" className="mt-8 bg-background text-primary hover:bg-secondary/90">
-            Get started for free
+          <Button
+            size="lg"
+            variant="secondary"
+            className="mt-8 bg-background text-primary hover:bg-secondary/90"
+          >
+            <Link href="/signup">Incia gratis</Link>
           </Button>
         </MotionDiv>
       </div>
     </div>
-  )
+  );
 }
-

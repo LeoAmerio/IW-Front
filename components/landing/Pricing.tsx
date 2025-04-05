@@ -3,6 +3,7 @@ import { Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { MotionDiv } from "."
+import Link from "next/link"
 
 const plans = [
   {
@@ -12,7 +13,8 @@ const plans = [
       "Hasta 4 usuarios por departamento",
       "Todas nuestras funciones gratis",
       "24/7 soporte",
-      "10GB storage"],
+      // "10GB storage"
+    ],
   },
   // {
   //   name: "Professional",
@@ -79,7 +81,7 @@ export default function Pricing() {
           <h2 className="text-3xl font-extrabold text-foreground sm:text-4xl">Precio? Jaja que es eso</h2>
           <p className="mt-4 text-xl text-muted-foreground">¡Tenemos solo 1 plan para ti, el mejor!</p>
         </MotionDiv>
-        <div className="mt-16 grid gap-8 lg:grid-cols-3">
+        <div className="mt-16 gap-8 lg:grid-cols-1 flex justify-center">
           {plans.map((plan, index) => (
             <MotionDiv
               key={plan.name}
@@ -94,9 +96,9 @@ export default function Pricing() {
                 <h3 className="text-lg font-medium text-foreground">{plan.name}</h3>
                 <p className="mt-4 text-3xl font-extrabold text-foreground">{plan.price}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {plan.name === "Enterprise" ? "Contact us for pricing" : "per month"}
+                  {plan.name === "Enterprise" ? "Contactanos para obtener el mejor precio" : "Por mes"}
                 </p>
-                <Button className="mt-6 w-full">{plan.name === "Enterprise" ? "Contact sales" : "Get started"}</Button>
+                <Button className="mt-6 w-full"><Link href="/signup">{plan.name === "Enterprise" ? "Contactate con ventas" : "Comienza"}</Link></Button>
               </div>
               <div className="px-6 pt-6 pb-8">
                 <h4 className="text-sm font-medium text-foreground tracking-wide uppercase">Que incluye?</h4>

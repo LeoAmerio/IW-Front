@@ -1,7 +1,7 @@
-"use client"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/ThemeSwitcher/theme-toggle"
+"use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeSwitcher/theme-toggle";
 
 export default function Header() {
   return (
@@ -36,13 +36,12 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <Button variant="outline" className="hidden sm:inline-flex">
-              Ingresá
+              <Link href="/login">Ingresá</Link>
             </Button>
-            <Button>Registrate</Button>
+            <Button><Link href="/signup">Registrate</Link></Button>
           </div>
         </div>
       </div>
     </header>
-  )
+  );
 }
-

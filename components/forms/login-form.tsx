@@ -4,24 +4,18 @@ import {
   AtSymbolIcon,
   KeyIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/servicios/button";
 import { lusitana } from "../ui/fonts";
-import Cookies from "js-cookie";
 import {
   Link,
   LinearProgress,
-  FormControl,
-  InputLabel,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
-import { useMutation } from "react-query";
 import * as yup from "yup";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 import PasswordResetPopup from "./PasswordResetPopup";
 
 interface LoginFormProps {
@@ -45,7 +39,6 @@ const schema = yup.object().shape({
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   const {
     register,
-    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -53,54 +46,30 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     resolver: yupResolver(schema),
   });
 
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessagge, setErrorMessagge] = useState("");
+  // Usar el store de autenticación
+  const { login, isLoading, error } = useAuthStore(state => ({
+    login: state.login,
+    isLoading: state.isLoading,
+    error: state.error
+  }));
+  
   const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
-
-  const loginMutation = useMutation(
-    ({ email, password }: LoginRequest) =>
-      fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify({ email, password }),
-      }).then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          //TODO Aca esta el mensaje de error que devuelve la api y debo mostrar.
-          setErrorMessagge(errorData.error);
-          if (response.status === 400 && errorData.email) {
-            // type TypeErrorMessage = ReturnType<typeof errorMessage>
-            const errorMessage = errorData.email[0];
-            console.log("ERROR MESSAGGE", errorMessage);
-            toast.error(errorMessage, { duration: 5000 });
-          }
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          // Cookies.set("token", data.token, { expires: 1 });
-          Cookies.set("token", data.token);
-          setAuth(data.token, data.user_id, data.email);
-          onLoginSuccess();
-        }
-        return response.json;
-      }),
-    {
-      onSuccess: (data) => {
-        toast.success(`${data.arguments}`, { duration: 5000 });
-        setIsLoading(false);
-        onLoginSuccess();
-      },
-      onError: (error: Error) => {
-        setIsLoading(false);
-        // toast.error(`${error.message}`, { duration: 5000 })
-      },
+  
+  // Manejar errores del store
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { duration: 5000 });
+      
+      // Configurar errores de formulario si aplica
+      if (error.includes('email') || error.includes('correo')) {
+        setError("email", { message: error });
+      }
+      
+      if (error.includes('contraseña') || error.includes('password')) {
+        setError("password", { message: error });
+      }
     }
-  );
+  }, [error, setError]);
 
   const handleOpenResetPopup = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -108,27 +77,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   };
 
   const onSubmit = async (data: LoginRequest) => {
-    if (!data.email || errorMessagge !== "") {
-      setError("email", { message: errorMessagge });
+    try {
+      // Utilizar la acción de login del store
+      await login(data.email, data.password);
+      
+      // Mostrar mensaje de éxito y redirigir
+      toast.success("Inicio de sesión exitoso", { duration: 5000 });
+      onLoginSuccess();
+    } catch (error) {
+      // Los errores ya son manejados por el useEffect que observa el estado de error
+      console.error("Error durante el inicio de sesión:", error);
     }
-    if (!data.password || errorMessagge !== "") {
-      setError("password", { message: errorMessagge });
-    }
-    setIsLoading(true);
-    loginMutation.mutate(data);
-    // try {
-    //   const response = await
-
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     Cookies.set("token", data.token, { expires: 1 }); // Set the token in a cookie for 1 day
-    //     onLoginSuccess();
-    //   } else {
-    //     console.error("Login failed");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
   };
 
   return (
@@ -222,7 +181,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
           Recuperar Contraseña
         </a>
       </div>
-        {isLoading && <LinearProgress />}
+        {isLoading && <LinearProgress color="primary" />}
       </div>
 
       <PasswordResetPopup 

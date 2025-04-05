@@ -1,5 +1,5 @@
 'use client';
-import { useAuthStore } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth/auth.store';
 import {
   UserGroupIcon,
   HomeIcon,
@@ -11,10 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Cookies from "js-cookie";
-import { useQuery } from 'react-query';
-import { User } from '@/interfaces/user.interface';
-import { fetchUserById } from '@/api/user.api';
+import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const links = [
@@ -33,36 +30,35 @@ const links = [
 
 export default function NavLinks() {
   const pathname = usePathname();
-  const user_id = useAuthStore((state) => state.user_id);
-  console.log('user_id', user_id);
+  const { user, isLoading, isAuthenticated, token, initializeAuth } = useAuthStore(state => ({
+    user: state.user,
+    isLoading: state.isLoading,
+    isAuthenticated: state.isAuthenticated,
+    token: state.token,
+    initializeAuth: state.initializeAuth
+  }));
 
-  const { data, isLoading } = useQuery(
-    ['user', user_id], 
-    () => fetchUserById(user_id), 
-    {
-      enabled: !!user_id,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMount: true,
-      onError: (error: Error) => {
-        console.error(`Fetch error ${error.message}`)
-      }
+  // Inicializar la autenticación al cargar el componente si hay un token pero no hay usuario
+  useEffect(() => {
+    if (token && !user) {
+      initializeAuth();
     }
-  );
-  console.log('data', data);
+  }, [token, user, initializeAuth]);
 
+  // Mostrar estado de carga
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Cargando información del usuario...</div>;
   }
 
-  if (!data || !data.rol_info) {
+  // Mostrar error si no hay información de usuario disponible
+  if (!isAuthenticated || !user || !user.rol_info) {
     return <div>Error: Datos del usuario no disponibles</div>;
   }
 
   return (
     <>
       {links
-      .filter((link) => !link.role || link.role === data.rol_info.rol)
+      .filter((link) => !link.role || link.role === user.rol_info?.rol)
       .map((link) => {
         const LinkIcon = link.icon;
         return (
