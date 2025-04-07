@@ -98,26 +98,30 @@ export default function ConversacionPage() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-auto p-4">
+    <div className="flex flex-col h-full gap-1">
+      <div className="flex-grow overflow-auto p-4 dark:bg-gray-900 rounded-lg shadow">
         {mensajes.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-2 ${
+            className={`mb-3 ${
               msg.remitente.id === userId ? "text-right" : "text-left"
-              // msg.remitente.id === usuarioActualId ? "text-right" : "text-left"
             }`}
           >
             <div
-              className={`inline-block max-w-[70%] ${
-                // msg.remitente.id === usuarioActualId
+              className={`inline-block max-w-[70%] rounded-lg shadow ${
                 msg.remitente.id === userId
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              } p-3 rounded-lg`}
+                  ? "bg-blue-600 text-white dark:bg-blue-700"
+                  : "bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+              } p-3`}
             >
-              <p>{msg.contenido}</p>
-              <span className="text-xs opacity-75 mt-1 block">
+              <p className="break-words">{msg.contenido}</p>
+              <span
+                className={`text-xs ${
+                  msg.remitente.id === userId
+                    ? "text-blue-100 dark:text-blue-200"
+                    : "text-gray-500 dark:text-gray-400"
+                } mt-1 block text-right`}
+              >
                 {msg.fecha_envio_legible}
               </span>
             </div>
@@ -125,19 +129,22 @@ export default function ConversacionPage() {
         ))}
       </div>
 
-      <form onSubmit={enviarMensaje} className="p-4 bg-white border-t dark:bg-[#020817]">
+      <form
+        onSubmit={enviarMensaje}
+        className="p-3 bg-white border-t dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow"
+      >
         <div className="flex">
           <input
             type="text"
             value={mensaje}
             onChange={(e) => setMensaje(e.target.value)}
             placeholder="Escribe un mensaje..."
-            className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             disabled={isLoading}
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition-colors disabled:bg-blue-300"
+            className="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 dark:bg-blue-700 dark:hover:bg-blue-800 dark:disabled:bg-blue-500"
             disabled={isLoading}
           >
             <IconSend size={20} />
