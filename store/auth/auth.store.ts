@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { User } from '@/interfaces/user.interface';
 import { AuthStatus } from '@/interfaces/auth-status.interface';
+import { QueryClient } from 'react-query';
 
 // API endpoints
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://ucse-iw-2024.onrender.com';
@@ -38,6 +39,7 @@ export interface AuthState {
   updateUser: (userData: Partial<User>) => void;
   fetchUserData: () => Promise<void>;
 }
+
 
 const useAuthStore = create<AuthState>()(
   devtools(
@@ -111,16 +113,21 @@ const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
+          const queryClient = new QueryClient();
           // Eliminar el token de las cookies
           Cookies.remove('token');
           
-          // Limpiar el estado
+          // Limpiar el estado completamente
           set({ 
             status: 'Unauthorized', 
             token: null, 
             user: null,
+            isLoading: false,
+            error: null,
             isAuthenticated: false 
           });
+          
+          queryClient.clear();
         },
 
         initializeAuth: async () => {

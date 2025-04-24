@@ -17,6 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
 import { useAuthStore } from "@/store/auth/auth.store";
 import PasswordResetPopup from "./PasswordResetPopup";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -37,6 +38,8 @@ const schema = yup.object().shape({
 });
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
+  const router = useRouter();
+  
   const {
     register,
     handleSubmit,
@@ -78,12 +81,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
+      console.log("Iniciando sesión...");
       // Utilizar la acción de login del store
       await login(data.email, data.password);
       
       // Mostrar mensaje de éxito y redirigir
       toast.success("Inicio de sesión exitoso", { duration: 5000 });
-      onLoginSuccess();
+      setTimeout(() => {
+        
+        // const decodedUrl = decodeURIComponent(returnUrl);
+        // console.log(`Login exitoso. Redirigiendo a: ${decodedUrl}`);
+        router.push("/dashboard");
+        onLoginSuccess();
+      }, 300);
     } catch (error) {
       // Los errores ya son manejados por el useEffect que observa el estado de error
       console.error("Error durante el inicio de sesión:", error);

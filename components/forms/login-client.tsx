@@ -39,11 +39,13 @@ export default function LoginClient() {
     }
   }, [isAuthenticated, router, returnUrl, token, isLoading]);
 
-  // Función que se ejecuta después de un login exitoso
+  // // Función que se ejecuta después de un login exitoso
   const handleLoginSuccess = () => {
     const decodedUrl = decodeURIComponent(returnUrl);
     console.log(`Login exitoso. Redirigiendo a: ${decodedUrl}`);
-    router.push(decodedUrl);
+    // router.push(decodedUrl);
+    router.push("/dashboard");
+    // window.location.href = decodedUrl;
   };
 
   const handleToggleForm = () => {
@@ -72,7 +74,7 @@ export default function LoginClient() {
             <AcmeLogo />
           </div>
         </div>
-       
+      
         {isRegistering ? (
           <SignupForm
             onSignupSuccess={handleLoginSuccess} 

@@ -5,13 +5,14 @@ import { Card, Carousel } from "./cards-services";
 import { ListProfessionals } from "./list-professionals";
 import { Servicios } from "@/interfaces/types";
 import { useQuery } from "react-query";
-import { useAuthStore } from "@/services/auth.service";
+// import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
 import { LinearProgress } from "@mui/material";
 import { fetchServicios } from "@/api/services.api";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 export function Serivcios() {
-  const user_id = useAuthStore((state) => state.user_id);
+  const userState = useAuthStore((state) => state.user);
 
   const [categorias, setCategorias] = useState<{ 
     plomeria: Servicios[], 
@@ -30,10 +31,10 @@ export function Serivcios() {
   });
 
   const { data: user, isLoading } = useQuery(
-    ["user", user_id],
-    () => fetchUserById(user_id),
+    ["user", userState?.id],
+    () => fetchUserById(userState?.id || 0),
     {
-      enabled: !!user_id,
+      enabled: !!userState,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
