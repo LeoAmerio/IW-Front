@@ -24,10 +24,11 @@ import { Edit, Trash2 } from "lucide-react";
 import { CrudOperation, Servicios } from "@/interfaces/types";
 import { ProfessionalDialog } from "@/components/servicios-gestion/professional-dialog";
 import { DeleteConfirmationDialog } from "@/components/servicios-gestion/confirmation-dialog";
-import { useAuthStore } from "@/services/auth.service";
+// import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
 import { fetchServicios } from "@/api/services.api";
 import { BackButton } from "@/components/ui/BackButton";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 const serviceTypes = [
   { id: 1, tipo: "Plomeria" },
@@ -38,7 +39,7 @@ const serviceTypes = [
 ];
 
 export default function ServicesClient() {
-  const user_id = useAuthStore((state) => state.user_id);
+  const userState = useAuthStore((state) => state.user);
   const [selectedService, setSelectedService] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -67,9 +68,9 @@ export default function ServicesClient() {
   });
 
   const { data: user, isLoading: loadingUser } = useQuery({
-    queryKey: ["user", user_id],
-    queryFn: () => fetchUserById(user_id),
-    enabled: !!user_id,
+    queryKey: ["user", userState?.id],
+    queryFn: () => fetchUserById(userState?.id || 0),
+    enabled: !!userState,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,

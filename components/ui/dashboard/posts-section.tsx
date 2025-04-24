@@ -235,19 +235,19 @@ const PostsSection = () => {
             Search
           </label>
           <input
-            className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+            className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
             placeholder={'Buscar Posteos...'}
             onChange={(e) => handleSearch(e.target.value)}
             // defaultValue={searchParams.get('query')?.toString()}
           />
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-gray-400 dark:peer-focus:text-gray-300" />
           {isLoading && <LinearProgress />}
           {searchResults.length > 0 && (
-            <ul className="absolute top-full left-0 w-full bg-white border border-black rounded-md mt-1">
+            <ul className="absolute top-full left-0 w-full bg-white border border-black rounded-md mt-1 shadow-lg dark:bg-gray-800 dark:border-gray-700">
               {searchResults.map((result, index) => (
                 <li
                   key={index}
-                  className="p-2 hover:bg-gray-100"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200"
                   onClick={() => handleSelectPost(result)}
                 >
                   {/* Renderiza aquí los detalles del resultado */}
