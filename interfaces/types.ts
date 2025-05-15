@@ -187,5 +187,10 @@ export interface Report {
   evento_denunciado: any | null
   comentario: string
   fecha_creacion: string
-  estado: "pendiente" | "aprobada" | "rechazada"
+  estado: "en_revision" | "aprobada" | "rechazada"
+}
+
+export interface ChangeStateResponse {
+  message: string;
+  denuncia: Report;
 }

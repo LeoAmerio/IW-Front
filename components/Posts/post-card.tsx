@@ -6,18 +6,24 @@ import Link from "next/link";
 import { usePostStore } from "@/store/post-store";
 import Image from "next/image";
 import {
-  DialogActions,
-  TextField,
-  SelectChangeEvent,
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
+  TextField,
+  SelectChangeEvent,
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
+  Typography,
+  IconButton,
+  Box,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import FlagIcon from "@mui/icons-material/Flag";
+import { motion } from "framer-motion";
 import { useAuthStore } from "@/services/auth.service";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
@@ -142,6 +148,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     enabled: !!user_id && !isLoading, // Solo habilitamos cuando tengamos user_id y no esté cargando
   });
 
+  const isSubmitDisabled = !reportType || reportComment.trim().length < 10;
+
   return (
     <>
       <Card className="mb-4 hover:shadow-lg transition-shadow duration-300">
@@ -198,53 +206,90 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
           </CardContent>
         </Link>
       </Card>
+      
+      {/* Diálogo mejorado */}
       <Dialog
         open={openReportDialog}
         onClose={handleCloseReportDialog}
+        maxWidth="sm"
+        fullWidth
         PaperProps={{
-          className: "dark:bg-[#020817]",
+          className: "dark:bg-gray-900 rounded-lg",
+          component: motion.div,
+          initial: { opacity: 0, y: 20 },
+          animate: { opacity: 1, y: 0 },
+          exit: { opacity: 0, y: 20 },
+          transition: { duration: 0.3 }
         }}
+        aria-labelledby="report-dialog-title"
       >
-        <DialogTitle className="dark:text-gray-300">
-          Denunciar Posteo
+        <DialogTitle 
+          id="report-dialog-title" 
+          className="dark:text-gray-100 flex items-center justify-between border-b dark:border-gray-700 pb-2"
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <FlagIcon color="error" />
+            <Typography variant="h6">Denunciar Posteo</Typography>
+          </Box>
+          <IconButton
+            aria-label="cerrar"
+            onClick={handleCloseReportDialog}
+            className="dark:text-gray-400 dark:hover:text-gray-200"
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="report-type-label">Tipo de denuncia</InputLabel>
+        
+        <DialogContent className="mt-4">
+          <Typography variant="body2" className="dark:text-gray-300 mb-4">
+            Por favor proporciona detalles sobre por qué estás denunciando este contenido. 
+            Todas las denuncias son revisadas por nuestro equipo.
+          </Typography>
+          
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel id="report-type-label" className="dark:text-gray-300">
+              Tipo de denuncia
+            </InputLabel>
             <Select
               labelId="report-type-label"
               id="report-type"
               value={reportType}
               label="Tipo de denuncia"
               onChange={handleReportTypeChange}
-              className="dark:text-gray-300 dark:field-text-white"
+              className="dark:text-gray-200"
+              MenuProps={{
+                PaperProps: {
+                  className: "dark:bg-gray-800"
+                }
+              }}
               sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
                 },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
                 },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#3b82f6',
                 },
               }}
             >
               <MenuItem
                 value={TipoDenuncia.SPAM.toLowerCase()}
-                className="dark:text-gray-300 dark:bg-gray-700"
+                className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Spam
               </MenuItem>
               <MenuItem
                 value={TipoDenuncia.ACOSO.toLowerCase()}
-                className="dark:text-gray-300 dark:bg-gray-700"
+                className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Acoso
               </MenuItem>
               <MenuItem
                 value={TipoDenuncia.CONTENIDO_INDEVIDO.toLowerCase()}
-                className="dark:text-gray-300 dark:bg-gray-700"
+                className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Contenido indebido
               </MenuItem>
@@ -253,11 +298,12 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
               Seleccione el tipo de denuncia
             </FormHelperText>
           </FormControl>
+          
           <TextField
-            autoFocus
             margin="dense"
             id="reportComment"
             label="Motivo de la denuncia"
+            placeholder="Describe en detalle por qué este contenido debe ser revisado..."
             type="text"
             fullWidth
             variant="outlined"
@@ -265,43 +311,47 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
             onChange={(e) => setReportComment(e.target.value)}
             multiline
             rows={4}
-            className="dark:text-white"
+            className="mt-3"
+            inputProps={{ maxLength: 500 }}
+            helperText={`${reportComment.length}/500 caracteres`}
+            FormHelperTextProps={{ className: "dark:text-gray-400 flex justify-end" }}
             sx={{
-              "& .MuiInputLabel-root": {
-                color: "rgba(255, 255, 255, 0.7)",
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
               },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
                 },
-                "&:hover fieldset": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
                 },
-                "&.Mui-focused fieldset": {
-                  borderColor: "rgba(255, 255, 255, 0.23)",
+                '&.Mui-focused fieldset': {
+                  borderColor: '#3b82f6',
                 },
               },
-              "& .MuiInputBase-input": {
-                color: "white",
+              '& .MuiInputBase-input': {
+                color: 'rgba(255, 255, 255, 0.9)',
               },
             }}
           />
         </DialogContent>
-        <DialogActions>
+        
+        <DialogActions className="px-6 py-3 border-t dark:border-gray-700">
           <Button
             onClick={handleCloseReportDialog}
-            color="primary"
-            className="dark:text-gray-300 dark:hover:text-gray-900 dark:hover:bg-gray-300 dark:bg-gray-700"
+            variant="outline"
+            className="dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-800"
           >
             Cancelar
           </Button>
           <Button
             onClick={handleSubmitReport}
-            color="primary"
             variant="default"
-            className="dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+            disabled={isSubmitDisabled}
+            className="dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700 disabled:dark:bg-gray-700 disabled:dark:text-gray-400"
           >
-            Denunciar
+            Enviar denuncia
           </Button>
         </DialogActions>
       </Dialog>
