@@ -152,33 +152,34 @@ export default function ConversacionPage() {
         </div>
       </form>
     </div>
-    // <div className="flex flex-col h-full">
-    //   <div className="flex-grow overflow-auto p-4">
-    //     {mensajes.map((msg, index) => (
-    //       <div key={index} className={`mb-2 ${msg.enviado ? "text-right" : "text-left"}`}>
-    //         <span className={`inline-block p-2 rounded-lg ${msg.enviado ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
-    //           {msg.texto}
-    //         </span>
-    //       </div>
-    //     ))}
-    //   </div>
-    //   <form onSubmit={enviarMensaje} className="p-4 bg-white border-t">
-    //     <div className="flex">
-    //       <input
-    //         type="text"
-    //         value={mensaje}
-    //         onChange={(e) => setMensaje(e.target.value)}
-    //         placeholder="Escribe un mensaje..."
-    //         className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    //       />
-    //       <button
-    //         type="submit"
-    //         className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition-colors"
-    //       >
-    //         <IconSend size={20} />
-    //       </button>
-    //     </div>
-    //   </form>
-    // </div>
   );
 }
+
+// <div className="flex flex-col h-full">
+//   <div className="flex-grow overflow-auto p-4">
+//     {mensajes.map((msg, index) => (
+//       <div key={index} className={`mb-2 ${msg.enviado ? "text-right" : "text-left"}`}>
+//         <span className={`inline-block p-2 rounded-lg ${msg.enviado ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
+//           {msg.texto}
+//         </span>
+//       </div>
+//     ))}
+//   </div>
+//   <form onSubmit={enviarMensaje} className="p-4 bg-white border-t">
+//     <div className="flex">
+//       <input
+//         type="text"
+//         value={mensaje}
+//         onChange={(e) => setMensaje(e.target.value)}
+//         placeholder="Escribe un mensaje..."
+//         className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+//       />
+//       <button
+//         type="submit"
+//         className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition-colors"
+//       >
+//         <IconSend size={20} />
+//       </button>
+//     </div>
+//   </form>
+// </div>

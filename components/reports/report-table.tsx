@@ -56,7 +56,7 @@ const updateReportStatus = async ({
   reportId: number;
   newStatus: string;
 }) => {
-  const response = ChangeStateApi.changeState({ reportId, newStatus });
+  const response = await ChangeStateApi.changeState({ reportId, newStatus });
   return response;
 };
 
@@ -95,7 +95,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
 
   const handleStatusChange = async (
     reportId: number,
-    newStatus: "en_revision" | "aprobada" | "rechazada"
+    newStatus: "en_revision" | "resuelta" | "desestimada"
   ) => {
     console.log("Changing status to:", newStatus);
     console.log("Report ID:", reportId);
@@ -246,7 +246,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                             size="icon"
                             disabled={!isReportReviewed(report.id)}
                             onClick={() =>
-                              handleStatusChange(report.id, "aprobada")
+                              handleStatusChange(report.id, "resuelta")
                             }
                             className={
                               isReportReviewed(report.id)
@@ -273,7 +273,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                             size="icon"
                             disabled={!isReportReviewed(report.id)}
                             onClick={() =>
-                              handleStatusChange(report.id, "rechazada")
+                              handleStatusChange(report.id, "desestimada")
                             }
                             className={
                               isReportReviewed(report.id)
@@ -379,7 +379,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
               <div className="grid grid-cols-1 gap-2">
                 <Button
                   onClick={() =>
-                    handleStatusChange(selectedReport.id, "aprobada")
+                    handleStatusChange(selectedReport.id, "resuelta")
                   }
                   className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 dark:text-white"
                 >
@@ -387,7 +387,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                 </Button>
                 <Button
                   onClick={() =>
-                    handleStatusChange(selectedReport.id, "rechazada")
+                    handleStatusChange(selectedReport.id, "desestimada")
                   }
                   className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:text-white"
                 >

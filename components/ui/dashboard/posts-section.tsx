@@ -43,6 +43,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { LinearProgress } from '@mui/material';
 import PostDetail from "@/components/Posts/post-detail";
+import Cookies from 'js-cookie';
 
 const createPost = async (posteo: PosteoRequest) => {
   const { data } = await edificiosApi.postPost(posteo);
@@ -119,8 +120,8 @@ const PostsSection = () => {
 
   const listUsersPost = posts
     ? Array.from(
-        new Set(posts.map((post) => JSON.stringify(post.usuario)))
-      ).map((userStr) => JSON.parse(userStr))
+      new Set(posts.map((post) => JSON.stringify(post.usuario)))
+    ).map((userStr) => JSON.parse(userStr))
     : [];
 
   const handleEdit = (posteo: Posteo) => {
@@ -196,35 +197,75 @@ const PostsSection = () => {
     refetch();
   };
 
-  const handleSearch = useDebouncedCallback(async (term) => {
-    setSearchTerm(term);
-    if (term) {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${BASE_URL}${encodeURIComponent(term)}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch search results');
-        }
-        const data = await response.json();
-        setSearchResults(data);
-      } catch (error) {
-        console.error(error);
-        setSearchResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setSearchResults([]);
-      clearPosteo();
-    }
-  }, WAIT_BETWEEN_CHANGE);
+  // const handleSearch = useDebouncedCallback(async (term) => {
+  //   setSearchTerm(term);
+  //   if (term) {
+  //     setIsLoading(true);
+  //     try {
+  //       const token = Cookies.get('token');
+  //       const response = await fetch(`${BASE_URL}${encodeURIComponent(term)}`, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //           Authorization: `Token ${token}`,
+  //         }
+  //       });
+  //       console.log('posteo ', response)
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch search results');
+  //       }
+  //       const data = await response.json();
+  //       console.log('data ', data)
+  //       setSearchResults(data);
+  //       // Update the main posts list with search results
+  //       if (data && data.length > 0) {
+  //         const filteredPosts = data.map(result => result.object);
+  //         setPosteo(filteredPosts[0]); // Set the first result as selected
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       setSearchResults([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   } else {
+  //     setSearchResults([]);
+  //     clearPosteo();
+  //     refetch(); // Refetch all posts when search is cleared
+  //   }
+  // }, WAIT_BETWEEN_CHANGE);
 
   const handleSelectPost = (post: PosteoSearch) => {
     setSelectedPost(post.object);
     setSearchTerm(post.titulo);
     setSearchResults([]);
-    // setPosteo(post);
+    setPosteo(post.object); // Update the selected post in the store
   }
+
+  const {
+    data: searchPosts,
+    isLoading: loadingSearch,
+    refetch: refetchSearch,
+  } = useQuery<Posteo[]>(
+    ['searchPosts', searchTerm],
+    async () => {
+      if (!searchTerm) return [];
+      const token = Cookies.get('token');
+      const data = await fetch(`${BASE_URL}${encodeURIComponent(searchTerm)}`, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Token ${token}`,
+        }
+      }).then(res => res.json());
+      // Si el backend retorna [{object: Posteo, ...}], mapea aquí:
+      return data.map((result: any) => result.object as Posteo);
+    },
+    {
+      enabled: !!searchTerm,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const postsToShow = searchTerm ? (searchPosts || []) : (posts || []);
 
   return (
     <div className="container mx-auto p-4">
@@ -237,8 +278,8 @@ const PostsSection = () => {
           <input
             className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
             placeholder={'Buscar Posteos...'}
-            onChange={(e) => handleSearch(e.target.value)}
-            // defaultValue={searchParams.get('query')?.toString()}
+            onChange={e => setSearchTerm(e.target.value)}
+          // defaultValue={searchParams.get('query')?.toString()}
           />
           <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-gray-400 dark:peer-focus:text-gray-300" />
           {isLoading && <LinearProgress />}
@@ -457,15 +498,22 @@ const PostsSection = () => {
       </Dialog>
 
       <div className="mt-6 grid grid-cols-1 space-y-4">
-        {selectedPost? (
+        {selectedPost ? (
           <PostDetail key={selectedPost.id} posteo={selectedPost} />
         ) : loadingData ? (
           <p>Cargando posteos...</p>
         ) : (
-          posts &&
-          posts.map((posteo) => (
-            <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
-          ))
+          postsToShow.length === 0 && !loadingData && !loadingSearch ? (
+            <p>No se encontraron posteos.</p>
+          ) : (
+            postsToShow.map((posteo: Posteo) => (
+              <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
+            ))
+          )
+          // posts &&
+          // posts.map((posteo) => (
+          //   <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
+          // ))
         )}
       </div>
     </div>
