@@ -4,9 +4,7 @@ import Cookies from 'js-cookie';
 
 class EdificoApi {
   http() {
-    // const token = useAuthStore.getState().token;
     const token = Cookies.get('token');
-    // console.log('Token: ', token);
     const headers = {
       'Content-Type': 'multipart/form-data',
       Authorization: `Token ${token}`,

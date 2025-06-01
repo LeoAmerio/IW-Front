@@ -97,8 +97,6 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
     reportId: number,
     newStatus: "en_revision" | "resuelta" | "desestimada"
   ) => {
-    console.log("Changing status to:", newStatus);
-    console.log("Report ID:", reportId);
     statusMutation.mutate({ reportId, newStatus });
     setReports(
       reports.map((report) =>
@@ -170,6 +168,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
       updated.add(reportId);
       return updated;
     });
+    statusMutation.mutate({ reportId, newStatus: "en_revision" });
   };
 
   const isReportReviewed = (reportId: number) => {
@@ -244,12 +243,12 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            disabled={!isReportReviewed(report.id)}
+                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
                             onClick={() =>
                               handleStatusChange(report.id, "resuelta")
                             }
                             className={
-                              isReportReviewed(report.id)
+                              isReportReviewed(report.id) || report.estado === "en_revision"
                                 ? "text-green-600 hover:text-green-700"
                                 : "text-gray-400"
                             }
@@ -271,12 +270,12 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            disabled={!isReportReviewed(report.id)}
+                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
                             onClick={() =>
                               handleStatusChange(report.id, "desestimada")
                             }
                             className={
-                              isReportReviewed(report.id)
+                              isReportReviewed(report.id) || report.estado === "en_revision"
                                 ? "text-red-600 hover:text-red-700"
                                 : "text-gray-400"
                             }
@@ -298,12 +297,12 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            disabled={!isReportReviewed(report.id)}
+                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
                             onClick={() =>
                               handleStatusChange(report.id, "en_revision")
                             }
                             className={
-                              isReportReviewed(report.id)
+                              isReportReviewed(report.id) || report.estado === "en_revision"
                                 ? "text-yellow-600 hover:text-yellow-700"
                                 : "text-gray-400"
                             }

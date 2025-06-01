@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { IconSend } from "@tabler/icons-react";
 import Cookies from "js-cookie";
-import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 interface Mensaje {
   id: number;
@@ -23,16 +23,20 @@ export default function ConversacionPage() {
   const [mensaje, setMensaje] = useState("");
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const userId = useAuthStore((state) => state.user_id);
+  const user = useAuthStore((state) => state.user);
 
-  // const enviarMensaje = (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   if (mensaje.trim()) {
-  //     setMensajes([...mensajes, { texto: mensaje, enviado: true }])
-  //     setMensaje("")
-  //   }
-  // }
-  // const conversacionId = Number(params.id)
+  // Validación de autenticación
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authStore = useAuthStore.getState();
+      if (!authStore.isAuthenticated) {
+        // Redirigir al login o mostrar mensaje de error
+        window.location.href = '/login';
+        return;
+      }
+    };
+    checkAuth();
+  }, []);
 
   const conversacionId =
     typeof params.id === "string"
@@ -60,13 +64,14 @@ export default function ConversacionPage() {
   };
 
   useEffect(() => {
-    cargarMensajes();
-    // Aquí podrías implementar un polling o websockets para actualizar mensajes
-  }, [params.conversacionId]);
+    if (conversacionId) {
+      cargarMensajes();
+    }
+  }, [conversacionId]);
 
   const enviarMensaje = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!mensaje.trim() || isLoading) return;
+    if (!mensaje.trim() || isLoading || !user) return;
 
     setIsLoading(true);
     try {
@@ -91,11 +96,14 @@ export default function ConversacionPage() {
       setMensaje("");
     } catch (error) {
       console.error("Error:", error);
-      // Aquí podrías mostrar un mensaje de error al usuario
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (!user) {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="flex flex-col h-full gap-1">
@@ -104,20 +112,20 @@ export default function ConversacionPage() {
           <div
             key={msg.id}
             className={`mb-3 ${
-              msg.remitente.id === userId ? "text-right" : "text-left"
+              msg.remitente.id === user.id ? "text-right" : "text-left"
             }`}
           >
             <div
               className={`inline-block max-w-[70%] rounded-lg shadow ${
-                msg.remitente.id === userId
+                msg.remitente.id === user.id
                   ? "bg-blue-600 text-white dark:bg-blue-700"
                   : "bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-              } p-3`}
+              } p-3 text-left`}
             >
               <p className="break-words">{msg.contenido}</p>
               <span
                 className={`text-xs ${
-                  msg.remitente.id === userId
+                  msg.remitente.id === user.id
                     ? "text-blue-100 dark:text-blue-200"
                     : "text-gray-500 dark:text-gray-400"
                 } mt-1 block text-right`}
@@ -154,32 +162,3 @@ export default function ConversacionPage() {
     </div>
   );
 }
-
-// <div className="flex flex-col h-full">
-//   <div className="flex-grow overflow-auto p-4">
-//     {mensajes.map((msg, index) => (
-//       <div key={index} className={`mb-2 ${msg.enviado ? "text-right" : "text-left"}`}>
-//         <span className={`inline-block p-2 rounded-lg ${msg.enviado ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
-//           {msg.texto}
-//         </span>
-//       </div>
-//     ))}
-//   </div>
-//   <form onSubmit={enviarMensaje} className="p-4 bg-white border-t">
-//     <div className="flex">
-//       <input
-//         type="text"
-//         value={mensaje}
-//         onChange={(e) => setMensaje(e.target.value)}
-//         placeholder="Escribe un mensaje..."
-//         className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-//       />
-//       <button
-//         type="submit"
-//         className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition-colors"
-//       >
-//         <IconSend size={20} />
-//       </button>
-//     </div>
-//   </form>
-// </div>

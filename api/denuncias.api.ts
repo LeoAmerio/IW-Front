@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 class ChangeStateApi {
   http() {
     const token = Cookies.get("token");
-    // console.log('Token: ', token);
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Token ${token}`,
