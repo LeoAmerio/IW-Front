@@ -41,7 +41,7 @@
     "app/lib/placeholder-data.ts",
     "scripts/seed.js",
     "dist/types/**/*.ts"
-  ],
+, "api/.api.ts"  ],
   "exclude": [
     "node_modules"
   ]

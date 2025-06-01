@@ -110,7 +110,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
     fetchEdificios,
     {
       onSuccess: (data) => {
-        // console.log("Edificios from useQuery: ", data);
       },
     }
   ) 

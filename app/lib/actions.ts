@@ -35,9 +35,6 @@ export async function createInvoice(formData: FormData) {
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 
-//   const rawTest = Object.fromEntries(formData.entries())
-//   console.log(rawFormData)
-//   console.log(rawTest);
 }
 
 const UpdateInvoice = formSchema.omit({ id: true, date: true })
