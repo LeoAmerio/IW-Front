@@ -29,6 +29,7 @@ const links = [
   { name: 'Admin Page', href: 'https://ucse-iw-2024.onrender.com/admin', icon: ServerIcon, role: 'Administrador' },
   { name: 'Gestion de Servicios', href: '/gestion-servicios', icon: ServerStackIcon, role: 'Colaborador' },
   { name: 'Gestion de Denuncias', href: '/admin/reports', icon: ClipboardDocumentListIcon, role: 'Colaborador' },
+  { name: 'Gestion de Usuarios', href: '/admin/gestion-usuarios', icon: UserGroupIcon, role: 'Colaborador' },
 ];
 
 export default function NavLinks() {

@@ -172,13 +172,30 @@ const MyCalendar: React.FC = () => {
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    const slotStart = new Date(slotInfo.start);
+    slotStart.setHours(0,0,0,0);
+
+    // Si la fecha seleccionada es previa a hoy, no abrir el modal
+    if (slotStart < now) return;
+
     setSelectedSlot(slotInfo);
     setDialogOpen(true);
     reset({
       ...defaultValues,
-      fecha_inicio: slotInfo.start,
-      fecha_fin: slotInfo.end,
+      fecha_inicio: slotStart,
+      fecha_fin: slotStart,
     });
+  };
+
+  // Función para evitar seleccionar días previos a hoy
+  const handleSelecting = ({ start }: { start: Date; end: Date }) => {
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    const slotStart = new Date(start);
+    slotStart.setHours(0,0,0,0);
+    return slotStart >= now;
   };
 
   const handleSubmit = (events: any[]) => {
@@ -230,6 +247,7 @@ const MyCalendar: React.FC = () => {
         views={['month', 'week', 'day']}
         selectable={true}
         onSelectSlot={handleSelectSlot}
+        onSelecting={handleSelecting}
         culture="es"
         messages={{
           next: "Siguiente",

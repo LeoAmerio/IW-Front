@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -79,6 +79,15 @@ const EventDialog: React.FC<EventDialogProps> = ({
   });
 
   const dias_repeticion = watch('dias_repeticion') || [];
+  const fecha_inicio = watch('fecha_inicio');
+  const fecha_fin = watch('fecha_fin');
+
+  // Si el usuario cambia la fecha de inicio y la fecha de fin es anterior, actualiza automáticamente la fecha de fin
+  useEffect(() => {
+    if (fecha_fin && fecha_inicio && fecha_fin < fecha_inicio) {
+      setValue('fecha_fin', fecha_inicio);
+    }
+  }, [fecha_inicio, fecha_fin, setValue]);
 
   const handleDayToggle = (dayNumber: number) => {
     const currentDays = [...dias_repeticion];
@@ -190,7 +199,8 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   selected={field.value}
                   onChange={(date) => field.onChange(date)}
                   showTimeSelect
-                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                  dateFormat="dd/MM/yyyy HH:mm:ss"
+                  minDate={new Date()}
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500  dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 />
               )}
@@ -212,7 +222,8 @@ const EventDialog: React.FC<EventDialogProps> = ({
                   selected={field.value}
                   onChange={(date) => field.onChange(date)}
                   showTimeSelect
-                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                  dateFormat="dd/MM/yyyy HH:mm:ss"
+                  minDate={fecha_inicio || new Date()}
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm outline-2 placeholder:text-gray-500  dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-400"
                 />
               )}
