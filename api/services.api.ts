@@ -36,7 +36,7 @@ export const fetchServicios = async (): Promise<Servicios[]> => {
 };
 
 export const createProfessional = async (data: ProfessionalFormRequest) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/servicios`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/servicios/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

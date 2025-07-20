@@ -5,20 +5,21 @@ import { Card, CardContent, CardTitle } from "../ui";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useAuthStore } from "@/services/auth.service";
 import { truncateDescription } from "../helpers/helpers";
 import VerticalMenu from "../VerticalMenu/vertical-menu";
 import { useMenuActions } from "../hooks/useMenuActions";
 import ConfirmModal from "../confirmation-modal";
 import { useMutation } from "react-query";
 import toast from "react-hot-toast";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 interface EventCardProps {
   event: EventResponse;
 }
 
 const EventCard = ({ event }: EventCardProps) => {
-  const user_id = useAuthStore((state) => state.user_id);
+  const user = useAuthStore((state) => state.user);
+
   const [isDeleting, setIsDeleting] = useState(false);
 
   const deleteMutation = useMutation(
@@ -48,9 +49,9 @@ const EventCard = ({ event }: EventCardProps) => {
   const handleReportEvent = () => {};
 
   const menuActions = useMenuActions({
-    userId: user_id,
+    userId: user && user.id !== null ? user.id : undefined,
     ownerId: event.usuario,
-    onEdit: () => handleEditEvent,
+    onEdit: handleEditEvent,
     onDelete: handleModalDelete,
     onReport: handleReportEvent,
     event: event,

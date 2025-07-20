@@ -56,7 +56,6 @@ const editPost = async (posteo: PosteoRequest, id: number) => {
 };
 
 const WAIT_BETWEEN_CHANGE = 300;
-const BASE_URL = 'https://ucse-iw-2024.onrender.com/comunicaciones/search/?q=';
 
 const PostsSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,6 +73,7 @@ const PostsSection = () => {
     tipo_posteo: "",
     ordering: "",
   });
+
   const [appliedFilters, setAppliedFilters] = useState<SearchParams>({
     usuario: 0,
     tipo_posteo: "",
@@ -202,7 +202,7 @@ const PostsSection = () => {
       setIsLoading(true);
       try {
         const token = Cookies.get('token');
-        const response = await fetch(`${BASE_URL}${encodeURIComponent(term)}`, {
+        const response = await fetch(`${process.env.BASE_URL}${encodeURIComponent(term)}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
@@ -242,7 +242,7 @@ const PostsSection = () => {
     async () => {
       if (!searchTerm) return [];
       const token = Cookies.get('token');
-      const data = await fetch(`${BASE_URL}${encodeURIComponent(searchTerm)}`, {
+      const data = await fetch(`${process.env.BASE_URL}${encodeURIComponent(searchTerm)}`, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Token ${token}`,

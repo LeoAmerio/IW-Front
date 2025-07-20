@@ -2,34 +2,19 @@ import { ReactNode } from "react";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-gray-100 flex justify-center items-center h-screen">
-      <div className="w-1/2 h-screen hidden lg:flex lg:flex-col items-center justify-center bg-gray-800 dark:bg-gray-800">
-        {/* <div className="pixels-photo">
-          <a
-            href="https://500px.com/photo/77888323/living-by-arild-aarnes"
-            id="Living by Arild Aarnes on 500px.com"
-          >
-            <img
-              src="https://drscdn.500px.org/photo/77888323/q%3D80_m%3D600/v2?sig=cd5b26acda59ddcc45082c69beb4e7dbe4ea79e316a971f3e0cc82a195da11f7"
-              alt="Living by Arild Aarnes on 500px.com"
-            />
-          </a>
-        </div>
-
-        <script
-          type="text/javascript"
-          src="https://500px.com/embed.js"
-        ></script> */}
-        {/* <span className="text-white font-bold text-9xl">Zustand</span> */}
+    <div className="bg-gray-900 flex justify-center items-center min-h-screen h-auto">
+      {/* Imagen a la izquierda solo en desktop */}
+      <div className="w-1/2 h-screen hidden lg:flex flex-col items-center justify-center bg-gray-900">
         <img
           src="./frontb&w.jpg"
-          alt="Placeholder Image"
+          alt="Living by Arild Aarnes on 500px.com"
           className="object-cover w-full h-full"
         />
       </div>
-      <div className="lg:p-26 md:p-42 sm:20 p-8 w-full lg:w-1/2 dark:bg-gray-900">
+      {/* Formulario a la derecha */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900">
         {children}
       </div>
     </div>
   );
-};
+}

@@ -5,7 +5,7 @@ const nextConfig = {
       domains: [
         'api.microlink.io',
       ]
-    },
+    }
   };
 
 export default nextConfig;

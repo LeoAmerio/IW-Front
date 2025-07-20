@@ -1,5 +1,5 @@
 import { Posteo, User } from "@/interfaces/types";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardTitle } from "../ui";
 import Link from "next/link";
@@ -24,7 +24,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import FlagIcon from "@mui/icons-material/Flag";
 import { motion } from "framer-motion";
-import { useAuthStore } from "@/services/auth.service";
+// import { useAuthStore } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth/auth.store";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { truncateDescription } from "../helpers/helpers";
@@ -37,7 +38,7 @@ import { Button } from "@/components/ui/button";
 enum TipoDenuncia {
   SPAM = "SPAM",
   ACOSO = "ACOSO",
-  CONTENIDO_INDEVIDO = "CONTENIDO INDEVIDO",
+  CONTENIDO_INDEBIDO = "CONTENIDO INDEBIDO",
 }
 
 interface PostCardProps {
@@ -73,7 +74,9 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     TipoDenuncia.ACOSO.toLowerCase()
   );
 
-  const user_id = useAuthStore((state) => state.user_id);
+  // const user_id = useAuthStore((state) => state.user_id);
+  const user = useAuthStore((state) => state.user);
+  const user_id = user && user.id !== null ? user.id : undefined;
 
   const { data, isLoading } = useQuery(
     ["user", user_id],
@@ -89,9 +92,9 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
 
   const open = Boolean(anchorEl);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   const handleSetPost = () => {
     setPost(posteo);
@@ -99,27 +102,20 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
 
   const handleEditPost = () => {
     onEdit(posteo);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  }
+  
   const handleDeletePost = () => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este posteo?")) {
       deletePostMutation.mutate(posteo.id);
     }
   };
+  
+  const handleReportPost = () => {
+    setOpenReportDialog(true);
+  }
 
   const handleReportTypeChange = (event: SelectChangeEvent) => {
     setReportType(event.target.value);
-  };
-
-  const handleReportPost = () => {
-    setOpenReportDialog(true);
   };
 
   const handleCloseReportDialog = () => {
@@ -145,7 +141,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     onDelete: handleDeletePost,
     onReport: handleReportPost,
     posteo: posteo,
-    enabled: !!user_id && !isLoading, // Solo habilitamos cuando tengamos user_id y no esté cargando
+    enabled: !isLoading && !!user_id, // Solo habilitado cuando tengamos user_id y no esté cargando
   });
 
   const isSubmitDisabled = !reportType || reportComment.trim().length < 10;
@@ -288,7 +284,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
                 Acoso
               </MenuItem>
               <MenuItem
-                value={TipoDenuncia.CONTENIDO_INDEVIDO.toLowerCase()}
+                value={TipoDenuncia.CONTENIDO_INDEBIDO.toLowerCase()}
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Contenido indebido

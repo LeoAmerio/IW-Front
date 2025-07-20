@@ -65,7 +65,7 @@ export const useMenuActions = ({
         label: 'Denunciar',
         icon: <ReportGmailerrorredIcon className="h-5 w-5 fill-red-600" />,
         onClick: () => onReport(),
-        show: !!onReport
+        show: userId !== ownerId && !!onReport
       }
     ];
 

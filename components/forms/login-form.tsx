@@ -30,10 +30,11 @@ interface LoginRequest {
 }
 
 const schema = yup.object().shape({
-  email: yup.string().email().required("Ingrese el mail"),
+  email: yup.string().email("Debe ser un correo valido.").required("Ingrese un mail valido"),
   password: yup
     .string()
-    .required()
+    .required("La contraseña es obligatoria")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número")
     .min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
