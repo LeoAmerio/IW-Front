@@ -186,8 +186,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
                   <Image
                     src={posteo.imagen}
                     alt="Imagen del posteo"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                     className="rounded-md content-end"
                   />
                 </div>

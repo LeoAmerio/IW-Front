@@ -84,8 +84,8 @@ export function CardWithBackground({ classNamesDivLogo, img, alt, classNameGloba
         <Image
           src={img}
           alt={alt}
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           className="absolute inset-0 z-0 opacity-70"
           quality={100}
         />

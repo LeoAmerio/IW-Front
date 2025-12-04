@@ -20,7 +20,6 @@ type LinkPreviewProps = {
   width?: number;
   height?: number;
   quality?: number;
-  layout?: string;
 } & (
   | { isStatic: true; imageSrc: string }
   | { isStatic?: false; imageSrc?: never }
@@ -33,7 +32,6 @@ export const LinkPreview = ({
   width = 200,
   height = 125,
   quality = 50,
-  layout = "fixed",
   isStatic = false,
   imageSrc = "",
 }: LinkPreviewProps) => {
@@ -84,7 +82,6 @@ export const LinkPreview = ({
             width={width}
             height={height}
             quality={quality}
-            layout={layout}
             priority={true}
             alt="hidden image"
           />
@@ -142,7 +139,6 @@ export const LinkPreview = ({
                     width={width}
                     height={height}
                     quality={quality}
-                    layout={layout}
                     priority={true}
                     className="rounded-lg"
                     alt="preview image"
