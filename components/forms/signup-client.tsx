@@ -60,7 +60,7 @@ const SignupClient = () => {
 
   const handleLoginSuccess = () => {
     const decodedUrl = decodeURIComponent(returnUrl);
-    console.log(`Login exitoso. Redirigiendo a: ${decodedUrl}`);
+    (`Login exitoso. Redirigiendo a: ${decodedUrl}`);
     // router.push(decodedUrl);
     router.push("/dashboard");
     // window.location.href = decodedUrl;

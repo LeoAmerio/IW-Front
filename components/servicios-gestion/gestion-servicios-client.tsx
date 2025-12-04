@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,11 +22,12 @@ import { Edit, Trash2 } from "lucide-react";
 import { CrudOperation, Servicios } from "@/interfaces/types";
 import { ProfessionalDialog } from "@/components/servicios-gestion/professional-dialog";
 import { DeleteConfirmationDialog } from "@/components/servicios-gestion/confirmation-dialog";
-// import { useAuthStore } from "@/services/auth.service";
 import { fetchUserById } from "@/api/user.api";
-import { fetchServicios } from "@/api/services.api";
 import { BackButton } from "@/components/ui/BackButton";
 import { useAuthStore } from "@/store/auth/auth.store";
+import { useServicesFilter } from "./useServicesFilter";
+import { useServicesStore } from "@/store/services/services.store";
+import { useQuery } from "react-query";
 
 const serviceTypes = [
   { id: 1, tipo: "Plomeria" },
@@ -40,101 +39,36 @@ const serviceTypes = [
 
 export default function ServicesClient() {
   const userState = useAuthStore((state) => state.user);
-  const [selectedService, setSelectedService] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedProfessional, setSelectedProfessional] =
-    useState<Servicios | null>(null);
-  const [editingProfessional, setEditingProfessional] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isDeletingProfessional, setIsDeletingProfessional] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Servicios | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const [categorias, setCategorias] = useState<{
-    plomeria: Servicios[];
-    gasista: Servicios[];
-    electricista: Servicios[];
-    refrigeracion: Servicios[];
-    cerrajero: Servicios[];
-    pintor: Servicios[];
-  }>({
-    plomeria: [],
-    gasista: [],
-    electricista: [],
-    refrigeracion: [],
-    cerrajero: [],
-    pintor: [],
-  });
+  // Use services store
+  const { services, isLoading: loadingServices, fetchServices } = useServicesStore();
 
   const { data: user, isLoading: loadingUser } = useQuery({
     queryKey: ["user", userState?.id],
     queryFn: () => fetchUserById(userState?.id || 0),
     enabled: !!userState,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-    onSuccess: (data) => {
-      console.log("Usuario obtenido:", data);
-      console.log("Edificio ID:", data?.edificio?.id);
-    },
-    onError: (err) => {
-      console.error(`Error al obtener usuario: ${err}`);
-    },
   });
 
-  // const { data: professionals, isLoading: loadingGetServicios } = useQuery<Servicios[]>({
-  //   queryKey: ["professionals"],
-  //   queryFn: fetchServicios,
-  //   enabled: !!user?.edificio?.id,
-  //   refetchOnWindowFocus: true,
-  //   onSuccess: (data) => {
-  //     console.log("Servicios obtenidos:", data);
-  //     separarPorCategorias(data);
-  //   },
-  //   onError: (err) => {
-  //     console.error("Error al obtener servicios:", err);
-  //   }
-  // });
+  // Fetch services when user edificio is available
+  useEffect(() => {
+    if (user?.edificio?.id) {
+      fetchServices();
+    }
+  }, [user?.edificio?.id, fetchServices]);
 
-  const { data: professionals, isLoading: loadingGetServicios } = useQuery<Servicios[]>({
-    queryKey: ["professionals"],
-    queryFn: () => fetchServicios(),
-    enabled: !!user?.edificio?.id,
-    refetchOnWindowFocus: true,
-    onSuccess: (data) => {
-      console.log("Servicios obtenidos:", data);
-      separarPorCategorias(data);
-    },
-  });
-
-  const separarPorCategorias = (servicios: Servicios[]) => {
-    const newCategorias = {
-      plomeria: servicios.filter(
-        (servicio) => servicio.tipo.tipo === "Plomeria"
-      ),
-      gasista: servicios.filter((servicio) => servicio.tipo.tipo === "Gasista"),
-      electricista: servicios.filter(
-        (servicio) => servicio.tipo.tipo === "Electricista"
-      ),
-      refrigeracion: servicios.filter(
-        (servicio) => servicio.tipo.tipo === "Tecnico en Refrigeracion"
-      ),
-      cerrajero: servicios.filter(
-        (servicio) => servicio.tipo.tipo === "Cerrajero"
-      ),
-      pintor: servicios.filter((servicio) => servicio.tipo.tipo === "Pintor"),
-    };
-    setCategorias(newCategorias);
-  };
-
-  const filteredProfessionals = professionals?.filter(
-    (professional) =>
-      (selectedService === "" || selectedService === "all" || professional.tipo.tipo === selectedService) &&
-      professional.nombre_proveedor
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
+  const {
+    selectedService,
+    setSelectedService,
+    searchTerm,
+    setSearchTerm,
+    filteredProfessionals,
+    clearFilters,
+  } = useServicesFilter(services);
 
   const handleEdit = (professional: Servicios) => {
     setIsEditing(true);
@@ -147,7 +81,7 @@ export default function ServicesClient() {
     setIsDeleteDialogOpen(true);
   };
 
-  if (loadingUser || loadingGetServicios) return <div>Cargando...</div>;
+  if (loadingUser || loadingServices) return <div>Cargando...</div>;
 
   return (
     <main>
@@ -179,10 +113,7 @@ export default function ServicesClient() {
             {(selectedService !== "" || searchTerm !== "") && (
               <Button
                 variant="ghost"
-                onClick={() => {
-                  setSelectedService("");
-                  setSearchTerm("");
-                }}
+                onClick={clearFilters}
                 className="px-3"
               >
                 Limpiar filtros
@@ -198,7 +129,7 @@ export default function ServicesClient() {
             Agregar Profesional
           </Button>
         </div>
-        {categorias && professionals && professionals.length > 0 ? (
+        {services && services.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>

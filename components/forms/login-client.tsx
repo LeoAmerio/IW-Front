@@ -32,7 +32,7 @@ export default function LoginClient() {
     if (!isLoading) {
       if (isAuthenticated && token) {
         const decodedUrl = decodeURIComponent(returnUrl);
-        console.log(`Usuario ya autenticado. Redirigiendo a: ${decodedUrl}`);
+        (`Usuario ya autenticado. Redirigiendo a: ${decodedUrl}`);
         router.push(decodedUrl);
       }
       setIsCheckingAuth(false);
@@ -42,7 +42,7 @@ export default function LoginClient() {
   // // Función que se ejecuta después de un login exitoso
   const handleLoginSuccess = () => {
     const decodedUrl = decodeURIComponent(returnUrl);
-    console.log(`Login exitoso. Redirigiendo a: ${decodedUrl}`);
+    (`Login exitoso. Redirigiendo a: ${decodedUrl}`);
     router.push(decodedUrl);
   };
 
