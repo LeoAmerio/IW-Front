@@ -108,15 +108,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "pendiente":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-yellow-100 text-yellow-800 border-yellow-200"
-          >
-            Pendiente
-          </Badge>
-        );
+
       case "aprobada":
         return (
           <Badge
@@ -243,7 +235,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
+                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision" || report.estado === "resuelta" || report.estado === "desestimada"}
                             onClick={() =>
                               handleStatusChange(report.id, "resuelta")
                             }
@@ -270,7 +262,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
+                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision" || report.estado === "resuelta" || report.estado === "desestimada"}
                             onClick={() =>
                               handleStatusChange(report.id, "desestimada")
                             }
@@ -290,32 +282,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                       </Tooltip>
                     </TooltipProvider>
 
-                    {/* Pendiente button */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={!isReportReviewed(report.id) && report.estado !== "en_revision"}
-                            onClick={() =>
-                              handleStatusChange(report.id, "en_revision")
-                            }
-                            className={
-                              isReportReviewed(report.id) || report.estado === "en_revision"
-                                ? "text-yellow-600 hover:text-yellow-700"
-                                : "text-gray-400"
-                            }
-                          >
-                            <Clock className="h-4 w-4" />
-                            <span className="sr-only">Pendiente</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Marcar como pendiente</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+
                   </div>
                 </TableCell>
                 {/* <TableCell className="text-right">
@@ -392,15 +359,7 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
                 >
                   Rechazar Denuncia
                 </Button>
-                <Button
-                  onClick={() =>
-                    handleStatusChange(selectedReport.id, "en_revision")
-                  }
-                  variant="outline"
-                  className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
-                >
-                  Marcar como Pendiente
-                </Button>
+
               </div>
             </div>
             <DialogFooter>

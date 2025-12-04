@@ -41,6 +41,13 @@ enum TipoDenuncia {
   CONTENIDO_INDEBIDO = "CONTENIDO INDEBIDO",
 }
 
+// Mapeo de valores del select a los valores esperados por el backend
+const tipoDenunciaMap = {
+  spam: TipoDenuncia.SPAM,
+  acoso: TipoDenuncia.ACOSO,
+  'contenido indebido': TipoDenuncia.CONTENIDO_INDEBIDO,
+};
+
 interface PostCardProps {
   posteo: Posteo;
   onEdit: (Posteo: Posteo) => void;
@@ -71,7 +78,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportComment, setReportComment] = useState("");
   const [reportType, setReportType] = useState<string>(
-    TipoDenuncia.ACOSO.toLowerCase()
+    "spam"
   );
 
   // const user_id = useAuthStore((state) => state.user_id);
@@ -124,8 +131,15 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   };
 
   const handleSubmitReport = () => {
+    // Mapear el tipo de denuncia al formato esperado por el backend
+    const mappedType = reportType.toLowerCase() === 'spam' 
+      ? 'SPAM'
+      : reportType.toLowerCase() === 'acoso'
+      ? 'ACOSO'
+      : 'CONTENIDO_INDEBIDO';
+
     reportPostMutation.mutate({
-      tipo: reportType,
+      tipo: mappedType,
       usuario_denunciado: null,
       posteo_denunciado: posteo.id,
       evento_denunciado: null,
@@ -272,19 +286,19 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
               }}
             >
               <MenuItem
-                value={TipoDenuncia.SPAM.toLowerCase()}
+                value="spam"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Spam
               </MenuItem>
               <MenuItem
-                value={TipoDenuncia.ACOSO.toLowerCase()}
+                value="acoso"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Acoso
               </MenuItem>
               <MenuItem
-                value={TipoDenuncia.CONTENIDO_INDEBIDO.toLowerCase()}
+                value="contenido indebido"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Contenido indebido

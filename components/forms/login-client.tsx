@@ -43,9 +43,7 @@ export default function LoginClient() {
   const handleLoginSuccess = () => {
     const decodedUrl = decodeURIComponent(returnUrl);
     console.log(`Login exitoso. Redirigiendo a: ${decodedUrl}`);
-    // router.push(decodedUrl);
-    // router.push("/dashboard");
-    // window.location.href = decodedUrl;
+    router.push(decodedUrl);
   };
 
   const handleToggleForm = () => {

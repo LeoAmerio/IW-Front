@@ -102,6 +102,10 @@ export default function ServicesClient() {
     queryFn: () => fetchServicios(),
     enabled: !!user?.edificio?.id,
     refetchOnWindowFocus: true,
+    onSuccess: (data) => {
+      console.log("Servicios obtenidos:", data);
+      separarPorCategorias(data);
+    },
   });
 
   const separarPorCategorias = (servicios: Servicios[]) => {
@@ -126,7 +130,7 @@ export default function ServicesClient() {
 
   const filteredProfessionals = professionals?.filter(
     (professional) =>
-      (selectedService === "" || professional.tipo.tipo === selectedService) &&
+      (selectedService === "" || selectedService === "all" || professional.tipo.tipo === selectedService) &&
       professional.nombre_proveedor
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
@@ -159,6 +163,7 @@ export default function ServicesClient() {
                 <SelectValue placeholder="Seleccione un servicio" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
                 {serviceTypes.map((type) => (
                   <SelectItem key={type.id} value={type.tipo}>
                     {type.tipo}
@@ -171,6 +176,18 @@ export default function ServicesClient() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {(selectedService !== "" || searchTerm !== "") && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSelectedService("");
+                  setSearchTerm("");
+                }}
+                className="px-3"
+              >
+                Limpiar filtros
+              </Button>
+            )}
           </div>
           <Button
             onClick={() => {

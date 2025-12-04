@@ -78,9 +78,8 @@ interface CardBgProps {
 export function CardWithBackground({ classNamesDivLogo, img, alt, classNameGlobal }: CardBgProps) {
   return (
     <div className={`${'relative' + classNameGlobal}`}>
-      <Link
+      <div
         className="relative mb-2 flex h-20 items-end justify-start rounded-md overflow-hidden md:h-40"
-        href="/"
       >
         <Image
           src={img}
@@ -93,7 +92,7 @@ export function CardWithBackground({ classNamesDivLogo, img, alt, classNameGloba
         <div className={`${ classNamesDivLogo ? classNamesDivLogo : "w-32 text-white md:w-40 z-10 relative"}`}>
           <AcmeLogo />
         </div>
-      </Link>
+      </div>
     </div>
   )
 }

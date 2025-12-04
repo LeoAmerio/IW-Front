@@ -85,11 +85,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
       await login(data.email, data.password);
       
       toast.success("Inicio de sesión exitoso", { duration: 5000 });
-      setTimeout(() => {
-        
-        router.push("/dashboard");
-        onLoginSuccess();
-      }, 300);
+      toast.success("Inicio de sesión exitoso", { duration: 5000 });
+      onLoginSuccess();
     } catch (error) {
       console.error("Error durante el inicio de sesión:", error);
     }

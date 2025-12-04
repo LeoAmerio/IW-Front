@@ -57,6 +57,7 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
         telefono: professional?.telefono,
       })
       setSelectedServiceType(professional?.tipo.id.toString()!)
+      setValue('tipo_id', professional?.tipo.id || 0)
     }
 
     if (operation === CrudOperation.CREATE) {

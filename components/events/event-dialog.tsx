@@ -28,6 +28,12 @@ const schema = yup.object().shape({
   fecha_fin: yup.date().required("La fecha de fin es requerida"),
   tipo_evento_id: yup.number().required("El tipo de evento es requerido"),
   dias_repeticion: yup.array().of(yup.number())
+}).test('time-validation', 'La hora de fin debe ser posterior a la de inicio', function(value) {
+  const { fecha_inicio, fecha_fin } = value;
+  if (fecha_inicio && fecha_fin) {
+    return fecha_fin > fecha_inicio;
+  }
+  return true;
 });
 
 const defaultValues = {
