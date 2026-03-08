@@ -10,14 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "../dropdown-menu";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import { useAuthStore } from "@/store/auth/auth.store";
 import { IconSettings, IconSettings2 } from "@tabler/icons-react";
 import { ThemeToggle } from "@/components/ThemeSwitcher/theme-toggle";
 
 export default function Header() {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
   const handleLogOut = async () => {
-    Cookies.remove("token");
+    logout();
     router.push("/login");
   };
 

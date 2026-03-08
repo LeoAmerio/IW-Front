@@ -1,0 +1,35 @@
+﻿---
+description: Project Development Guidelines
+globs: ["**/*"]
+alwaysApply: true
+---
+# IW-Front Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2026-03-08
+
+## Active Technologies
+
+- TypeScript, Next.js 14 (App Router), React 18 + Next.js, React, Zustand (`useAuthStore`), React Query, React Hook Form, Yup, Axios (`apiClient`), TailwindCSS, shadcn/ui, `react-hot-toast` (001-cu-fixes)
+
+## Project Structure
+
+```text
+backend/
+frontend/
+tests/
+```
+
+## Commands
+
+npm test; npm run lint
+
+## Code Style
+
+TypeScript, Next.js 14 (App Router), React 18: Follow standard conventions
+
+## Recent Changes
+
+- 001-cu-fixes: Added TypeScript, Next.js 14 (App Router), React 18 + Next.js, React, Zustand (`useAuthStore`), React Query, React Hook Form, Yup, Axios (`apiClient`), TailwindCSS, shadcn/ui, `react-hot-toast`
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

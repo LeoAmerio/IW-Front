@@ -1,15 +1,15 @@
 "use client";
 import { PowerIcon } from "@heroicons/react/24/outline";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 const LogoutButton = () => {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
 
   const handleLogOut = async () => {
-    Cookies.remove("token");
-    // router.push("/login");
-    window.location.href = "/login";
+    logout();
+    router.push("/login");
   };
 
   return (

@@ -34,6 +34,7 @@ import VerticalMenu from "../VerticalMenu/vertical-menu";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { useReportPost } from "../hooks/useReportPost";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-hot-toast";
 
 enum TipoDenuncia {
   SPAM = "SPAM",
@@ -131,6 +132,13 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   };
 
   const handleSubmitReport = () => {
+    // Prevenir auto-denuncia incluso si se intenta por medios indirectos
+    if (user_id && posteo.usuario && user_id === posteo.usuario.id) {
+      toast.error("No podés denunciar tu propio posteo");
+      handleCloseReportDialog();
+      return;
+    }
+
     // Mapear el tipo de denuncia al formato esperado por el backend
     const mappedType = reportType.toLowerCase() === 'spam' 
       ? 'SPAM'

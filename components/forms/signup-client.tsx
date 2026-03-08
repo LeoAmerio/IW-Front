@@ -47,8 +47,16 @@ const schema = yup.object().shape({
     .required("Debes confirmar la nueva contraseña."),
   // .min(8, "La contraseña debe tener mínimo 8 caracteres."),
   edificio: yup.number().required("Se debe seleccionar un edificio"),
-  piso: yup.number().required(),
-  numero: yup.string().required()
+  piso: yup
+    .number()
+    .typeError("El piso debe ser un número entero")
+    .integer("El piso debe ser un número entero")
+    .moreThan(0, "El piso debe ser mayor a 0")
+    .required("El piso es obligatorio"),
+  numero: yup
+    .string()
+    .matches(/^[A-Za-z]$/, "El departamento debe ser una sola letra")
+    .required("El departamento es obligatorio"),
 });
 
 const SignupClient = () => {
