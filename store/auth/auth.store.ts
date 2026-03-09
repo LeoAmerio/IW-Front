@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { User } from '@/interfaces/user.interface';
 import { AuthStatus } from '@/interfaces/auth-status.interface';
 import { QueryClient } from 'react-query';
+import { apiClient } from '@/lib/api-client';
 
 // API endpoints
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://ucse-iw-2024.onrender.com';
@@ -58,26 +59,8 @@ const useAuthStore = create<AuthState>()(
           set({ isLoading: true, error: null });
           
           try {
-            const response = await fetch(LOGIN_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              set({ 
-                status: 'Unauthorized', 
-                isLoading: false, 
-                error: errorData.error || 'Error de autenticación',
-                isAuthenticated: false 
-              });
-              throw new Error(errorData.error || 'Error de autenticación');
-            }
-
-            const data = await response.json();
+            const response = await apiClient.post<LoginResponse>('/auth/login/', { email, password });
+            const data = response.data;
             
             // Guardar el token en cookies para peticiones de API
             Cookies.set('token', data.token);
@@ -194,19 +177,8 @@ const useAuthStore = create<AuthState>()(
           }
           
           try {
-            const response = await fetch(USER_URL(userId), {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`,
-              },
-            });
-            
-            if (!response.ok) {
-              throw new Error('Error al obtener datos del usuario');
-            }
-            
-            const userData = await response.json();
+            const response = await apiClient.get<User>(`/auth/usuarios/${userId}`);
+            const userData = response.data;
             
             set({ 
               user: userData,

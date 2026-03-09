@@ -1,0 +1,35 @@
+---
+description: Estándares para el stack tecnológico y forma de trabajo del frontend
+globs:
+  - src/**/*
+  - components/**/*
+  - hooks/**/*
+  - services/**/*
+alwaysApply: true
+---
+
+Stack Tecnológico
+- Estilos: Usar exclusivamente TailwindCSS para todos los estilos.
+- UI Components: Solo utilizar ShadcnUI o AccernityUI como librerías de componentes.
+- HTTP Requests: Usar Axios para todas las peticiones al backend.
+- Data Fetching: Implementar react-query (TanStack Query) para manejo de estado del servidor.
+- State Management: Utilizar Redux para gestión de estado global de la aplicación.
+- Custom Hooks: Crear custom hooks cuando sea necesario para reutilizar lógica.
+
+Estructura de Archivos
+- Organizar componentes por feature/dominio
+- Separar hooks personalizados en carpeta `/hooks`
+- Agrupar servicios API en carpeta `/services`
+- Mantener stores de Redux organizados por slices
+
+Convenciones de Código
+- Nombrar componentes con PascalCase
+- Hooks personalizados deben comenzar con 'use'
+- Archivos de servicios terminan con '.service.ts'
+- Constantes en UPPER_SNAKE_CASE
+
+Templates
+@component-with-query.tsx
+@custom-hook-template.ts
+@redux-slice-template.ts
+@api-service-template.ts

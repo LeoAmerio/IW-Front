@@ -21,14 +21,52 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { EventRequest } from "@/interfaces/types";
 
-const schema = yup.object().shape({
-  titulo: yup.string().required("El título es requerido"),
-  descripcion: yup.string().required("La descripción es requerida"),
-  fecha_inicio: yup.date().required("La fecha de inicio es requerida"),
-  fecha_fin: yup.date().required("La fecha de fin es requerida"),
-  tipo_evento_id: yup.number().required("El tipo de evento es requerido"),
-  dias_repeticion: yup.array().of(yup.number())
-});
+const schema = yup
+  .object()
+  .shape({
+    titulo: yup.string().required("El título es requerido"),
+    descripcion: yup.string().required("La descripción es requerida"),
+    fecha_inicio: yup
+      .date()
+      .required("La fecha de inicio es requerida"),
+    fecha_fin: yup
+      .date()
+      .required("La fecha de fin es requerida"),
+    tipo_evento_id: yup.number().required("El tipo de evento es requerido"),
+    dias_repeticion: yup.array().of(yup.number()),
+  })
+  .test(
+    "time-validation",
+    "La hora de fin debe ser posterior a la de inicio",
+    function (value) {
+      const { fecha_inicio, fecha_fin } = value as {
+        fecha_inicio?: Date;
+        fecha_fin?: Date;
+      };
+      if (fecha_inicio && fecha_fin) {
+        return fecha_fin > fecha_inicio;
+      }
+      return true;
+    }
+  )
+  .test(
+    "no-past-start-date",
+    "La fecha de inicio no puede ser anterior a la fecha actual",
+    function (value) {
+      const { fecha_inicio } = value as { fecha_inicio?: Date };
+      if (!fecha_inicio) return true;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const start = new Date(
+        fecha_inicio.getFullYear(),
+        fecha_inicio.getMonth(),
+        fecha_inicio.getDate()
+      );
+
+      return start >= today;
+    }
+  );
 
 const defaultValues = {
   titulo: "",
@@ -251,6 +289,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
                     <SelectItem value="2" className="dark:text-white dark:focus:bg-gray-700">Limpieza</SelectItem>
                     <SelectItem value="3" className="dark:text-white dark:focus:bg-gray-700">Reformas</SelectItem>
                     <SelectItem value="4" className="dark:text-white dark:focus:bg-gray-700">Reunión de Consorcio</SelectItem>
+                    <SelectItem value="5" className="dark:text-white dark:focus:bg-gray-700">Ocupación Espacios Comunes</SelectItem>
                   </SelectContent>
                 </Select>
               )}

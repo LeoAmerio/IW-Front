@@ -101,7 +101,7 @@ export default function UserDialog({ isOpen, onClose, isEditing, user }: UserDia
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" {...register("email", { required: true })} />
+            <Input id="email" {...register("email", { required: true })} disabled={isEditing} />
             {errors.email && <span>Este campo es requerido</span>}
           </div>
           <div>

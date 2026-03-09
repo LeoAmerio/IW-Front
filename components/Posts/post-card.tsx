@@ -34,12 +34,20 @@ import VerticalMenu from "../VerticalMenu/vertical-menu";
 import { useDeletePost } from "../hooks/useDeletePost";
 import { useReportPost } from "../hooks/useReportPost";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-hot-toast";
 
 enum TipoDenuncia {
   SPAM = "SPAM",
   ACOSO = "ACOSO",
   CONTENIDO_INDEBIDO = "CONTENIDO INDEBIDO",
 }
+
+// Mapeo de valores del select a los valores esperados por el backend
+const tipoDenunciaMap = {
+  spam: TipoDenuncia.SPAM,
+  acoso: TipoDenuncia.ACOSO,
+  'contenido indebido': TipoDenuncia.CONTENIDO_INDEBIDO,
+};
 
 interface PostCardProps {
   posteo: Posteo;
@@ -71,7 +79,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportComment, setReportComment] = useState("");
   const [reportType, setReportType] = useState<string>(
-    TipoDenuncia.ACOSO.toLowerCase()
+    "spam"
   );
 
   // const user_id = useAuthStore((state) => state.user_id);
@@ -124,8 +132,22 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   };
 
   const handleSubmitReport = () => {
+    // Prevenir auto-denuncia incluso si se intenta por medios indirectos
+    if (user_id && posteo.usuario && user_id === posteo.usuario.id) {
+      toast.error("No podés denunciar tu propio posteo");
+      handleCloseReportDialog();
+      return;
+    }
+
+    // Mapear el tipo de denuncia al formato esperado por el backend
+    const mappedType = reportType.toLowerCase() === 'spam' 
+      ? 'SPAM'
+      : reportType.toLowerCase() === 'acoso'
+      ? 'ACOSO'
+      : 'CONTENIDO_INDEBIDO';
+
     reportPostMutation.mutate({
-      tipo: reportType,
+      tipo: mappedType,
       usuario_denunciado: null,
       posteo_denunciado: posteo.id,
       evento_denunciado: null,
@@ -172,8 +194,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
                   <Image
                     src={posteo.imagen}
                     alt="Imagen del posteo"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                     className="rounded-md content-end"
                   />
                 </div>
@@ -272,19 +294,19 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
               }}
             >
               <MenuItem
-                value={TipoDenuncia.SPAM.toLowerCase()}
+                value="spam"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Spam
               </MenuItem>
               <MenuItem
-                value={TipoDenuncia.ACOSO.toLowerCase()}
+                value="acoso"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Acoso
               </MenuItem>
               <MenuItem
-                value={TipoDenuncia.CONTENIDO_INDEBIDO.toLowerCase()}
+                value="contenido indebido"
                 className="dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Contenido indebido

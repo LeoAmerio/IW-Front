@@ -1,0 +1,46 @@
+---
+description: Buenas prácticas de desarrollo, Clean Architecture y principios SOLID
+globs:
+  - src/**/*
+  - test/**/*
+  - __tests__/**/*
+alwaysApply: true
+---
+
+Clean Architecture
+- Separar lógica de negocio de la presentación
+- Implementar capas: Presentation → Domain → Infrastructure
+- Usar casos de uso (use cases) para lógica compleja
+- Aplicar inversión de dependencias con interfaces
+
+Principios SOLID
+- Single Responsibility: Cada componente/función debe tener una sola razón para cambiar
+- Open/Closed: Abierto para extensión, cerrado para modificación
+- Liskov Substitution: Los subtipos deben ser sustituibles por sus tipos base
+- Interface Segregation: Preferir interfaces específicas sobre genéricas
+- Dependency Inversion: Depender de abstracciones, no de concreciones
+
+Testing
+- Escribir tests unitarios para custom hooks y utilidades
+- Implementar tests de integración para flujos críticos
+- Usar React Testing Library para componentes
+- Mantener cobertura mínima del 80%
+- Seguir patrón AAA (Arrange, Act, Assert)
+
+Code Quality
+- Aplicar ESLint y Prettier consistentemente
+- Usar TypeScript estricto (strict: true)
+- Implementar validación de props con PropTypes o TypeScript
+- Evitar any, preferir tipos específicos
+- Documentar funciones complejas con JSDoc
+
+Performance
+- Implementar lazy loading para componentes pesados
+- Usar React.memo para componentes que re-renderizan frecuentemente
+- Optimizar queries con react-query (staleTime, cacheTime)
+- Implementar virtualization para listas largas
+
+Templates
+@test-component-template.test.tsx
+@custom-hook-test-template.test.ts
+@use-case-template.ts

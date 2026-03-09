@@ -1,17 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQueryClient } from 'react-query'
-import axios from 'axios'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { CrudOperation, Servicios } from '@/interfaces/types'
-import { createProfessional, deleteProfessional, editProfessional } from '@/api/services.api'
 import { LinearProgress } from '@mui/material'
+import { useServicesStore } from '@/store/services/services.store'
+import { useEffect, useState } from 'react'
 
 export type ProfessionalFormRequest = {
   tipo_id: number
@@ -38,77 +36,42 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
   const [selectedServiceType, setSelectedServiceType] = useState(professional?.tipo.id.toString() || '')
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProfessionalFormRequest>({
     defaultValues: defaultValues
-    // professional
-    //   ? {
-    //       tipo_id: professional.tipo.id,
-    //       nombre_proveedor: professional.nombre_proveedor,
-    //       telefono: professional.telefono,
-    //     }
-    //   : undefined,
   })
 
-  const queryClient = useQueryClient()
+  const { createService, updateService, isLoading } = useServicesStore()
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && professional) {
       reset({
-        tipo_id: professional?.tipo.id,
-        nombre_proveedor: professional?.nombre_proveedor,
-        telefono: professional?.telefono,
+        tipo_id: professional.tipo.id,
+        nombre_proveedor: professional.nombre_proveedor,
+        telefono: professional.telefono,
       })
-      setSelectedServiceType(professional?.tipo.id.toString()!)
+      setSelectedServiceType(professional.tipo.id.toString())
+      setValue('tipo_id', professional.tipo.id)
     }
 
     if (operation === CrudOperation.CREATE) {
       reset(defaultValues);
+      setSelectedServiceType('');
     }
-  }, [reset, professional, isEditing]);
+  }, [reset, professional, isEditing, operation]);
 
-  const createProfessionalMutation = useMutation(
-    ({ data }: { data: ProfessionalFormRequest }) =>
-      createProfessional(data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['professionals'])
-        onClose();
-        reset();
+  const onSubmit = async (data: ProfessionalFormRequest) => {
+    try {
+      if (operation === CrudOperation.CREATE) {
+        await createService(data)
       }
-    }
-  );
 
-  const editProfessionalMutation = useMutation(
-    ({ id, data }: { id: number, data: ProfessionalFormRequest }) =>
-      editProfessional(id, data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['professionals'])
-        onClose();
-        reset();
+      if (operation === CrudOperation.UPDATE && professional) {
+        await updateService(professional.id, data)
       }
+      
+      onClose();
+      reset();
+    } catch (error) {
+      // Error is already handled in the store
     }
-  );
-
-  const deleteProfessionalMutation = useMutation(
-    ({ id }: { id: number }) =>
-      deleteProfessional(id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['professionals'])
-        onClose();
-        reset();
-      }
-    }
-  );
-
-  const onSubmit = (data: ProfessionalFormRequest) => {
-    if (operation === CrudOperation.CREATE) {
-      createProfessionalMutation.mutate({ data })
-    }
-
-    if (operation === CrudOperation.UPDATE) {
-      editProfessionalMutation.mutate({ id: professional?.id!, data })
-    }
-    // mutation.mutate(data)
   }
 
   return (
@@ -118,13 +81,12 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
           <DialogTitle>{professional ? 'Editar Professional' : 'Agregar Profesional'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
+          <div>
             <Label htmlFor="tipo_id">Servicio</Label>
             <Select
               value={selectedServiceType}
               onValueChange={(value) => {
                 setSelectedServiceType(value)
-                // Actualiza el valor del campo en react-hook-form
                 setValue('tipo_id', parseInt(value))
               }}
             >
@@ -139,11 +101,6 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
                 ))}
               </SelectContent>
             </Select>
-            {/* <input
-              type="hidden"
-              {...register('tipo_id', { required: true })}
-              value={selectedServiceType}
-            /> */}
           </div>
           <div>
             <Label htmlFor="nombre_proveedor">Nombre</Label>
@@ -151,7 +108,7 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
               id="nombre_proveedor"
               {...register('nombre_proveedor', { required: true })}
             />
-            {errors.nombre_proveedor && <span>Este campo es requerido</span>}
+            {errors.nombre_proveedor && <span className="text-red-500 text-sm">Este campo es requerido</span>}
           </div>
           <div>
             <Label htmlFor="telefono">Telefono</Label>
@@ -159,18 +116,18 @@ export function ProfessionalDialog({ isOpen, onClose, isEditing, operation, prof
               id="telefono"
               {...register('telefono', { required: true })}
             />
-            {errors.telefono && <span>Este campo es requerido</span>}
+            {errors.telefono && <span className="text-red-500 text-sm">Este campo es requerido</span>}
           </div>
           <div className='flex justify-center align-center m-2 gap-2'>
-            <Button type="submit">
+            <Button type="submit" disabled={isLoading}>
               {professional ? 'Actualizar' : 'Crear'}
             </Button>
-            <Button type="button" onClick={onClose}>
+            <Button type="button" onClick={onClose} variant="outline">
               Cancelar
             </Button>
           </div>
         </form>
-        {createProfessionalMutation.isLoading && <LinearProgress />}
+        {isLoading && <LinearProgress />}
       </DialogContent>
     </Dialog>
   )

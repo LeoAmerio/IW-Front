@@ -46,6 +46,7 @@ export function ReportDetails({
             Pendiente
           </Badge>
         );
+
       case "en_revision":
         return (
           <Badge

@@ -1,21 +1,14 @@
-import React, { useState } from "react";
-import { lusitana } from "../ui/fonts";
-import Cookies from "js-cookie";
+import React from "react";
 import {
-  ArrowRightIcon,
-  AtSymbolIcon,
-  KeyIcon,
-  FaceSmileIcon,
-  FaceFrownIcon,
   ArrowLeftIcon
 } from "@heroicons/react/24/outline";
-import { Button } from "../ui/servicios/button";
+import { Button } from "../ui/button";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useMutation, useQuery } from "react-query";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField } from "@mui/material";
-import edificiosApi from "@/api/edificios.api";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import propiedadesApi from "@/api/propiedades.api";
 import { toast } from "react-hot-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -23,7 +16,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { ArrowLeft, ArrowRight, Building2, Hash, Loader2, Mail, MapPin, User, Lock } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Alert, AlertDescription } from "../ui/alert";
 
 const fetchEdificios = async () => {
   const { data } = await propiedadesApi.getEdificios();
@@ -58,13 +50,14 @@ const schema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), ""], "Las contraseñas deben coincidir")
     .required("Debes confirmar la nueva contraseña."),
-    // .min(8, "La contraseña debe tener mínimo 8 caracteres."),
+  // .min(8, "La contraseña debe tener mínimo 8 caracteres."),
   edificio: yup.number().required("Se debe seleccionar un edificio"),
   piso: yup.number().required(),
   numero: yup.string().required()
 });
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) => {
+  const router = useRouter();
   // const [isLoading, setIsLoading] = useState(false)
   // const [error, setError] = useState<string | null>(null)
   const {
@@ -88,7 +81,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
       }).then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json();
-          if(response.status === 400 && errorData.email) {
+          if (response.status === 400 && errorData.email) {
             // throw new Error(errorData.email[0]);
             toast.error(errorData.email[0]);
           }
@@ -116,7 +109,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
       onSuccess: (data) => {
       },
     }
-  ) 
+  )
 
   const onSubmit = (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
@@ -170,6 +163,23 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
       <div className="flex-1 flex items-center justify-center p-4 bg-gray-900">
         <div className="w-full max-w-md">
           <Card className="shadow-2xl border-0 bg-gray-900 dark:bg-gray-900">
+            {/* Botón Volver atrás */}
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                variant="ghost"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                onClick={() => router.push("/login")}
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Volver atrás
+              </Button>
+              <Link
+                href="/login"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                ¿Ya tienes cuenta?
+              </Link>
+            </div>
             <CardHeader className="space-y-1 pb-6">
               <div className="flex items-center justify-center mb-4">
                 <div className="bg-blue-600 p-3 rounded-xl">
@@ -247,7 +257,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
                           <SelectValue placeholder="Seleccione un edificio" />
                         </SelectTrigger>
                         <SelectContent>
-{/* //               <select 
+                          {/* //               <select 
 //                 className="peer block w-full rounded-md border border-gray-200 dark:border-gray-700 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400 apparence-none"
 //                 id="edificios"
 //                 {...register("edificio", { required: "Seleccione un edificio" })}
@@ -391,12 +401,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess, onGoBack }) =>
                   </Button>
 
                   <Button
-                    type="button"
-                    className="w-full bg-transparent"
-                    onClick={onGoBack}
-                    disabled={isLoading}
+                    variant="default"
+                    className="bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                    onClick={() => router.push("/login")}
                   >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    <ArrowLeft className="h-5 w-5 mr-2" />
                     Volver atrás
                   </Button>
                 </div>

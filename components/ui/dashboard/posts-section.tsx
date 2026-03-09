@@ -68,17 +68,17 @@ const PostsSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPost, setSelectedPost] = useState<Posteo | null>(null);
 
-  const [filters, setFilters] = useState<SearchParams>({
+  const initialFilters: SearchParams = {
     usuario: 0,
     tipo_posteo: "",
     ordering: "",
-  });
+  };
 
-  const [appliedFilters, setAppliedFilters] = useState<SearchParams>({
-    usuario: 0,
-    tipo_posteo: "",
-    ordering: "",
-  });
+  const [filters, setFilters] = useState<SearchParams>(initialFilters);
+
+  const [appliedFilters, setAppliedFilters] = useState<SearchParams>(
+    initialFilters
+  );
 
   const { control, handleSubmit, reset, setValue } = useForm<PosteoRequest>({
     defaultValues: {
@@ -186,13 +186,8 @@ const PostsSection = () => {
   };
 
   const clearFilters = () => {
-    const clearedFilters = {
-      usuario: 0,
-      tipo_posteo: "",
-      ordering: "",
-    };
-    setFilters(clearedFilters);
-    setAppliedFilters(clearedFilters);
+    setFilters(initialFilters);
+    setAppliedFilters(initialFilters);
     setIsFilterModalOpen(false);
     refetch();
   };
@@ -258,6 +253,18 @@ const PostsSection = () => {
   );
 
   const postsToShow = searchTerm ? (searchPosts || []) : (posts || []);
+
+  const hasActiveFilters =
+    appliedFilters.usuario !== 0 ||
+    appliedFilters.tipo_posteo !== "" ||
+    appliedFilters.ordering !== "";
+
+  const handleClearSearchAndFilters = () => {
+    setSearchTerm("");
+    setSearchResults([]);
+    setSelectedPost(null);
+    clearFilters();
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -509,10 +516,27 @@ const PostsSection = () => {
           <PostDetail key={selectedPost.id} posteo={selectedPost} />
         ) : loadingData ? (
           <p>Cargando posteos...</p>
-        ) : (
-          posts && posts.map((posteo: Posteo) => (
+        ) : postsToShow && postsToShow.length > 0 ? (
+          postsToShow.map((posteo: Posteo) => (
             <PostCard key={posteo.id} posteo={posteo} onEdit={handleEdit} />
           ))
+        ) : (
+          <div className="text-center text-gray-500 dark:text-gray-300 space-y-3">
+            <p>
+              {searchTerm || hasActiveFilters
+                ? "No se encontraron posteos para los filtros o búsqueda seleccionados."
+                : "No hay posteos disponibles aún."}
+            </p>
+            {(searchTerm || hasActiveFilters) && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClearSearchAndFilters}
+              >
+                Limpiar filtros y búsqueda
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </div>
