@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { SessionLoader } from "@/components/forms/session-loader"
 import { LoginForm } from "@/components/forms/new-login-form"
 import { RegistrationForm } from "../../components/forms/new-registration-form"
@@ -11,7 +11,7 @@ import { toast } from "react-hot-toast"
 
 type AuthView = "loading" | "login" | "register" | "forgot-password"
 
-export default function AuthPage() {
+function AuthPageContent() {
   const [view, setView] = useState<AuthView>("loading")
   const [imageLoaded, setImageLoaded] = useState(false)
   const router = useRouter()
@@ -220,5 +220,20 @@ function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
         )}
       </div>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-sm text-muted-foreground">Cargando...</span>
+        </div>
+      </div>
+    }>
+      <AuthPageContent />
+    </Suspense>
   )
 }

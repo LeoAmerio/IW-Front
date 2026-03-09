@@ -1,12 +1,5 @@
-import LoginClient from "@/components/forms/login-client";
-import { Suspense } from "react";
+import AuthPage from "@/components/auth/auth-page"
 
-const LoginPage = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginClient />
-    </Suspense>
-  );
-};
-
-export default LoginPage;
+export default function LoginPage() {
+  return <AuthPage />
+}
