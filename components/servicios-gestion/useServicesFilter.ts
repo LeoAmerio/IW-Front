@@ -12,9 +12,9 @@ export const useServicesFilter = (professionals: Servicios[] | undefined) => {
       const matchesService =
         selectedService === "" ||
         selectedService === "all" ||
-        professional.tipo.tipo === selectedService;
+        professional.tipo?.tipo === selectedService;
 
-      const matchesSearch = professional.nombre_proveedor
+      const matchesSearch = (professional.nombre_proveedor || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 

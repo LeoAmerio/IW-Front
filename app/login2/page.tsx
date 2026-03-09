@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { SessionLoader } from "@/components/forms/session-loader"
 import { LoginForm } from "@/components/forms/new-login-form"
-import { RegistrationForm } from "@/components/forms/new-registration-form"
+import { RegistrationForm } from "../../components/forms/new-registration-form"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAuthStore } from "@/store/auth/auth.store"
@@ -106,18 +106,6 @@ export default function AuthPage() {
     </div>
   )
 }
-        
-//         {view === "register" && (
-//           <RegistrationForm onBack={() => setView("login")} />
-//         )}
-        
-//         {view === "forgot-password" && (
-//           <ForgotPasswordForm onBack={() => setView("login")} />
-//         )}
-//       </div>
-//     </div>
-//   )
-// }
 
 function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState("")

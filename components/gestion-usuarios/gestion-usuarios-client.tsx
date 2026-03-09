@@ -73,7 +73,7 @@ export default function GestionUsuariosClient() {
   // Filtros y búsqueda en cliente
   const filteredUsers = users.filter(
     (user) =>
-      (selectedRole === "" || user.rol_info.rol === selectedRole) &&
+      (selectedRole === "" || selectedRole === "all" || user.rol_info.rol === selectedRole) &&
       (user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.apellido.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -122,7 +122,7 @@ export default function GestionUsuariosClient() {
                 <SelectValue placeholder="Todos los roles" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los roles</SelectItem>
+                <SelectItem value="all">Todos los roles</SelectItem>
                 {roles.map((role) => (
                   <SelectItem key={role.id} value={role.rol}>
                     {role.rol}
