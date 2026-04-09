@@ -136,11 +136,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 // name="password"
                 placeholder="Ingrese su contraseña"
                 required
-                minLength={8}
-                {...register("password", {
-                  required: "Contraseña es requerida",
-                  minLength: 8,
-                })}
+                {...register("password")}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>
