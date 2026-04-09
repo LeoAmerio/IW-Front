@@ -74,7 +74,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportComment, setReportComment] = useState("");
-  const [reportType, setReportType] = useState<TipoDenunciaValue | "">("spam");
+  const [reportType, setReportType] = useState<TipoDenunciaValue | ("")>("");
 
   // const user_id = useAuthStore((state) => state.user_id);
   const user = useAuthStore((state) => state.user);
@@ -116,13 +116,14 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setOpenReportDialog(true);
   }
 
-  const handleReportTypeChange = (event: SelectChangeEvent) => {
-    setReportType(event.target.value);
+  const handleReportTypeChange = (event: SelectChangeEvent<TipoDenunciaValue | "">) => {
+    setReportType(event.target.value as TipoDenunciaValue | "");
   };
 
   const handleCloseReportDialog = () => {
     setOpenReportDialog(false);
     setReportComment("");
+    setReportType("");
   };
 
   const handleSubmitReport = () => {
