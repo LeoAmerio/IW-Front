@@ -127,7 +127,7 @@ const MyCalendar: React.FC = () => {
     defaultValues: defaultValues,
   });
 
-  const { data, isLoading } = useQuery(["events"], getEvents)
+  const { data, isLoading: isLoadingEvents } = useQuery(["events"], getEvents)
 
   const parseDate = (dateString: string): Date => {
     try {
