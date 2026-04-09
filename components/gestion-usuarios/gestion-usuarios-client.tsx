@@ -77,7 +77,8 @@ export default function GestionUsuariosClient() {
     .filter((user) => {
       // Building isolation for Colaborador role
       if (currentUser?.rol_info?.rol === "Colaborador") {
-        return user.edificio?.id === currentUser?.edificio?.id;
+        if (!currentUser.edificio?.id) return false; // no building assigned → show nothing
+        return user.edificio?.id === currentUser.edificio.id;
       }
       return true;
     })
