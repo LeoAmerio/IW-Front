@@ -34,6 +34,7 @@ import Cookies from 'js-cookie';
 import "react-datepicker/dist/react-datepicker.css";
 import { EventRequest, EventResponse } from "@/interfaces/types";
 import EventDialog from "../events/event-dialog";
+import toast from "react-hot-toast";
 
 const locales = {
   es: es,
@@ -85,8 +86,10 @@ const getEvents = async (): Promise<EventResponse[]> => {
   return response.json();
 };
 
+const FETCH_TIMEOUT_MS = 15000;
+
 const postEvento = async (data: any) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/eventos/`, {
+  const fetchPromise = fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/comunicaciones/eventos/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -94,6 +97,12 @@ const postEvento = async (data: any) => {
     },
     body: JSON.stringify(data),
   });
+
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout: el servidor tardó demasiado en responder")), FETCH_TIMEOUT_MS)
+  );
+
+  const response = await Promise.race([fetchPromise, timeoutPromise]);
   if (!response.ok) {
     throw new Error("Error al crear el evento");
   }
@@ -160,6 +169,7 @@ const MyCalendar: React.FC = () => {
     },
     onError: (error) => {
       console.error("Error al crear el evento:", error);
+      toast.error("Error al crear el evento. Si el problema persiste, verificá si el evento fue creado antes de reintentar.");
     },
   });
 
@@ -272,6 +282,7 @@ const MyCalendar: React.FC = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSubmit={handleSubmit}
+        isLoading={mutation.isLoading}
         defaultDate={
           selectedSlot
             ? { start: selectedSlot.start, end: selectedSlot.end }
