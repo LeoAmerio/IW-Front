@@ -66,7 +66,7 @@ export default function NavLinks() {
       .filter((link) => !link.role || link.role === user.rol_info?.rol)
       .map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href;
+        const isActive = !link.external && pathname === link.href;
         const linkClassName = cn(
           "flex items-center gap-2 rounded-lg px-3 py-2 text-foreground transition-colors hover:bg-accent",
           isActive ? 'bg-sky-100 text-blue-600' : ''
