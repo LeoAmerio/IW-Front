@@ -10,7 +10,7 @@ import {
   ChatBubbleLeftRightIcon,
   PaperClipIcon,
   ClipboardDocumentListIcon,
-  ExternalLinkIcon
+  ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -84,7 +84,7 @@ export default function NavLinks() {
               <LinkIcon className="w-6" />
               <p className="hidden md:flex items-center gap-1">
                 {link.name}
-                <ExternalLinkIcon className="w-4 h-4" />
+                <ArrowTopRightOnSquareIcon className="w-4 h-4" />
               </p>
             </a>
           );
