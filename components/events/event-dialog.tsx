@@ -92,13 +92,15 @@ interface EventDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: any) => void;
   defaultDate?: { start: Date; end: Date };
+  isLoading?: boolean;
 }
 
 const EventDialog: React.FC<EventDialogProps> = ({
   open,
   onOpenChange,
   onSubmit,
-  defaultDate
+  defaultDate,
+  isLoading = false,
 }) => {
   const {
     register,
@@ -323,8 +325,8 @@ const EventDialog: React.FC<EventDialogProps> = ({
             <Button onClick={() => onOpenChange(false)} variant="outline" type="button" className="dark:border-gray-700 dark:text-gray-200">
               Cancelar
             </Button>
-            <Button type="submit" className="ml-2">
-              Crear
+            <Button type="submit" className="ml-2" disabled={isLoading}>
+              {isLoading ? "Creando..." : "Crear"}
             </Button>
           </div>
         </form>

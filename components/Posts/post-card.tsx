@@ -36,18 +36,14 @@ import { useReportPost } from "../hooks/useReportPost";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 
-enum TipoDenuncia {
-  SPAM = "SPAM",
-  ACOSO = "ACOSO",
-  CONTENIDO_INDEBIDO = "CONTENIDO INDEBIDO",
-}
+const TIPOS_DENUNCIA = [
+  { value: "spam",        label: "Spam" },
+  { value: "inapropiado", label: "Contenido Inapropiado" },
+  { value: "ofensivo",    label: "Contenido Ofensivo" },
+  { value: "acoso",       label: "Acoso" },
+] as const;
 
-// Mapeo de valores del select a los valores esperados por el backend
-const tipoDenunciaMap = {
-  spam: TipoDenuncia.SPAM,
-  acoso: TipoDenuncia.ACOSO,
-  'contenido indebido': TipoDenuncia.CONTENIDO_INDEBIDO,
-};
+type TipoDenunciaValue = typeof TIPOS_DENUNCIA[number]["value"];
 
 interface PostCardProps {
   posteo: Posteo;
@@ -78,9 +74,7 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportComment, setReportComment] = useState("");
-  const [reportType, setReportType] = useState<string>(
-    "spam"
-  );
+  const [reportType, setReportType] = useState<TipoDenunciaValue | ("")>("");
 
   // const user_id = useAuthStore((state) => state.user_id);
   const user = useAuthStore((state) => state.user);
@@ -122,13 +116,14 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
     setOpenReportDialog(true);
   }
 
-  const handleReportTypeChange = (event: SelectChangeEvent) => {
-    setReportType(event.target.value);
+  const handleReportTypeChange = (event: SelectChangeEvent<TipoDenunciaValue | "">) => {
+    setReportType(event.target.value as TipoDenunciaValue | "");
   };
 
   const handleCloseReportDialog = () => {
     setOpenReportDialog(false);
     setReportComment("");
+    setReportType("");
   };
 
   const handleSubmitReport = () => {
@@ -139,15 +134,8 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
       return;
     }
 
-    // Mapear el tipo de denuncia al formato esperado por el backend
-    const mappedType = reportType.toLowerCase() === 'spam' 
-      ? 'SPAM'
-      : reportType.toLowerCase() === 'acoso'
-      ? 'ACOSO'
-      : 'CONTENIDO_INDEBIDO';
-
     reportPostMutation.mutate({
-      tipo: mappedType,
+      tipo: reportType,
       usuario_denunciado: null,
       posteo_denunciado: posteo.id,
       evento_denunciado: null,
@@ -293,24 +281,15 @@ const PostCard: React.FC<PostCardProps> = ({ posteo, onEdit }) => {
                 },
               }}
             >
-              <MenuItem
-                value="spam"
-                className="dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                Spam
-              </MenuItem>
-              <MenuItem
-                value="acoso"
-                className="dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                Acoso
-              </MenuItem>
-              <MenuItem
-                value="contenido indebido"
-                className="dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                Contenido indebido
-              </MenuItem>
+              {TIPOS_DENUNCIA.map((tipo) => (
+                <MenuItem
+                  key={tipo.value}
+                  value={tipo.value}
+                  className="dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                  {tipo.label}
+                </MenuItem>
+              ))}
             </Select>
             <FormHelperText className="dark:text-gray-400">
               Seleccione el tipo de denuncia

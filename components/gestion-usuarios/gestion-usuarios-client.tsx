@@ -25,6 +25,7 @@ import { activarUsuario, fetchUsuarios } from "@/api/user.api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
 import { User } from "@/interfaces/user.interface";
+import { useAuthStore } from "@/store/auth/auth.store";
 
 const roles = [
   { id: 1, rol: "Inquilino" },
@@ -34,6 +35,7 @@ const roles = [
 
 export default function GestionUsuariosClient() {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
 
   // UI state
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,13 +73,22 @@ export default function GestionUsuariosClient() {
   );
 
   // Filtros y búsqueda en cliente
-  const filteredUsers = users.filter(
-    (user) =>
-      (selectedRole === "" || selectedRole === "all" || user.rol_info.rol === selectedRole) &&
-      (user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.apellido.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredUsers = users
+    .filter((user) => {
+      // Building isolation for Colaborador role
+      if (currentUser?.rol_info?.rol === "Colaborador") {
+        if (!currentUser.edificio?.id) return false; // no building assigned → show nothing
+        return user.edificio?.id === currentUser.edificio.id;
+      }
+      return true;
+    })
+    .filter(
+      (user) =>
+        (selectedRole === "" || selectedRole === "all" || user.rol_info.rol === selectedRole) &&
+        (user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.apellido.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
   const handleEdit = (user: User) => {
     setIsEditing(true);

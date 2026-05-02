@@ -26,9 +26,7 @@ const schema = yup.object().shape({
   email: yup.string().email("Debe ser un correo válido.").required("Ingrese un mail válido"),
   password: yup
     .string()
-    .required("La contraseña es obligatoria")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número")
-    .min(8, "La contraseña debe tener al menos 8 caracteres"),
+    .required("La contraseña es obligatoria"),
 })
 
 export function LoginForm({ onRegister, onForgotPassword, onLoginSuccess }: LoginFormProps) {
@@ -50,7 +48,8 @@ export function LoginForm({ onRegister, onForgotPassword, onLoginSuccess }: Logi
       onLoginSuccess()
     } catch (error) {
       console.error("Login error:", error)
-      // Error handling is done in the auth store interceptor
+      // Show generic error message to avoid leaking password policy
+      setError("password", { message: "Credenciales inválidas" })
     }
   }
 

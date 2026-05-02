@@ -33,9 +33,7 @@ const schema = yup.object().shape({
   email: yup.string().email("Debe ser un correo valido.").required("Ingrese un mail valido"),
   password: yup
     .string()
-    .required("La contraseña es obligatoria")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número")
-    .min(8, "La contraseña debe tener al menos 8 caracteres"),
+    .required("La contraseña es obligatoria"),
 });
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
@@ -62,16 +60,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
   // Manejar errores del store
   useEffect(() => {
     if (error) {
-      toast.error(error, { duration: 5000 });
-      
-      // Configurar errores de formulario si aplica
-      if (error.includes('email') || error.includes('correo')) {
-        setError("email", { message: error });
-      }
-      
-      if (error.includes('contraseña') || error.includes('password')) {
-        setError("password", { message: error });
-      }
+      // Show generic error message to avoid leaking password policy
+      toast.error("Credenciales inválidas", { duration: 5000 });
+      setError("password", { message: "Credenciales inválidas" });
     }
   }, [error, setError]);
 
@@ -84,7 +75,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
     try {
       await login(data.email, data.password);
       
-      toast.success("Inicio de sesión exitoso", { duration: 5000 });
       toast.success("Inicio de sesión exitoso", { duration: 5000 });
       onLoginSuccess();
     } catch (error) {
@@ -145,11 +135,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoBack }) => {
                 // name="password"
                 placeholder="Ingrese su contraseña"
                 required
-                minLength={8}
-                {...register("password", {
-                  required: "Contraseña es requerida",
-                  minLength: 8,
-                })}
+                {...register("password")}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-focus:text-gray-900 dark:peer-focus:text-gray-100" />
             </div>

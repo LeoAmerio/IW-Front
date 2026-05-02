@@ -166,10 +166,10 @@ export function Serivcios() {
 
   return (
     <div className="w-full h-full py-20">
-      <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+      <h2 className="max-w-7xl px-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans text-center">
         Listado de profesionales asociados al edificio.
       </h2>
-      <h6>
+      <h6 className="max-w-7xl px-4 mx-auto text-center">
         Sientase libre de elegir de este listado o el de su preferencia, son
         meras recomendaciones
       </h6>
